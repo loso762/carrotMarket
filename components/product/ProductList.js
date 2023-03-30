@@ -1,7 +1,7 @@
 import classes from './ProductList.module.css';
 import ProductItem from './ProductItem';
 
-function ProductList({list}) {
+function ProductList({list,section}) {
 
   const Productlist = Object.entries(list);
 
@@ -14,6 +14,8 @@ function ProductList({list}) {
           image={Item[1].img}
           title={Item[1].title}
           price={Item[1].price}
+          time={Item[1].time}
+          section={section}
         />
       ))}
     </ul>

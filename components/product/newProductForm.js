@@ -2,13 +2,13 @@ import { useRef } from 'react';
 import classes from './newProductForm.module.css';
 import { useRouter } from 'next/router';
 
-const Section = ["인기매물","디지털기기","생활가전","가구","유아동","의류","뷰티","스포츠","취미", "도서", "티켓/교환권", "반려동물용품" , "식물" , "삽니다"];
+const category = ["카테고리","인기매물","디지털기기","생활가전","가구","유아동","의류","뷰티","스포츠","취미", "도서", "티켓/교환권", "반려동물용품" , "식물" , "삽니다"];
 
 function NewProductForm() {
 
   const router = useRouter();
 
-  const sectionRef = useRef();
+  const categoryRef = useRef();
   const titleInputRef = useRef();
   const priceInputRef = useRef();
   const imgInputRef = useRef();
@@ -17,20 +17,27 @@ function NewProductForm() {
   const submitHandler = (e) =>{
     e.preventDefault();
     
-    const whatSection = sectionRef.current.value;
+    const category = categoryRef.current.value;
     const enteredTitle = titleInputRef.current.value;
     const enteredPrice = priceInputRef.current.value;
     const enteredImg = imgInputRef.current.value;
     const enteredDescription = descriptionInputRef.current.value;
+    const now = Date.now();
 
     const newProduct = {
       title : enteredTitle,
       price : enteredPrice,
       img : enteredImg,
-      description : enteredDescription
+      description : enteredDescription,
+      time : now
     }
 
-    fetch(`https://carrot-621db-default-rtdb.firebaseio.com/${whatSection}.json`,{
+    if(category == "카테고리"){
+      alert("카테고리를 골라주세요");
+      return 
+    }
+
+    fetch(`https://carrot-621db-default-rtdb.firebaseio.com/${category}.json`,{
       method:"POST",
       body:JSON.stringify(newProduct),
       headers:{
@@ -38,17 +45,20 @@ function NewProductForm() {
       }
     })
 
-    router.push("/main")
-  }
+    router.push("/Home")
+}
 
-  const cancelHandler = () =>{ }
+  const cancelHandler = () =>{
+    router.push("/Home") 
+  }
+  
   return (
     <form id='form' className={classes.form} onSubmit={submitHandler}>
       <p>
-        <select ref={sectionRef}>
+        <select ref={categoryRef}>
           {
-            Section.map((section,idx)=>{
-              return <option key={idx} value={section}> {section} </option>
+            category.map((category,idx)=>{
+              return <option key={idx} value={category}> {category} </option>
             })
           }
         </select>

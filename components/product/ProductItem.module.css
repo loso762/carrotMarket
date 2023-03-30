@@ -1,0 +1,38 @@
+.item {
+  margin: 1rem 0;
+  display: flex;
+  padding: 0 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  border-bottom: 1px solid rgb(60, 60, 60);
+}
+
+.image {
+  width: 130px;
+  height: 130px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.image img {
+  width: 115px;
+  height: 115px;
+  border-radius: 10px;
+}
+
+.content {
+  text-align: left;
+  padding: 1rem;
+}
+
+.content h4 {
+  font-size: 1rem;
+  color: rgb(212, 212, 212);
+  margin-bottom: 10px;
+}
+
+.content .time{
+  color: rgb(128, 128, 128);
+  margin-bottom: 10px;
+}

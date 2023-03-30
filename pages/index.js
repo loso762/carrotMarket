@@ -1,10 +1,9 @@
 import React from 'react';
+import MainLayout from '../components/mainLayout';
 
 function index(props) {
     return (
-        <div>
-            first
-        </div>
+        <MainLayout />
     );
 }
 

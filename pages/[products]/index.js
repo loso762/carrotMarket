@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import ProductList from './../components/ProductList';
+import ProductList from '../../components/product/ProductList';
+import ProductsHeader from '@/components/product/ProductsHeader';
+import FooterMenu from '../../components/main/FooterMenu';
 
 function Products(props) {
     const router = useRouter();
@@ -12,8 +14,9 @@ function Products(props) {
 
     return (
     <>
-        <header> {section} </header>
-        <ProductList list={props.ProductsData}></ProductList>
+        <ProductsHeader section={section}/>
+        <ProductList list={props.ProductsData} section={section}></ProductList>
+        <FooterMenu/>
     </>
     );
 }

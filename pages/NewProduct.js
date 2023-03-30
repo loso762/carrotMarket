@@ -1,4 +1,4 @@
-import NewProductForm from '../components/newProductForm';
+import NewProductForm from '../components/product/newProductForm';
 
 function NewProduct() {
     return <NewProductForm />;
