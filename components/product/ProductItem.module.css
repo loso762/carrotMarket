@@ -5,19 +5,20 @@
   box-sizing: border-box;
   cursor: pointer;
   border-bottom: 1px solid rgb(60, 60, 60);
+  position: relative;
 }
 
 .image {
-  width: 130px;
-  height: 130px;
+  width: 118px;
+  height: 118px;
   overflow: hidden;
   display: flex;
   justify-content: center;
 }
 
 .image img {
-  width: 115px;
-  height: 115px;
+  width: 110px;
+  height: 110px;
   border-radius: 10px;
 }
 
@@ -35,4 +36,22 @@
 .content .time{
   color: rgb(128, 128, 128);
   margin-bottom: 10px;
+}
+
+
+.likeButton{
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  right: 20px;
+  bottom : 10px;
+  display: flex;
+  align-items: center;
+}
+
+.likeButton svg{
+  width: 20px;
+  height: 20px;
+  transform: translateY(-1px);
+  margin-right: 5px;
 }

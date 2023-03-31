@@ -41,12 +41,12 @@ export async function getStaticProps(context) {
 
     const section = context.params.products;
 
-    const response = await fetch(`https://carrot-621db-default-rtdb.firebaseio.com/${section}.json`);
-    const resData = await response.json();
+    const response = await fetch(`https://carrot-621db-default-rtdb.firebaseio.com/products/${section}.json`);
+    const ProductsData = await response.json();
 
     return {
         props: {
-            ProductsData: resData
+            ProductsData
         },
     };
   }

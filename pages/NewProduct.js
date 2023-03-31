@@ -1,3 +1,4 @@
+
 import NewProductForm from '../components/product/newProductForm';
 
 function NewProduct() {

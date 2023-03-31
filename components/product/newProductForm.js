@@ -1,8 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import classes from './newProductForm.module.css';
 import { useRouter } from 'next/router';
 
 const category = ["카테고리","인기매물","디지털기기","생활가전","가구","유아동","의류","뷰티","스포츠","취미", "도서", "티켓/교환권", "반려동물용품" , "식물" , "삽니다"];
+
 
 function NewProductForm() {
 
@@ -13,6 +14,36 @@ function NewProductForm() {
   const priceInputRef = useRef();
   const imgInputRef = useRef();
   const descriptionInputRef = useRef();
+
+  //글쓴이 주소 가져오는 코드
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
+  const [dong, setDong] = useState();
+  
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    })
+
+    if (latitude && longitude) {
+      // 카카오 지도 API에서 위도, 경도를 주소로 변환
+      window.kakao.maps.load(() => {
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        geocoder.coord2Address(longitude, latitude, (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            // 변환된 주소에서 동 정보 추출
+            for (let i = 0; i < result[0].address.address_name.split(' ').length; i++) {
+              if (result[0].address.address_name.split(' ')[i].endsWith('동')) {
+                setDong(result[0].address.address_name.split(' ')[i]);
+                break;
+              }
+            }
+          }
+        });
+      })
+    }
+  }, [latitude, longitude]);
 
   const submitHandler = (e) =>{
     e.preventDefault();
@@ -29,7 +60,11 @@ function NewProductForm() {
       price : enteredPrice,
       img : enteredImg,
       description : enteredDescription,
-      time : now
+      time : now,
+      Latitude : latitude,
+      Longitude : longitude,
+      dong : dong,
+      category : category
     }
 
     if(category == "카테고리"){
@@ -37,7 +72,7 @@ function NewProductForm() {
       return 
     }
 
-    fetch(`https://carrot-621db-default-rtdb.firebaseio.com/${category}.json`,{
+    fetch(`https://carrot-621db-default-rtdb.firebaseio.com/products/${category}.json`,{
       method:"POST",
       body:JSON.stringify(newProduct),
       headers:{
@@ -46,12 +81,12 @@ function NewProductForm() {
     })
 
     router.push("/Home")
-}
+  }
 
   const cancelHandler = () =>{
     router.push("/Home") 
   }
-  
+
   return (
     <form id='form' className={classes.form} onSubmit={submitHandler}>
       <p>
@@ -102,7 +137,7 @@ function NewProductForm() {
         />
       </p>
       <div className={classes.actions}>
-        <button type="button" onClick={cancelHandler}>
+        <button type="button" onClick={()=> router.push("/Home")}>
           Cancel
         </button>
         <button>글쓰기</button>

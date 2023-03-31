@@ -5,3 +5,15 @@
   height: calc(100vh - 130px);
   overflow: scroll;
 }
+
+.writeButton{
+  position:absolute;
+  bottom : 100px;
+  right : 20px;
+  background-color: rgb(255, 94, 0);
+  width: 75px;
+  height: 38px;
+  text-align:center;
+  line-height:35px;
+  border-radius: 15px;
+}
