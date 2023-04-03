@@ -1,0 +1,176 @@
+.detail {
+  text-align: center;
+}
+
+.detail figure {
+  width: 100%;
+  height: 310px;
+}
+
+.detail .Img img {
+  width: 100%;
+  height: 310px;
+}
+
+.userInfo {
+  width: 94%;
+  margin: 0px auto 10px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  border-bottom: 1px solid rgb(60, 60, 60);
+}
+
+.userInfoBox {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.userInfoBox p {
+  height: 35%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.userInfoBox p:nth-child(3) {
+  font-size: 11px;
+}
+
+.userInfoBox img {
+  border-radius: 50%;
+  margin: 5px 10px 0 0;
+}
+
+.temperatureBox .tempInfo {
+  display: flex;
+}
+
+.tempInfo .temperature {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  font-size: 14px;
+  letter-spacing: 0px;
+  text-align: right;
+  transform: translateY(3px);
+}
+
+.tempInfo .tempBar {
+  display: block;
+  background-color: rgb(60, 60, 60);
+  border-radius: 5px;
+  width: 50px;
+  height: 5px;
+}
+
+.tempInfo .tempBar p {
+  display: block;
+  background-color: rgb(109, 225, 124);
+  border-radius: 5px;
+  height: 5px;
+}
+
+.tempInfo .tempImoticon {
+  font-size: 20px;
+}
+
+.temperatureBox .tempEx {
+  font-size: 8px;
+  text-decoration: underline;
+  color: rgb(130, 130, 130);
+  text-align: right;
+}
+
+.productInfo {
+  padding-left: 20px;
+  text-align: left;
+}
+
+.productInfo div {
+  display: flex;
+  color: rgb(130, 130, 130);
+  font-size: 13px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.productInfo div a {
+  color: rgb(130, 130, 130);
+  text-decoration: underline;
+}
+
+.productInfo div p {
+  color: rgb(130, 130, 130);
+}
+
+.productInfo productdesc {
+  font-size: 13px;
+}
+
+.likeButton {
+  background-color: transparent;
+  border: none;
+  padding: 0 20px;
+  border-right: 1px solid rgb(60, 60, 60);
+  margin-right: 20px;
+}
+
+.likeButton svg {
+  width: 20px;
+  height: 20px;
+  transform: translateY(2px);
+}
+
+.chatButton {
+  background-color: rgb(255, 94, 0);
+  width: 65px;
+  height: 35px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
+  border-top: 1px solid rgb(60, 60, 60);
+}
+
+.Img a {
+  fill: black;
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  width: 25px;
+  height: 25px;
+}
+
+.Img a:nth-child(2) {
+  left: 50px;
+  top: 14px;
+}
+
+.Img a:nth-child(3) {
+  left: initial;
+  right: 15px;
+  top: 14px;
+  transform: scale(0.8);
+}
+
+.Img svg {
+  fill: black;
+  width: 25px;
+  height: 25px;
+}
