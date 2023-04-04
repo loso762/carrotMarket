@@ -1,16 +1,12 @@
 import classes from "./product/ProductList.module.css";
 import ProductItem from "./product/ProductItem";
 import Link from "next/link";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import productContext from "./context";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 
 function SearchList({ list, range, section }) {
-  const {
-    setIsEdit,
-    longitude: myLng,
-    latitude: myLat,
-  } = useContext(productContext);
+  const { setIsEdit } = useContext(productContext);
 
   list.sort(function (a, b) {
     return b.data.time - a.data.time;
@@ -19,8 +15,8 @@ function SearchList({ list, range, section }) {
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
 
   useEffect(() => {
-    nearbyLocationsFn(myLat, myLng, range, list);
-  }, [myLat, myLng, range, list]);
+    nearbyLocationsFn();
+  }, [nearbyLocationsFn]);
 
   const lists = section == "내근처" ? nearProduct : list;
 

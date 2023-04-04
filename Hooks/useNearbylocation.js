@@ -1,6 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useContext } from "react";
+import ProductContext from "@/components/context";
 
-export const useNearbyLocations = (range, arr) => {
+export const useNearbyLocations = (range, list) => {
+  const { longitude: myLng, latitude: myLat } = useContext(ProductContext);
+
   const [nearProduct, setNearProduct] = useState([]);
 
   const calcDistance = useCallback((lat1, lng1, lat2, lng2) => {
@@ -18,10 +21,10 @@ export const useNearbyLocations = (range, arr) => {
     return parseFloat(d.toFixed(1));
   }, []);
 
-  const nearbyLocationsFn = (myLat, myLng) => {
-    const NearList = arr.filter(
-      (list) =>
-        calcDistance(myLat, myLng, list.data.Latitude, list.data.Longitude) <=
+  const nearbyLocationsFn = useCallback(() => {
+    const NearList = list.filter(
+      (arr) =>
+        calcDistance(myLat, myLng, arr.data.Latitude, arr.data.Longitude) <=
         range
     );
 
@@ -30,7 +33,7 @@ export const useNearbyLocations = (range, arr) => {
     });
 
     setNearProduct(NearList);
-  };
+  }, [calcDistance, myLat, myLng, list, range]);
 
   return [nearProduct, nearbyLocationsFn];
 };

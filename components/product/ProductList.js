@@ -6,17 +6,13 @@ import productContext from "../context";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 
 function ProductList({ list, section, range }) {
-  const {
-    setIsEdit,
-    longitude: myLng,
-    latitude: myLat,
-  } = useContext(productContext);
+  const { setIsEdit } = useContext(productContext);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
 
   useEffect(() => {
-    nearbyLocationsFn(myLat, myLng, range, list);
-  }, [myLat, myLng, range]);
+    nearbyLocationsFn();
+  }, [nearbyLocationsFn]);
 
   const lists = section == "내근처" ? nearProduct : list;
 
