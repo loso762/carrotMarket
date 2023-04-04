@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
-import { doc, setDoc , deleteDoc } from "firebase/firestore";
+import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 
 function ProductDetail({ data, id }) {
@@ -61,40 +61,39 @@ function ProductDetail({ data, id }) {
 
   const deleteBtnHandler = () => {
     deleteDoc(doc(firestore, "products", id));
-    router.push(`/${data.category}`)
-  }
+    router.push(`/${data.category}`);
+  };
 
   return (
     <>
-      <header  className={classes.header}>
+      <header className={classes.header}>
         <Link href={`/${data.category}`}>
-            <IoIosArrowBack />
-          </Link>
+          <IoIosArrowBack />
+        </Link>
 
         <Link href={`/Home`}>
           <AiFillHome />
         </Link>
 
-        {
-            !menuOpen ? 
-            <button onClick={()=>setMenuOpen((prev)=>!prev)}>
-              <BiDotsVerticalRounded/>
-            </button>
-            : (
-              <div className={classes.menuBox}>
-                <Link
-                  href={`/NewProduct?id=${id}`}
-                  onClick={() => {
-                    setIsEdit(true);
-                  }}
-                >게시글 수정
-                </Link>
-                <p onClick={deleteBtnHandler}>게시글 삭제</p>
-              </div>
-            )
-        }
+        {!menuOpen ? (
+          <button onClick={() => setMenuOpen((prev) => !prev)}>
+            <BiDotsVerticalRounded />
+          </button>
+        ) : (
+          <div className={classes.menuBox}>
+            <Link
+              href={`/NewProduct?id=${id}`}
+              onClick={() => {
+                setIsEdit(true);
+              }}
+            >
+              게시글 수정
+            </Link>
+            <p onClick={deleteBtnHandler}>게시글 삭제</p>
+          </div>
+        )}
       </header>
-      <section className={classes.detail} onClick={()=>setMenuOpen(false)}>
+      <section className={classes.detail} onClick={() => setMenuOpen(false)}>
         <figure className={classes.Img}>
           <img src={data.img} alt={data.title} />
         </figure>

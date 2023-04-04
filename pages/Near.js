@@ -1,31 +1,69 @@
 import React from "react";
 import ProductList from "@/components/product/ProductList";
-import ProductsHeader from "@/components/product/ProductsHeader";
+import Header from "@/components/Header";
 import FooterMenu from "@/components/main/FooterMenu";
 import { firestore } from "@/components/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useState } from "react";
+import SearchList from "@/components/SearchList";
 
 function Near(props) {
   const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위
+  const [onSearch, setOnSearch] = useState(false);
+  const [filterdProducts, setfilterdProducts] = useState([]);
 
   const searchRangeHandler = (range) => {
-    setSearchRange(range)
+    setSearchRange(range);
+  };
+
+  const searchBoxCancel = (e) => {
+    e.stopPropagation();
+    setOnSearch(false);
+  };
+
+  const searchBoxOpen = (e) => {
+    e.stopPropagation();
+    setOnSearch(true);
+  };
+
+  function Productsfilter(filter) {
+    const tempData = [];
+
+    props.ProductsData.forEach((product) => {
+      if (product.data.title.includes(filter)) {
+        tempData.push(product);
+      }
+    });
+
+    setfilterdProducts(tempData);
   }
-  
+
   return (
     <>
-      <ProductsHeader
-        section="내근처" 
-        near={true} 
+      <Header
+        section="내근처"
+        near={true}
         range={searchRange}
         rangechange={searchRangeHandler}
+        onSearch={onSearch}
+        searchBoxCancel={searchBoxCancel}
+        searchBoxOpen={searchBoxOpen}
+        Productsfilter={Productsfilter}
       />
-      <ProductList 
-        list={props.ProductsData} 
-        section="내근처" 
-        range={searchRange}
-      />
+      {onSearch ? (
+        <SearchList
+          list={filterdProducts}
+          range={searchRange}
+          section="내근처"
+        />
+      ) : (
+        <ProductList
+          list={props.ProductsData}
+          section="내근처"
+          range={searchRange}
+        />
+      )}
+
       <FooterMenu />
     </>
   );

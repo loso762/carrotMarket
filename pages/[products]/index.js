@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React from "react";
 import ProductList from "../../components/product/ProductList";
-import ProductsHeader from "@/components/product/ProductsHeader";
+import Header from "@/components/Header";
 import FooterMenu from "../../components/main/FooterMenu";
 import { firestore } from "@/components/firebase";
 import { collection, getDocs } from "firebase/firestore";
@@ -12,7 +12,7 @@ function Products(props) {
 
   return (
     <>
-      <ProductsHeader section={section} />
+      <Header section={section} />
       <ProductList list={props.ProductsData} section={section} />
       <FooterMenu />
     </>
@@ -40,12 +40,11 @@ export async function getStaticProps(context) {
         id: doc.id,
         data: doc.data(),
       });
-    })
+    });
 
-    ProductsData = (ProductsData.sort(function (a, b) {
+    ProductsData = ProductsData.sort(function (a, b) {
       return b.data.likes - a.data.likes;
-    })).slice(0,5);
-    
+    }).slice(0, 5);
   } else {
     Productlist.forEach((doc) => {
       if (doc.data().category == section) {
@@ -55,10 +54,10 @@ export async function getStaticProps(context) {
         });
       }
     });
-    
+
     ProductsData.sort(function (a, b) {
       return b.data.time - a.data.time;
-    })
+    });
   }
 
   return {

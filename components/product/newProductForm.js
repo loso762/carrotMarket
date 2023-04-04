@@ -104,9 +104,9 @@ function NewProductForm() {
   };
 
   const cancelHandler = () => {
-    if(!isEdit){
+    if (!isEdit) {
       router.push("/Home");
-    }else{
+    } else {
       router.push(`/${product.category}/${productId}`);
     }
   };

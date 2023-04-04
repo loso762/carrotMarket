@@ -1,22 +1,26 @@
-import classes from "./ProductList.module.css";
-import ProductItem from "./ProductItem";
+import classes from "./product/ProductList.module.css";
+import ProductItem from "./product/ProductItem";
 import Link from "next/link";
-import { useContext, useEffect, useCallback, useState } from "react";
-import productContext from "../context";
+import { useContext, useEffect } from "react";
+import productContext from "./context";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 
-function ProductList({ list, section, range }) {
+function SearchList({ list, range, section }) {
   const {
     setIsEdit,
     longitude: myLng,
     latitude: myLat,
   } = useContext(productContext);
 
+  list.sort(function (a, b) {
+    return b.data.time - a.data.time;
+  });
+
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
 
   useEffect(() => {
     nearbyLocationsFn(myLat, myLng, range, list);
-  }, [myLat, myLng, range]);
+  }, [myLat, myLng, range, list]);
 
   const lists = section == "내근처" ? nearProduct : list;
 
@@ -40,4 +44,4 @@ function ProductList({ list, section, range }) {
   );
 }
 
-export default ProductList;
+export default SearchList;
