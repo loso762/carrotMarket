@@ -29,3 +29,10 @@
     height : 25px;
     margin-bottom: 4px;
 }
+
+.footer li:nth-child(2) svg{
+    width: 28px;
+    height : 28px;
+    margin-bottom: 1px;
+    transform :translateY(-1px);
+}

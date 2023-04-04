@@ -33,15 +33,19 @@ export async function getStaticProps(context) {
   let ProductsData = [];
 
   const Productlist = await getDocs(collection(firestore, "products"));
-  const hotlist = await getDocs(collection(firestore, "hotProducts"));
 
   if (section == "인기매물") {
-    hotlist.forEach((doc) => {
+    Productlist.forEach((doc) => {
       ProductsData.push({
         id: doc.id,
         data: doc.data(),
       });
-    });
+    })
+
+    ProductsData = (ProductsData.sort(function (a, b) {
+      return b.data.likes - a.data.likes;
+    })).slice(0,5);
+    
   } else {
     Productlist.forEach((doc) => {
       if (doc.data().category == section) {
@@ -51,6 +55,10 @@ export async function getStaticProps(context) {
         });
       }
     });
+    
+    ProductsData.sort(function (a, b) {
+      return b.data.time - a.data.time;
+    })
   }
 
   return {

@@ -1,19 +1,31 @@
-import { useRouter } from "next/router";
 import React from "react";
 import ProductList from "@/components/product/ProductList";
 import ProductsHeader from "@/components/product/ProductsHeader";
 import FooterMenu from "@/components/main/FooterMenu";
 import { firestore } from "@/components/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { useState } from "react";
 
 function Near(props) {
-  const router = useRouter();
-  const section = router.query.products;
+  const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위
 
+  const searchRangeHandler = (range) => {
+    setSearchRange(range)
+  }
+  
   return (
     <>
-      <ProductsHeader section={section} />
-      <ProductList list={props.ProductsData} section={section} />
+      <ProductsHeader
+        section="내근처" 
+        near={true} 
+        range={searchRange}
+        rangechange={searchRangeHandler}
+      />
+      <ProductList 
+        list={props.ProductsData} 
+        section="내근처" 
+        range={searchRange}
+      />
       <FooterMenu />
     </>
   );

@@ -10,6 +10,7 @@ function ProductItem({ id, item }) {
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
 
+  //좋아요 버튼 클릭시
   const ClickLikeButton = async (e) => {
     e.stopPropagation();
     let updatedNumber = likesNumber;
@@ -21,11 +22,6 @@ function ProductItem({ id, item }) {
     }
 
     await setDoc(doc(firestore, "products", id), {
-      ...item,
-      likes: updatedNumber,
-    });
-
-    await setDoc(doc(firestore, "hotProducts", id), {
       ...item,
       likes: updatedNumber,
     });

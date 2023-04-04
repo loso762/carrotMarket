@@ -3,7 +3,7 @@
   flex-wrap: wrap;
   align-items: center;
   list-style: none;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 130px);
   padding-bottom: 50px;
 }
 

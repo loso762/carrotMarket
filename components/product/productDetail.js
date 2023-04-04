@@ -3,15 +3,18 @@ import { useContext, useState } from "react";
 import ProductContext from "../context";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
-import { FaPen } from "react-icons/fa";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc , deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 
 function ProductDetail({ data, id }) {
+  const router = useRouter();
   const { setIsEdit, SelectedCategory } = useContext(ProductContext);
   const [isLike, setIsLike] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   let price;
   if (data.price == "나눔") {
@@ -39,7 +42,7 @@ function ProductDetail({ data, id }) {
     tempImoticon = "😀";
   }
 
-  const ClickLikeButton = async (e) => {
+  const LikeBtnHandler = async (e) => {
     let updatedNumber = data.likes;
 
     if (isLike == false) {
@@ -53,80 +56,93 @@ function ProductDetail({ data, id }) {
       likes: updatedNumber,
     });
 
-    await setDoc(doc(firestore, "hotProducts", id), {
-      ...data,
-      likes: updatedNumber,
-    });
-
     setIsLike((prev) => !prev);
   };
 
+  const deleteBtnHandler = () => {
+    deleteDoc(doc(firestore, "products", id));
+    router.push(`/${data.category}`)
+  }
+
   return (
-    <section className={classes.detail}>
-      <figure className={classes.Img}>
-        <Link href={`/${SelectedCategory}`}>
-          <IoIosArrowBack />
-        </Link>
+    <>
+      <header  className={classes.header}>
+        <Link href={`/${data.category}`}>
+            <IoIosArrowBack />
+          </Link>
 
         <Link href={`/Home`}>
           <AiFillHome />
         </Link>
 
-        <Link
-          href={`/NewProduct?id=${id}`}
-          onClick={() => {
-            setIsEdit(true);
-          }}
-        >
-          <FaPen />
-        </Link>
-
-        <img src={data.img} alt={data.title} />
-      </figure>
-
-      <div className={classes.userInfo}>
-        <div className={classes.userInfoBox}>
-          <Image
-            src="/images/profile.jpg"
-            alt="profileImg"
-            width={35}
-            height={35}
-          />
-          <p>loso762</p>
-          <p>{data.dong}</p>
-        </div>
-
-        <div className={classes.temperatureBox}>
-          <div className={classes.tempInfo}>
-            <div className={classes.temperature}>
-              {temp}°C
-              <div className={classes.tempBar}>
-                <p style={{ width: `${temp}%` }} />
+        {
+            !menuOpen ? 
+            <button onClick={()=>setMenuOpen((prev)=>!prev)}>
+              <BiDotsVerticalRounded/>
+            </button>
+            : (
+              <div className={classes.menuBox}>
+                <Link
+                  href={`/NewProduct?id=${id}`}
+                  onClick={() => {
+                    setIsEdit(true);
+                  }}
+                >게시글 수정
+                </Link>
+                <p onClick={deleteBtnHandler}>게시글 삭제</p>
               </div>
-            </div>
-            <div className={classes.tempImoticon}>{tempImoticon}</div>
+            )
+        }
+      </header>
+      <section className={classes.detail} onClick={()=>setMenuOpen(false)}>
+        <figure className={classes.Img}>
+          <img src={data.img} alt={data.title} />
+        </figure>
+
+        <div className={classes.userInfo}>
+          <div className={classes.userInfoBox}>
+            <Image
+              src="/images/profile.jpg"
+              alt="profileImg"
+              width={35}
+              height={35}
+            />
+            <p>loso762</p>
+            <p>{data.dong}</p>
           </div>
-          <p className={classes.tempEx}>매너온도</p>
-        </div>
-      </div>
 
-      <div className={classes.productInfo}>
-        <h1>{data.title}</h1>
-        <div>
-          <Link href={`/${data.category}`}>{data.category} </Link>
-          <p>·{minutesAgo} 전</p>
+          <div className={classes.temperatureBox}>
+            <div className={classes.tempInfo}>
+              <div className={classes.temperature}>
+                {temp}°C
+                <div className={classes.tempBar}>
+                  <p style={{ width: `${temp}%` }} />
+                </div>
+              </div>
+              <div className={classes.tempImoticon}>{tempImoticon}</div>
+            </div>
+            <p className={classes.tempEx}>매너온도</p>
+          </div>
         </div>
-        <p>{data.description}</p>
-      </div>
 
-      <div className={classes.footer}>
-        <button onClick={ClickLikeButton} className={classes.likeButton}>
-          {isLike ? <AiFillHeart /> : <AiOutlineHeart />}
-        </button>
-        <p>{price}</p>
-        <button className={classes.chatButton}>채팅하기</button>
-      </div>
-    </section>
+        <div className={classes.productInfo}>
+          <h1>{data.title}</h1>
+          <div>
+            <Link href={`/${data.category}`}>{data.category} </Link>
+            <p>·{minutesAgo} 전</p>
+          </div>
+          <p>{data.description}</p>
+        </div>
+
+        <div className={classes.footer}>
+          <button onClick={LikeBtnHandler} className={classes.likeButton}>
+            {isLike ? <AiFillHeart /> : <AiOutlineHeart />}
+          </button>
+          <p>{price}</p>
+          <button className={classes.chatButton}>채팅하기</button>
+        </div>
+      </section>
+    </>
   );
 }
 

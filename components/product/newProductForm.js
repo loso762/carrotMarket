@@ -84,9 +84,10 @@ function NewProductForm() {
     }
 
     const WriteData = async () => {
-      const ProductID = isEdit ? productId : `${now}_${category}`;
+      const ProductID = isEdit ? productId : `${now}`;
       const likes = isEdit ? product.likes : 0;
       const time = isEdit ? product.time : now;
+
       try {
         const docRef = await setDoc(doc(firestore, "products", ProductID), {
           ...newProduct,
@@ -103,7 +104,11 @@ function NewProductForm() {
   };
 
   const cancelHandler = () => {
-    router.push("/Home");
+    if(!isEdit){
+      router.push("/Home");
+    }else{
+      router.push(`/${product.category}/${productId}`);
+    }
   };
 
   return (
@@ -142,6 +147,7 @@ function NewProductForm() {
             ref={priceInputRef}
             type="number"
             name="price"
+            disabled={isFree}
           />
           <label htmlFor="freeCheck">나눔</label>
           <input

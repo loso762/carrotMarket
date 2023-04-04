@@ -1,29 +1,41 @@
 import React,{useState} from 'react';
-import Link from 'next/link';
-import {IoIosArrowBack} from 'react-icons/io';
 import {BsSearch} from 'react-icons/bs';
 
 import classes from './ProductsHeader.module.css';
 
 
 function ProductsHeader(props) {
-
     const [onSearch,setOnSearch] = useState(false);
 
     return (
         <header className={classes.ProductsHeader}>
-            <Link href="/Home"><IoIosArrowBack/></Link>
             <p>{props.section}</p>
-            <div className={classes.searchBox}>
             {
-                !onSearch 
-                ? <BsSearch className={classes.searchBtn} onClick={()=>{setOnSearch((prev)=>!prev)}}/> 
-                : ( <form>
-                        <input placeholder='원하는 상품 검색'></input>
-                        <BsSearch className={classes.searchBtn2} />
-                    </form>)
+                props.near 
+                ?(
+                    <select 
+                        className={classes.rangeselect} 
+                        onChange={(e)=>props.rangechange(e.target.value)}
+                        defaultValue={props.range}
+                    >
+                        <option value="3">3km</option>
+                        <option value="5">5km</option>
+                        <option value="10">10km</option>
+                    </select>
+                    
+                ) 
+                : <div className={classes.searchBox}>
+                {
+                    !onSearch 
+                    ? <BsSearch className={classes.searchBtn} onClick={()=>{setOnSearch((prev)=>!prev)}}/> 
+                    : ( <form>
+                            <input placeholder='원하는 상품 검색'></input>
+                            <BsSearch className={classes.searchBtn2} />
+                        </form>)
+                }
+                </div>
             }
-            </div>
+            
         </header>
     );
 }

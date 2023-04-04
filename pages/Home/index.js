@@ -1,12 +1,14 @@
-import HomeHeader from "@/components/Home/homeHeader";
+import HomeHeader from "@/components/category/homeHeader";
 import React from "react";
-import Categories from "./../../components/Home/Categories";
+import Categories from "../../components/category/Categories";
+import FooterMenu from "@/components/main/FooterMenu";
 
 function main() {
   return (
     <>
       <HomeHeader />
       <Categories />
+      <FooterMenu />
     </>
   );
 }
