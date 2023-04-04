@@ -10,10 +10,9 @@ function ProductItem({ id, item }) {
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
 
-  let updatedNumber = likesNumber;
-
   const ClickLikeButton = async (e) => {
     e.stopPropagation();
+    let updatedNumber = likesNumber;
 
     if (isLike == false) {
       updatedNumber += 1;
@@ -45,9 +44,10 @@ function ProductItem({ id, item }) {
   }
 
   let price;
-
-  if (item.price) {
-    price = item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (item.price == "나눔") {
+    price = item.price;
+  } else if (item.price) {
+    price = `${item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
   }
 
   const now = Date.now();
@@ -71,7 +71,7 @@ function ProductItem({ id, item }) {
         <p className={classes.time}>
           {item.dong} · {minutesAgo} 전
         </p>
-        <p>{price} 원</p>
+        <p>{price}</p>
       </div>
 
       <button onClick={ClickLikeButton} className={classes.likeButton}>

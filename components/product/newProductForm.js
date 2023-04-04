@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useContext, useCallback } from "react";
 import classes from "./newProductForm.module.css";
 import { useRouter } from "next/router";
-import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowBack, IoMdCheckbox } from "react-icons/io";
 import ProductContext from "../context";
 import { firestore } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -24,9 +24,8 @@ const category = [
 ];
 
 function NewProductForm() {
-  const { isEdit } = useContext(ProductContext);
+  const { isEdit, latitude, longitude, dong } = useContext(ProductContext);
   const router = useRouter();
-  const id = router.query.id;
 
   const categoryRef = useRef();
   const titleInputRef = useRef();
@@ -34,78 +33,49 @@ function NewProductForm() {
   const imgInputRef = useRef();
   const descriptionInputRef = useRef();
 
+  const [isFree, setIsFree] = useState(false);
+
   //수정일 경우 데이터 가져오기
   const [product, setProduct] = useState({});
-
-  //글쓴이 주소 가져오는 코드
-  const [latitude, setLatitude] = useState();
-  const [longitude, setLongitude] = useState();
-  const [dong, setDong] = useState("내근처");
-
   const productId = router.query.id;
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      setLatitude(position.coords.latitude);
-      setLongitude(position.coords.longitude);
-    });
+    if (isEdit) {
+      async function getData() {
+        const docRef = doc(firestore, "products", productId);
+        const docSnap = await getDoc(docRef);
 
-    const mapScript = document.createElement("script");
-    mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=ed86928ac206d7e1c95266631cccfd91&libraries=services&autoload=false`;
-    document.head.appendChild(mapScript);
+        setProduct(docSnap.data());
+      }
 
-    const onLoadKakaoMap = () => {
-      window.kakao.maps.load(() => {
-        const geocoder = new window.kakao.maps.services.Geocoder();
-        geocoder.coord2RegionCode(longitude, latitude, (result, status) => {
-          if (status === window.kakao.maps.services.Status.OK) {
-            const dongAddress = result[0].region_3depth_name;
-            setDong(dongAddress);
-          } else {
-            console.error("Failed to get the dong address");
-          }
-        });
-      });
-    };
-
-    if (latitude && longitude) {
-      mapScript.addEventListener("load", onLoadKakaoMap);
+      getData();
     }
-  }, [latitude, longitude]);
-
-  useEffect(() => {
-    async function getData(context) {
-      const docRef = doc(firestore, "products", productId);
-      const docSnap = await getDoc(docRef);
-
-      setProduct(docSnap.data());
-    }
-
-    getData();
-  }, [productId]);
+  }, [productId, isEdit]);
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     const category = categoryRef.current.value;
     const enteredTitle = titleInputRef.current.value;
-    const enteredPrice = priceInputRef.current.value;
+    const enteredPrice = isFree ? "나눔" : priceInputRef.current.value;
     const enteredImg = imgInputRef.current.value;
     const enteredDescription = descriptionInputRef.current.value;
     const now = Date.now();
 
+    if (!isFree && !priceInputRef.current.value) {
+      alert("가격을 입력해주세요");
+      return;
+    }
+
     const newProduct = {
       title: enteredTitle,
       price: enteredPrice,
-      img: enteredImg,
       description: enteredDescription,
-      time: now,
+      img: enteredImg,
       Latitude: latitude,
       Longitude: longitude,
-      dong: dong,
       category: category,
-      likes: 0,
+      dong: dong,
     };
 
     if (category == "카테고리") {
@@ -113,43 +83,22 @@ function NewProductForm() {
       return;
     }
 
-    if (isEdit == false) {
-      const WriteData = async () => {
-        try {
-          const docRef = await setDoc(
-            doc(firestore, "products", `${now}_${category}`),
-            newProduct
-          );
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-      };
-      WriteData();
-    }
+    const WriteData = async () => {
+      const ProductID = isEdit ? productId : `${now}_${category}`;
+      const likes = isEdit ? product.likes : 0;
+      const time = isEdit ? product.time : now;
+      try {
+        const docRef = await setDoc(doc(firestore, "products", ProductID), {
+          ...newProduct,
+          likes,
+          time,
+        });
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    };
+    WriteData();
 
-    // if (isEdit == false) {
-    //   fetch(
-    //     `https://carrot-621db-default-rtdb.firebaseio.com/products/${category}.json`,
-    //     {
-    //       method: "POST",
-    //       body: JSON.stringify(newProduct),
-    //       headers: {
-    //         "Content-Type": "application.json",
-    //       },
-    //     }
-    //   );
-    // } else {
-    //   fetch(
-    //     `https://carrot-621db-default-rtdb.firebaseio.com/products/${category}/${id}.json`,
-    //     {
-    //       method: "PUT",
-    //       body: JSON.stringify(newProduct),
-    //       headers: {
-    //         "Content-Type": "application.json",
-    //       },
-    //     }
-    //   );
-    // }
     router.push("/Home");
   };
 
@@ -187,13 +136,19 @@ function NewProductForm() {
             required
           />
         </p>
-        <p>
+        <p className={classes.priceBox}>
           <input
             placeholder={product?.price || "₩ 가격"}
             ref={priceInputRef}
             type="number"
             name="price"
-            required
+          />
+          <label htmlFor="freeCheck">나눔</label>
+          <input
+            type="checkbox"
+            name="freeCheck"
+            value="0"
+            onClick={() => setIsFree((prev) => !prev)}
           />
         </p>
         <p>

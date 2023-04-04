@@ -6,14 +6,18 @@ import Link from "next/link";
 import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
 import { IoIosArrowBack } from "react-icons/io";
 import { FaPen } from "react-icons/fa";
+import { doc, setDoc } from "firebase/firestore";
+import { firestore } from "../firebase";
 
 function ProductDetail({ data, id }) {
   const { setIsEdit, SelectedCategory } = useContext(ProductContext);
   const [isLike, setIsLike] = useState(false);
 
   let price;
-  if (data.price) {
-    price = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (data.price == "나눔") {
+    price = data.price;
+  } else if (data.price) {
+    price = `${data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
   }
 
   const now = Date.now();
@@ -34,6 +38,28 @@ function ProductDetail({ data, id }) {
   } else if (temp > 38) {
     tempImoticon = "😀";
   }
+
+  const ClickLikeButton = async (e) => {
+    let updatedNumber = data.likes;
+
+    if (isLike == false) {
+      updatedNumber += 1;
+    } else if (isLike == true) {
+      updatedNumber -= 1;
+    }
+
+    await setDoc(doc(firestore, "products", id), {
+      ...data,
+      likes: updatedNumber,
+    });
+
+    await setDoc(doc(firestore, "hotProducts", id), {
+      ...data,
+      likes: updatedNumber,
+    });
+
+    setIsLike((prev) => !prev);
+  };
 
   return (
     <section className={classes.detail}>
@@ -94,13 +120,10 @@ function ProductDetail({ data, id }) {
       </div>
 
       <div className={classes.footer}>
-        <button
-          onClick={() => setIsLike((prev) => !prev)}
-          className={classes.likeButton}
-        >
+        <button onClick={ClickLikeButton} className={classes.likeButton}>
           {isLike ? <AiFillHeart /> : <AiOutlineHeart />}
         </button>
-        <p>{price}원</p>
+        <p>{price}</p>
         <button className={classes.chatButton}>채팅하기</button>
       </div>
     </section>

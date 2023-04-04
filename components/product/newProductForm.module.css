@@ -89,3 +89,19 @@
 .actions button[type="button"]:hover {
   background-color: var(--color-gray-800);
 }
+
+.priceBox {
+  display: flex;
+  align-items: center;
+}
+
+.priceBox input[type="checkbox"] {
+  width: 15px;
+  position: relative;
+}
+.priceBox label {
+  display: block;
+  width: 40px;
+  height: 100%;
+  margin-right: 5px;
+}
