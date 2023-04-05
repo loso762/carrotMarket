@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState, useContext, useCallback } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import classes from "./newProductForm.module.css";
 import { useRouter } from "next/router";
-import { IoIosArrowBack, IoMdCheckbox } from "react-icons/io";
+import { IoIosArrowBack } from "react-icons/io";
 import ProductContext from "../context";
 import { firestore } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";

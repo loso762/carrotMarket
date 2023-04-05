@@ -1,13 +1,20 @@
 import { ProductContextProvider } from "@/components/context";
-import React from "react";
-import MainLayout from "../components/mainLayout";
+import React,{useContext} from "react";
+import ProductContext from "@/components/context";
+import FooterMenu from "@/components/main/FooterMenu";
+import Mypage from "@/components/main/mypage";
+import Login from "@/components/main/login"
 
-function index(props) {
+function Index() {
+  const { isLoggedIn } = useContext(ProductContext);
   return (
-    <ProductContextProvider>
-      <MainLayout />
-    </ProductContextProvider>
+    <>
+      {
+        isLoggedIn ? <Mypage /> : <Login />
+      }
+      <FooterMenu />
+    </>
   );
 }
 
-export default index;
+export default Index;

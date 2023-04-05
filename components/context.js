@@ -1,11 +1,14 @@
 import React, { createContext, useEffect, useState } from "react";
-
+import { authService } from "./firebase";
 const ProductContext = createContext({});
 export default ProductContext;
 
 export const ProductContextProvider = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [SelectedCategory, setSelectedCategory] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginDisplayName, setloginDisplayName] = useState("");
+
 
   //글쓴이 주소 가져오는 코드
   const [latitude, setLatitude] = useState();
@@ -42,6 +45,8 @@ export const ProductContextProvider = (props) => {
     }
   }, [latitude, longitude]);
 
+
+
   return (
     <ProductContext.Provider
       value={{
@@ -52,6 +57,10 @@ export const ProductContextProvider = (props) => {
         latitude,
         longitude,
         dong,
+        isLoggedIn, 
+        setIsLoggedIn,
+        loginDisplayName, 
+        setloginDisplayName
       }}
     >
       {props.children}
