@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Link from "next/link";
 import classes from "./Categories.module.css";
-import ProductContext from "../product-context";
+import ProductContext from "../context/product-context";
 
 function SectionList(props) {
   const { setSelectedCategory } = useContext(ProductContext);

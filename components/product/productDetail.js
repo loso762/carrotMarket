@@ -1,6 +1,6 @@
 import classes from "./ProductDetail.module.css";
 import { useContext, useState } from "react";
-import ProductContext from "../product-context";
+import ProductContext from "../context/product-context";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,12 +9,12 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
-import UserContext from "../user-context";
+import UserContext from "../context/user-context";
 
 function ProductDetail({ data, id }) {
   const router = useRouter();
-  const { setIsEdit } = useContext(ProductContext);
-  const { isLoggedIn, loginDisplayName } = useContext(UserContext);
+  const { setIsEdit, selectedCategory } = useContext(ProductContext);
+  const { loginDisplayName } = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -69,7 +69,7 @@ function ProductDetail({ data, id }) {
   return (
     <>
       <header className={classes.header}>
-        <Link href={`/${data.category}`}>
+        <Link href={`/${selectedCategory}`}>
           <IoIosArrowBack />
         </Link>
 

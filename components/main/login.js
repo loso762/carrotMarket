@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 import { auth, firestore, googleAuthProvider } from "../firebase";
 import classes from "./login.module.css";
 import Image from "next/image";
-import UserContext from "../user-context";
+import UserContext from "../context/user-context";
 
 function Login(props) {
   const router = useRouter();
-  const { setloginDisplayName, setIsLoggedIn, setloginTemp } =
+  const { setloginDisplayName, setIsLoggedIn, setloginTemp, setloginID } =
     useContext(UserContext);
 
   const [email, setEmail] = useState("");
@@ -35,12 +35,14 @@ function Login(props) {
       const user = auth.currentUser;
       const userRef = firestore.collection("users").doc(user.uid);
       const doc = await userRef.get();
-
+      6;
       if (doc.exists) {
         const userData = doc.data();
+        console.log(userRef);
         const { nickname, temp } = userData;
         setIsLoggedIn(true);
         setloginTemp(temp);
+        setloginID(user.uid);
         setloginDisplayName(nickname);
       } else {
         setError("사용자 정보를 찾을 수 없습니다.");

@@ -6,7 +6,7 @@ export default ProductContext;
 
 export const ProductContextProvider = (props) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [SelectedCategory, setSelectedCategory] = useState(false);
+  const [SelectedCategory, setSelectedCategory] = useState("카테고리");
 
   //글쓴이 주소 가져오는 코드
   const [latitude, setLatitude] = useState();

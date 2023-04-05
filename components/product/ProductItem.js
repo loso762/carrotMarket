@@ -1,14 +1,22 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { firestore } from "../firebase";
 import classes from "./ProductItem.module.css";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
+import UserContext from "../context/user-context";
 
-function ProductItem({ id, item }) {
+function ProductItem({ id, item, likes }) {
   const router = useRouter();
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
+
+  const { loginID } = useContext(UserContext);
+
+  //유저가 찜한 매물이면 바로 좋아요 상태
+  useEffect(() => {
+    likes && setIsLike(true);
+  }, [likes]);
 
   //좋아요 버튼 클릭시
   const ClickLikeButton = async (e) => {
@@ -26,11 +34,25 @@ function ProductItem({ id, item }) {
       likes: updatedNumber,
     });
 
+    const userDocRef = doc(
+      collection(firestore, "users", loginID, "likesproducts"),
+      id
+    );
+    await setDoc(userDocRef, {
+      ...item,
+      likes: updatedNumber,
+    });
+
     setIsLike((prev) => !prev);
 
-    if (isLike !== true) {
+    if (!isLike) {
       setlikesNumber((prev) => prev + 1);
     } else {
+      const productDocRef = doc(
+        collection(firestore, "users", loginID, "likesproducts"),
+        id
+      );
+      deleteDoc(productDocRef);
       setlikesNumber((prev) => prev - 1);
     }
   };

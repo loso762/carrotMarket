@@ -1,11 +1,11 @@
 import React from "react";
 import ProductList from "@/components/product/ProductList";
-import Header from "@/components/Header";
-import FooterMenu from "@/components/main/FooterMenu";
+import Header from "@/components/layout/Header";
+import FooterMenu from "@/components/layout/FooterMenu";
 import { firestore } from "@/components/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useState } from "react";
-import SearchList from "@/components/SearchList";
+import SearchList from "@/components/product/SearchList";
 
 function Near(props) {
   const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위

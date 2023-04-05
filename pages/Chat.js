@@ -1,15 +1,13 @@
-import React from 'react';
-import FooterMenu from "@/components/main/FooterMenu";
+import React from "react";
+import FooterMenu from "@/components/layout/FooterMenu";
 
 const Chat = () => {
-    return (
-        <>
-            <div>
-                chat
-            </div>
-            <FooterMenu />
-        </>
-    );
+  return (
+    <>
+      <div>chat</div>
+      <FooterMenu />
+    </>
+  );
 };
 
 export default Chat;

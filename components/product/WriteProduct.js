@@ -2,10 +2,10 @@ import { useRef, useEffect, useState, useContext } from "react";
 import classes from "./WriteProduct.module.css";
 import { useRouter } from "next/router";
 import { IoIosArrowBack } from "react-icons/io";
-import ProductContext from "../product-context";
+import ProductContext from "../context/product-context";
 import { firestore } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import UserContext from "../user-context";
+import UserContext from "../context/user-context";
 
 const category = [
   "카테고리",

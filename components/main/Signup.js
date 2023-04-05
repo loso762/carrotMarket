@@ -2,7 +2,7 @@ import { useState } from "react";
 import { auth, firestore } from "../firebase";
 import classes from "./Signup.module.css";
 import { useRouter } from "next/router";
-import FooterMenu from "@/components/main/FooterMenu";
+import FooterMenu from "@/components/layout/FooterMenu";
 
 function Signup() {
   const router = useRouter();

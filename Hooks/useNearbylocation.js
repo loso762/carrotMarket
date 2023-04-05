@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext } from "react";
-import ProductContext from "@/components/product-context";
+import ProductContext from "@/components/context/product-context";
 
 export const useNearbyLocations = (range, list) => {
   const { longitude: myLng, latitude: myLat } = useContext(ProductContext);

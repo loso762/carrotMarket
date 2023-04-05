@@ -3,15 +3,19 @@ import ProductItem from "./ProductItem";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
-import UserContext from "../user-context";
-import ProductContext from "../product-context";
+import UserContext from "../context/user-context";
+import ProductContext from "../context/product-context";
+import { firestore } from "../firebase";
+import { collection, doc, getDocs } from "firebase/firestore";
 
 function ProductList({ list, section, range }) {
   const { setIsEdit } = useContext(ProductContext);
-  const { isLoggedIn } = useContext(UserContext);
+  const { isLoggedIn, loginID } = useContext(UserContext);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [IsScroll, setIsScroll] = useState(false);
+  const [likeProduct, setlikeProduct] = useState([]);
+  const [isLikeCategory, setIsLikeCategory] = useState(false);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -28,25 +32,71 @@ function ProductList({ list, section, range }) {
   }, []);
 
   useEffect(() => {
-    nearbyLocationsFn();
-  }, [nearbyLocationsFn]);
+    if (isLoggedIn) {
+      // 유저가 찜한 매물 불러오기
+      async function fetchLikeProducts(context) {
+        let ProductsData = [];
 
-  const lists = section == "내근처" ? nearProduct : list;
+        const likesDocRef = collection(
+          firestore,
+          "users",
+          loginID,
+          "likesproducts"
+        );
+
+        const Productlist = await getDocs(likesDocRef);
+
+        Productlist.forEach((doc) => {
+          ProductsData.push({
+            id: doc.id,
+            data: doc.data(),
+          });
+        });
+        setlikeProduct(ProductsData);
+        ProductsData.map((a) => {
+          console.log(a.id);
+        });
+      }
+      fetchLikeProducts();
+    }
+
+    //내 근처 매물 불러오기
+    if (section == "내근처") {
+      nearbyLocationsFn();
+    }
+  }, [nearbyLocationsFn, loginID, section]);
+
+  let lists;
+  if (section == "내근처") {
+    lists = nearProduct;
+  } else if (section == "likes") {
+    lists = likeProduct;
+  } else {
+    lists = list;
+  }
 
   return (
     <>
       <ul className={classes.list} onScroll={handleScroll}>
-        {lists.map((item) => (
-          <ProductItem key={item.id} id={item.id} item={item.data} />
-        ))}
+        {lists &&
+          lists.map((item) => {
+            // 유저가 찜한 매물인지 필터링하는 함수
+            const isLiked = likeProduct.some((i) => i.id === item.id);
+            return (
+              <ProductItem
+                key={item.id}
+                id={item.id}
+                item={item.data}
+                likes={isLiked}
+              />
+            );
+          })}
       </ul>
 
       {isLoggedIn && (
         <Link
           href="WriteProduct"
-          className={`${classes.writeButton} ${
-            IsScroll ? classes.onScroll : ""
-          }`}
+          className={`${classes.writeButton} ${IsScroll && classes.onScroll}`}
           onClick={() => setIsEdit(false)}
           onMouseOver={() => setIsScroll(false)}
         >

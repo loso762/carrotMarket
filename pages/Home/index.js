@@ -1,11 +1,11 @@
-import Header from "@/components/Header";
+import Header from "@/components/layout/Header";
 import React, { useState } from "react";
 import Categories from "../../components/category/Categories";
-import FooterMenu from "@/components/main/FooterMenu";
+import FooterMenu from "@/components/layout/FooterMenu";
 import ProductList from "@/components/product/ProductList";
 import { firestore } from "@/components/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import SearchList from "@/components/SearchList";
+import SearchList from "@/components/product/SearchList";
 
 function Main(props) {
   const [onSearch, setOnSearch] = useState(false);

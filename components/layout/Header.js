@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import classes from "./Header.module.css";
-import ProductContext from "./product-context";
+import ProductContext from "../context/product-context";
 
 function Header({
   Productsfilter,
