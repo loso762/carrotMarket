@@ -1,6 +1,6 @@
 import classes from "./ProductDetail.module.css";
 import { useContext, useState } from "react";
-import ProductContext from "../context";
+import ProductContext from "../product-context";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,10 +9,12 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
+import UserContext from "../user-context";
 
 function ProductDetail({ data, id }) {
   const router = useRouter();
-  const { setIsEdit, SelectedCategory } = useContext(ProductContext);
+  const { setIsEdit } = useContext(ProductContext);
+  const { isLoggedIn, loginDisplayName } = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -34,7 +36,7 @@ function ProductDetail({ data, id }) {
     minutesAgo = `${Math.floor(minutesAgo / 60 / 24)}일`;
   }
 
-  const temp = 36.5;
+  const temp = data.temp || 36.5;
   let tempImoticon = "🙂";
   if (temp < 35) {
     tempImoticon = "😨";
@@ -75,23 +77,24 @@ function ProductDetail({ data, id }) {
           <AiFillHome />
         </Link>
 
-        {!menuOpen ? (
-          <button onClick={() => setMenuOpen((prev) => !prev)}>
-            <BiDotsVerticalRounded />
-          </button>
-        ) : (
-          <div className={classes.menuBox}>
-            <Link
-              href={`/NewProduct?id=${id}`}
-              onClick={() => {
-                setIsEdit(true);
-              }}
-            >
-              게시글 수정
-            </Link>
-            <p onClick={deleteBtnHandler}>게시글 삭제</p>
-          </div>
-        )}
+        {loginDisplayName == data.userName &&
+          (!menuOpen ? (
+            <button onClick={() => setMenuOpen((prev) => !prev)}>
+              <BiDotsVerticalRounded />
+            </button>
+          ) : (
+            <div className={classes.menuBox}>
+              <Link
+                href={`/WriteProduct?id=${id}`}
+                onClick={() => {
+                  setIsEdit(true);
+                }}
+              >
+                게시글 수정
+              </Link>
+              <p onClick={deleteBtnHandler}>게시글 삭제</p>
+            </div>
+          ))}
       </header>
       <section className={classes.detail} onClick={() => setMenuOpen(false)}>
         <figure className={classes.Img}>
@@ -106,7 +109,7 @@ function ProductDetail({ data, id }) {
               width={35}
               height={35}
             />
-            <p>loso762</p>
+            <p>{data.userName}</p>
             <p>{data.dong}</p>
           </div>
 
@@ -115,7 +118,7 @@ function ProductDetail({ data, id }) {
               <div className={classes.temperature}>
                 {temp}°C
                 <div className={classes.tempBar}>
-                  <p style={{ width: `${temp}%` }} />
+                  <p style={{ width: `${(temp / 80) * 100}%` }} />
                 </div>
               </div>
               <div className={classes.tempImoticon}>{tempImoticon}</div>

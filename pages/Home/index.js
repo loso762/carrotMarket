@@ -36,7 +36,6 @@ function Main(props) {
   return (
     <>
       <Header
-        section="카테고리"
         onSearch={onSearch}
         searchBoxCancel={searchBoxCancel}
         searchBoxOpen={searchBoxOpen}

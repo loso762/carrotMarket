@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Link from "next/link";
 import classes from "./Categories.module.css";
-import ProductContext from "../context";
+import ProductContext from "../product-context";
 
 function SectionList(props) {
   const { setSelectedCategory } = useContext(ProductContext);
@@ -26,7 +26,7 @@ function SectionList(props) {
   const CategoryDBname = [
     "인기매물",
     "디지털기기",
-    "가전",
+    "생활가전",
     "가구",
     "생활",
     "유아동",
@@ -63,10 +63,7 @@ function SectionList(props) {
     <ul className={classes.categoryMenu}>
       {category.map((category, idx) => {
         return (
-          <li
-            key={category}
-            onClick={() => setSelectedCategory(CategoryDBname[idx])}
-          >
+          <li key={category} onClick={() => setSelectedCategory(category)}>
             <Link href={CategoryDBname[idx]}>
               <h2>{CategoryIcon[idx]}</h2>
               {category}

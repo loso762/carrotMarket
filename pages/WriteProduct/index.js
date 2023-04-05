@@ -1,9 +1,9 @@
-import NewProductForm from "@/components/product/newProductForm";
+import WriteProduct from "@/components/product/WriteProduct";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "@/components/firebase";
 
 function NewProduct() {
-  return <NewProductForm />;
+  return <WriteProduct />;
 }
 
 export default NewProduct;

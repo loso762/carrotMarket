@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import classes from "./Header.module.css";
+import ProductContext from "./product-context";
 
 function Header({
-  section,
   Productsfilter,
   searchBoxOpen,
   onSearch,
@@ -14,13 +14,15 @@ function Header({
 }) {
   const searchRef = useRef();
 
+  const { SelectedCategory } = useContext(ProductContext);
+
   const SubmitHandler = (e) => {
     e.preventDefault();
     Productsfilter(searchRef.current.value);
   };
 
   let searchBtn;
-  if (section == "카테고리" || section == "내근처") {
+  if (SelectedCategory == "카테고리" || SelectedCategory == "내근처") {
     searchBtn = (
       <BsSearch className={classes.searchBtn} onClick={searchBoxOpen} />
     );
@@ -29,11 +31,11 @@ function Header({
   return (
     <header className={classes.ProductsHeader}>
       {!onSearch ? (
-        <p>{section}</p>
+        <p>{SelectedCategory}</p>
       ) : (
         <IoIosArrowBack onClick={searchBoxCancel} />
       )}
-      {section == "내근처" && (
+      {SelectedCategory == "내근처" && (
         <select
           className={classes.rangeselect}
           onChange={(e) => rangechange(e.target.value)}

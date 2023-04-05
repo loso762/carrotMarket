@@ -1,10 +1,11 @@
 import { useRef, useEffect, useState, useContext } from "react";
-import classes from "./newProductForm.module.css";
+import classes from "./WriteProduct.module.css";
 import { useRouter } from "next/router";
 import { IoIosArrowBack } from "react-icons/io";
-import ProductContext from "../context";
+import ProductContext from "../product-context";
 import { firestore } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import UserContext from "../user-context";
 
 const category = [
   "카테고리",
@@ -23,8 +24,9 @@ const category = [
   "삽니다",
 ];
 
-function NewProductForm() {
+function WriteProduct() {
   const { isEdit, latitude, longitude, dong } = useContext(ProductContext);
+  const { loginDisplayName, loginTemp } = useContext(UserContext);
   const router = useRouter();
 
   const categoryRef = useRef();
@@ -76,6 +78,8 @@ function NewProductForm() {
       Longitude: longitude,
       category: category,
       dong: dong,
+      userName: loginDisplayName,
+      temp: loginTemp,
     };
 
     if (category == "카테고리") {
@@ -189,4 +193,4 @@ function NewProductForm() {
   );
 }
 
-export default NewProductForm;
+export default WriteProduct;

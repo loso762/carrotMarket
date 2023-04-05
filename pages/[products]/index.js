@@ -12,7 +12,7 @@ function Products(props) {
 
   return (
     <>
-      <Header section={section} />
+      <Header />
       <ProductList list={props.ProductsData} section={section} />
       <FooterMenu />
     </>

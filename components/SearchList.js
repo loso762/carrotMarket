@@ -2,7 +2,7 @@ import classes from "./product/ProductList.module.css";
 import ProductItem from "./product/ProductItem";
 import Link from "next/link";
 import { useCallback, useContext, useEffect } from "react";
-import productContext from "./context";
+import productContext from "./product-context";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 
 function SearchList({ list, range, section }) {

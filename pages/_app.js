@@ -1,10 +1,13 @@
 import "@/styles/globals.css";
-import { ProductContextProvider } from "@/components/context";
+import { ProductContextProvider } from "@/components/product-context";
+import { UserContextProvider } from "@/components/user-context";
 
 export default function App({ Component, pageProps }) {
   return (
-    <ProductContextProvider>
-      <Component {...pageProps} />
-    </ProductContextProvider>
+    <UserContextProvider>
+      <ProductContextProvider>
+        <Component {...pageProps} />
+      </ProductContextProvider>
+    </UserContextProvider>
   );
 }

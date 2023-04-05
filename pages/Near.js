@@ -41,7 +41,6 @@ function Near(props) {
   return (
     <>
       <Header
-        section="내근처"
         near={true}
         range={searchRange}
         rangechange={searchRangeHandler}
