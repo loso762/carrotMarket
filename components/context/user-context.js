@@ -7,7 +7,7 @@ export default UserContext;
 
 export const UserContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginDisplayName, setloginDisplayName] = useState("");
+  const [loginDisplayName, setloginDisplayName] = useState("loso762");
   const [loginTemp, setloginTemp] = useState("");
   const [loginID, setloginID] = useState("");
   const [likeProducts, setlikeProducts] = useState([]);

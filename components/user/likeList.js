@@ -6,7 +6,7 @@ import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
 
-function likeList({ list, section, range }) {
+function LikeList({ list, section, range }) {
   const { setIsEdit } = useContext(ProductContext);
   const { isLoggedIn } = useContext(UserContext);
 
@@ -57,4 +57,4 @@ function likeList({ list, section, range }) {
   );
 }
 
-export default likeList;
+export default LikeList;

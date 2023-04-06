@@ -73,8 +73,7 @@ function ProductItem({ id, item, likes }) {
     price = `${item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
   }
 
-  const now = Date.now();
-  let minutesAgo = Math.round((now - item.time) / 1000 / 60);
+  let minutesAgo = Math.round((Date.now() - item.time) / 1000 / 60);
 
   if (minutesAgo < 60) {
     minutesAgo = `${minutesAgo}분`;

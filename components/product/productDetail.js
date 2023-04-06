@@ -14,7 +14,8 @@ import { doc, setDoc, deleteDoc } from "firebase/firestore";
 function ProductDetail({ data, id }) {
   const router = useRouter();
   const { setIsEdit, SelectedCategory } = useContext(ProductContext);
-  const { loginDisplayName, likeProducts } = useContext(UserContext);
+  const { loginDisplayName, likeProducts, isLoggedIn } =
+    useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -70,6 +71,28 @@ function ProductDetail({ data, id }) {
     router.push(`/${data.category}`);
   };
 
+  async function ClickLikeButton() {
+    if (!isLoggedIn) {
+      alert("로그인을 해주세요!");
+      return;
+    }
+    if (data.userName == loginDisplayName) {
+      return;
+    }
+    await setDoc(
+      doc(firestore, "chat", `${loginDisplayName}_${data.userName}`),
+      {
+        party: [loginDisplayName, data.userName],
+        product: id,
+        img: data.img,
+        dong: data.dong,
+        date: Date.now(),
+      }
+    );
+
+    router.push("/Chat");
+  }
+
   return (
     <>
       <header className={classes.header}>
@@ -81,6 +104,7 @@ function ProductDetail({ data, id }) {
           <AiFillHome />
         </Link>
 
+        {/* 게시글 작성자만 게시글 수정 및 삭제 가능하도록 하는 코드*/}
         {loginDisplayName == data.userName &&
           (!menuOpen ? (
             <button onClick={() => setMenuOpen((prev) => !prev)}>
@@ -149,7 +173,14 @@ function ProductDetail({ data, id }) {
             )}
           </button>
           <p>{price}</p>
-          <button className={classes.chatButton}>채팅하기</button>
+          <button
+            className={`${classes.chatButton} ${
+              !isLoggedIn && classes.disabled
+            }`}
+            onClick={ClickLikeButton}
+          >
+            채팅하기
+          </button>
         </div>
       </section>
     </>

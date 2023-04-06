@@ -1,0 +1,55 @@
+.header {
+  height: 50px;
+  line-height: 50px;
+  padding-left: 15px;
+  border-bottom: 1px solid rgb(80, 80, 80);
+}
+
+.chatul {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.chatli {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: baseline;
+  width: 100%;
+  height: 80px;
+  border-bottom: 1px solid rgb(80, 80, 80);
+  padding-left: 15px;
+  position: relative;
+}
+
+.chatli div {
+  display: flex;
+  align-items: baseline;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: rgb(150, 150, 150);
+}
+
+.chatli div p {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.chatli img {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.chatli img:first-child {
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.chatli img:nth-child(4) {
+  position: absolute;
+  right: 15px;
+}

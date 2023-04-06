@@ -6,20 +6,20 @@
   overflow: scroll;
 }
 
-.writeButton{
-  position:absolute;
-  bottom : 110px;
-  right : 20px;
-  background-color: rgb(255, 94, 0);
+.writeButton {
+  position: absolute;
+  bottom: 110px;
+  right: 20px;
+  background-color: #fb7f37;
   width: 75px;
   height: 38px;
-  text-align:center;
-  line-height:35px;
+  text-align: center;
+  line-height: 35px;
   border-radius: 15px;
-  transition:1s;
+  transition: 1s;
 }
 
-.onScroll{
+.onScroll {
   width: 40px;
-  transition:1s;
+  transition: 1s;
 }

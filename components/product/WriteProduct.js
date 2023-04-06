@@ -26,7 +26,7 @@ const category = [
 
 function WriteProduct() {
   const { isEdit, latitude, longitude, dong } = useContext(ProductContext);
-  const { loginDisplayName, loginTemp } = useContext(UserContext);
+  const { loginDisplayName, loginTemp, loginID } = useContext(UserContext);
   const router = useRouter();
 
   const categoryRef = useRef();
@@ -80,6 +80,7 @@ function WriteProduct() {
       dong: dong,
       userName: loginDisplayName,
       temp: loginTemp,
+      ID: loginID,
     };
 
     if (category == "카테고리") {

@@ -136,7 +136,7 @@
 }
 
 .chatButton {
-  background-color: rgb(255, 94, 0);
+  background-color: #fb7f37;
   width: 65px;
   height: 35px;
   border: none;
@@ -145,6 +145,11 @@
   position: absolute;
   right: 10px;
   bottom: 10px;
+}
+
+button.disabled {
+  background-color: rgb(113, 113, 113);
+  color: rgb(255, 255, 255);
 }
 
 .footer {

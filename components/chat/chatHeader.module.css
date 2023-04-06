@@ -1,0 +1,25 @@
+.header {
+  height: 50px;
+  line-height: 50px;
+  padding-left: 15px;
+  border-bottom: 1px solid rgb(80, 80, 80);
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.header svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+}
+
+.header a {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}

@@ -1,0 +1,97 @@
+.main {
+  width: 100%;
+  height: calc(100vh - 100px);
+}
+
+.footer {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  padding-left: 15px;
+  justify-content: space-around;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.footer form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.footer input {
+  width: 80%;
+  height: 40px;
+  background-color: rgb(60, 60, 60);
+  border-radius: 20px;
+  border: none;
+  color: white;
+  margin-right: 10px;
+  padding: 0 20px;
+}
+
+.footer input:focus {
+  outline: white;
+}
+
+.footer button {
+  width: 40px;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+}
+
+.footer button img {
+  width: 26px;
+  height: 26px;
+}
+
+.chatUl {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 110px);
+  margin: 0 auto;
+  overflow: scroll;
+}
+.chatUl li {
+  width: 100%;
+  height: auto;
+  border: none;
+  margin: 10px 0;
+  text-align: left;
+  display: flex;
+  justify-content: left;
+  align-items: end;
+}
+
+.chatUl li.me {
+  position: relative;
+  display: flex;
+  justify-content: right;
+}
+
+.chatUl li .msg {
+  background-color: rgb(210, 210, 210);
+  justify-content: right;
+  padding: 10px 15px;
+  color: black;
+  border-radius: 10px;
+  max-width: 70%;
+  position: relative;
+  margin-right: 4px;
+  order: 0;
+}
+
+.chatUl li .time {
+  order: 1;
+  margin: 0 5px;
+}
+
+.chatUl li.me .msg {
+  background-color: #fd9253;
+  justify-content: right;
+  margin-left: 4px;
+  order: 1;
+}
