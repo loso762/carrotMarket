@@ -1,6 +1,6 @@
 import React from "react";
 import FooterMenu from "@/components/layout/FooterMenu";
-import Signup from "../components/main/Signup";
+import Signup from "../components/user/Signup";
 
 function Sign(props) {
   return (

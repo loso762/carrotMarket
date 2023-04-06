@@ -1,5 +1,5 @@
 import classes from "./ProductDetail.module.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProductContext from "../context/product-context";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,14 +7,14 @@ import { useRouter } from "next/router";
 import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 import UserContext from "../context/user-context";
+import { doc, setDoc, deleteDoc } from "firebase/firestore";
 
 function ProductDetail({ data, id }) {
   const router = useRouter();
-  const { setIsEdit, selectedCategory } = useContext(ProductContext);
-  const { loginDisplayName } = useContext(UserContext);
+  const { setIsEdit, SelectedCategory } = useContext(ProductContext);
+  const { loginDisplayName, likeProducts } = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -24,6 +24,10 @@ function ProductDetail({ data, id }) {
   } else if (data.price) {
     price = `${data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
   }
+
+  useEffect(() => {
+    likeProducts.some((like) => like.id == id) && setIsLike(true);
+  }, [id, likeProducts]);
 
   const now = Date.now();
   let minutesAgo = Math.round((now - data.time) / 1000 / 60);
@@ -41,7 +45,7 @@ function ProductDetail({ data, id }) {
   if (temp < 35) {
     tempImoticon = "😨";
   } else if (temp > 38) {
-    tempImoticon = "😀";
+    tempImoticon = "😍";
   }
 
   const LikeBtnHandler = async (e) => {
@@ -69,7 +73,7 @@ function ProductDetail({ data, id }) {
   return (
     <>
       <header className={classes.header}>
-        <Link href={`/${selectedCategory}`}>
+        <Link href={`/${SelectedCategory}`}>
           <IoIosArrowBack />
         </Link>
 
@@ -138,7 +142,11 @@ function ProductDetail({ data, id }) {
 
         <div className={classes.footer}>
           <button onClick={LikeBtnHandler} className={classes.likeButton}>
-            {isLike ? <AiFillHeart /> : <AiOutlineHeart />}
+            {isLike ? (
+              <AiFillHeart className={classes.fill} />
+            ) : (
+              <AiOutlineHeart />
+            )}
           </button>
           <p>{price}</p>
           <button className={classes.chatButton}>채팅하기</button>

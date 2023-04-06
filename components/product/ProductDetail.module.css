@@ -78,6 +78,10 @@
   font-size: 20px;
 }
 
+.temperatureBox {
+  transform: translateY(4px);
+}
+
 .temperatureBox .tempEx {
   font-size: 8px;
   text-decoration: underline;
@@ -89,7 +93,6 @@
   padding: 0 20px;
   text-align: left;
   line-height: 140%;
-  
 }
 
 .productInfo div {
@@ -125,6 +128,11 @@
   width: 20px;
   height: 20px;
   transform: translateY(2px);
+  fill: rgb(255, 255, 255);
+}
+
+.likeButton svg.fill {
+  fill: rgb(255, 0, 0);
 }
 
 .chatButton {
@@ -150,20 +158,20 @@
   border-top: 1px solid rgb(60, 60, 60);
 }
 
-.header{
-  position:absolute;
+.header {
+  position: absolute;
   width: 100%;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
 }
 
-.header button{
-  position:absolute;
+.header button {
+  position: absolute;
   right: 10px;
-  top:14px;
-  width:30px;
-  height:30px;
-  border:none;
+  top: 14px;
+  width: 30px;
+  height: 30px;
+  border: none;
   background-color: transparent;
 }
 
@@ -202,24 +210,24 @@
   top: 15px;
   width: 95px;
   height: 80px;
-  background-color:black;
-  padding:0;
-  display:flex;
-  flex-direction:column;
+  background-color: black;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   border-radius: 5px;
   border: 1px solid rgb(70, 70, 70);
 }
 
 .header .menuBox p {
   padding: 10px;
-  border-bottom : 1px solid rgb(212, 212, 212);
-  cursor:pointer;
+  border-bottom: 1px solid rgb(212, 212, 212);
+  cursor: pointer;
 }
 
-.header .menuBox a{
-  width:90%;
+.header .menuBox a {
+  width: 90%;
   left: 10px;
   top: 48px;
-  color : rgb(212, 212, 212);
-  cursor:pointer;
+  color: rgb(212, 212, 212);
+  cursor: pointer;
 }

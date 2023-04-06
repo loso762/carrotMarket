@@ -2,9 +2,11 @@ import React, { useContext } from "react";
 import Link from "next/link";
 import classes from "./Categories.module.css";
 import ProductContext from "../context/product-context";
+import Image from "next/image";
 
 function SectionList(props) {
   const { setSelectedCategory } = useContext(ProductContext);
+
   const category = [
     "인기매물",
     "디지털기기",
@@ -41,32 +43,19 @@ function SectionList(props) {
     "삽니다",
   ];
 
-  const CategoryIcon = [
-    "🔥",
-    "💻",
-    "📺",
-    "🪑",
-    "🍴",
-    "🧸",
-    "👔",
-    "💄",
-    "🏓",
-    "🎮",
-    "📘",
-    "🎫",
-    "🐈",
-    "🌷",
-    "📢",
-  ];
-
   return (
     <ul className={classes.categoryMenu}>
       {category.map((category, idx) => {
         return (
           <li key={category} onClick={() => setSelectedCategory(category)}>
-            <Link href={CategoryDBname[idx]}>
-              <h2>{CategoryIcon[idx]}</h2>
-              {category}
+            <Link href={CategoryDBname[idx]} className={classes.link}>
+              <Image
+                src={`/images/${CategoryDBname[idx]}.png`}
+                alt="category"
+                width={42}
+                height={42}
+              />
+              <p>{category}</p>
             </Link>
           </li>
         );

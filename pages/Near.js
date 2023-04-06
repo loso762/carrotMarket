@@ -12,6 +12,7 @@ function Near(props) {
   const [onSearch, setOnSearch] = useState(false);
   const [filterdProducts, setfilterdProducts] = useState([]);
 
+  //검색범위 지정
   const searchRangeHandler = (range) => {
     setSearchRange(range);
   };
@@ -26,6 +27,7 @@ function Near(props) {
     setOnSearch(true);
   };
 
+  //검색 매물 필터링
   function Productsfilter(filter) {
     const tempData = [];
 

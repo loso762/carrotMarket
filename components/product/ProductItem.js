@@ -11,7 +11,7 @@ function ProductItem({ id, item, likes }) {
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
 
-  const { loginID } = useContext(UserContext);
+  const { loginID, isLoggedIn } = useContext(UserContext);
 
   //유저가 찜한 매물이면 바로 좋아요 상태
   useEffect(() => {
@@ -21,6 +21,11 @@ function ProductItem({ id, item, likes }) {
   //좋아요 버튼 클릭시
   const ClickLikeButton = async (e) => {
     e.stopPropagation();
+
+    if (!isLoggedIn) {
+      router.push("/");
+      return;
+    }
     let updatedNumber = likesNumber;
 
     if (isLike == false) {
@@ -93,7 +98,7 @@ function ProductItem({ id, item, likes }) {
       </div>
 
       <button onClick={ClickLikeButton} className={classes.likeButton}>
-        {isLike ? <AiFillHeart /> : <AiOutlineHeart />}
+        {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
         {likesNumber}
       </button>
     </li>

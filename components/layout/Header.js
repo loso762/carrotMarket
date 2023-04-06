@@ -22,7 +22,7 @@ function Header({
   };
 
   let searchBtn;
-  if (SelectedCategory == "카테고리" || SelectedCategory == "내근처") {
+  if (SelectedCategory == "카테고리" || SelectedCategory == "Near") {
     searchBtn = (
       <BsSearch className={classes.searchBtn} onClick={searchBoxOpen} />
     );
@@ -31,11 +31,11 @@ function Header({
   return (
     <header className={classes.ProductsHeader}>
       {!onSearch ? (
-        <p>{SelectedCategory}</p>
+        <p>{SelectedCategory == "Near" ? "내근처" : SelectedCategory}</p>
       ) : (
         <IoIosArrowBack onClick={searchBoxCancel} />
       )}
-      {SelectedCategory == "내근처" && (
+      {SelectedCategory == "Near" && (
         <select
           className={classes.rangeselect}
           onChange={(e) => rangechange(e.target.value)}

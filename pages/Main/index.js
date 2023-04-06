@@ -1,8 +1,7 @@
 import Header from "@/components/layout/Header";
 import React, { useState } from "react";
-import Categories from "../../components/category/Categories";
+import Categories from "../../components/main/Categories";
 import FooterMenu from "@/components/layout/FooterMenu";
-import ProductList from "@/components/product/ProductList";
 import { firestore } from "@/components/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import SearchList from "@/components/product/SearchList";

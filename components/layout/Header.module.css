@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgb(100, 100, 100);
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .ProductsHeader a {
@@ -39,7 +39,7 @@
 
 .rangeselect {
   position: absolute;
-  left: 70px;
+  left: 80px;
   background-color: transparent;
   border-radius: 5px;
   padding: 2px 5px;

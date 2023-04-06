@@ -5,17 +5,13 @@ import { useContext, useEffect, useState } from "react";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
-import { firestore } from "../firebase";
-import { collection, doc, getDocs } from "firebase/firestore";
 
-function ProductList({ list, section, range }) {
-  const { setIsEdit } = useContext(ProductContext);
-  const { isLoggedIn, loginID } = useContext(UserContext);
+function ProductList({ list, range }) {
+  const { setIsEdit, SelectedCategory } = useContext(ProductContext);
+  const { isLoggedIn, likeProducts } = useContext(UserContext);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [IsScroll, setIsScroll] = useState(false);
-  const [likeProduct, setlikeProduct] = useState([]);
-  const [isLikeCategory, setIsLikeCategory] = useState(false);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -24,7 +20,7 @@ function ProductList({ list, section, range }) {
   useEffect(() => {
     const timer = setInterval(() => {
       window.addEventListener("scroll", handleScroll);
-    }, 100);
+    }, 500);
     return () => {
       clearInterval(timer);
       window.removeEventListener("scroll", handleScroll);
@@ -32,65 +28,37 @@ function ProductList({ list, section, range }) {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      // 유저가 찜한 매물 불러오기
-      async function fetchLikeProducts(context) {
-        let ProductsData = [];
-
-        const likesDocRef = collection(
-          firestore,
-          "users",
-          loginID,
-          "likesproducts"
-        );
-
-        const Productlist = await getDocs(likesDocRef);
-
-        Productlist.forEach((doc) => {
-          ProductsData.push({
-            id: doc.id,
-            data: doc.data(),
-          });
-        });
-        setlikeProduct(ProductsData);
-        ProductsData.map((a) => {
-          console.log(a.id);
-        });
-      }
-      fetchLikeProducts();
-    }
-
     //내 근처 매물 불러오기
-    if (section == "내근처") {
+    if (SelectedCategory == "Near") {
       nearbyLocationsFn();
     }
-  }, [nearbyLocationsFn, loginID, section]);
+  }, [nearbyLocationsFn, SelectedCategory]);
 
-  let lists;
-  if (section == "내근처") {
-    lists = nearProduct;
-  } else if (section == "likes") {
-    lists = likeProduct;
+  //섹션에 따라 다른 리스트 보여주기
+  let showList;
+  if (SelectedCategory == "Near") {
+    showList = nearProduct;
+  } else if (SelectedCategory == "관심목록") {
+    showList = likeProducts;
   } else {
-    lists = list;
+    showList = list;
   }
 
   return (
     <>
       <ul className={classes.list} onScroll={handleScroll}>
-        {lists &&
-          lists.map((item) => {
-            // 유저가 찜한 매물인지 필터링하는 함수
-            const isLiked = likeProduct.some((i) => i.id === item.id);
-            return (
-              <ProductItem
-                key={item.id}
-                id={item.id}
-                item={item.data}
-                likes={isLiked}
-              />
-            );
-          })}
+        {showList.map((item) => {
+          // 유저가 찜한 매물인지 필터링하는 함수
+          const isLiked = likeProducts.some((i) => i.id === item.id);
+          return (
+            <ProductItem
+              key={item.id}
+              id={item.id}
+              item={item.data}
+              likes={isLiked}
+            />
+          );
+        })}
       </ul>
 
       {isLoggedIn && (
