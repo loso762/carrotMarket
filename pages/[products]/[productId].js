@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductDetail from "@/components/product/productDetail";
 import { useRouter } from "next/router";
 import { doc, getDoc } from "firebase/firestore";
@@ -8,18 +8,25 @@ import { ref, getDownloadURL } from "firebase/storage";
 function ProductDetailPage(props) {
   const router = useRouter();
   const [image, setImage] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const imageRef = ref(storage, `images/${router.query.productId}`);
-  getDownloadURL(imageRef).then((url) => {
-    setImage(url);
-  });
+  useEffect(() => {
+    getDownloadURL(imageRef).then((url) => {
+      setImage(url);
+      setIsLoading(false);
+    });
+  }, [imageRef]);
 
   return (
-    <ProductDetail
-      data={props.ProductData}
-      id={router.query.productId}
-      url={image}
-    />
+    <>
+      <ProductDetail
+        data={props.ProductData}
+        id={router.query.productId}
+        url={image}
+        isLoading={isLoading}
+      />
+    </>
   );
 }
 

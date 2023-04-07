@@ -6,11 +6,10 @@ import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
 
-function ProductList({ list, range }) {
+function ProductList({ list, range, img }) {
   const { setIsEdit, SelectedCategory } = useContext(ProductContext);
   const { isLoggedIn, likeProducts, sellProducts, buyProducts } =
     useContext(UserContext);
-
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
 

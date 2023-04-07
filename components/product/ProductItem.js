@@ -6,12 +6,14 @@ import classes from "./ProductItem.module.css";
 import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
 import UserContext from "../context/user-context";
 import { ref, getDownloadURL } from "firebase/storage";
+import Image from "next/image";
+import { ClipLoader } from "react-spinners";
 
 function ProductItem({ id, item, likes }) {
   const router = useRouter();
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
-  const [image, setImage] = useState([]);
+  const [image, setImage] = useState();
 
   const { loginID, isLoggedIn, setlikeProducts } = useContext(UserContext);
 
@@ -20,7 +22,7 @@ function ProductItem({ id, item, likes }) {
     getDownloadURL(imageRef).then((url) => {
       setImage(url);
     });
-  }, []);
+  }, [id]);
 
   //유저가 찜한 매물이면 바로 좋아요 상태
   useEffect(() => {
@@ -107,22 +109,30 @@ function ProductItem({ id, item, likes }) {
   }
 
   return (
-    <li className={classes.item} onClick={showDetailsHandler}>
+    <li key={id} className={classes.item} onClick={showDetailsHandler}>
       <div className={classes.image}>
-        <img src={image} alt={item.title} />
+        {image ? (
+          <Image src={image} alt={item.title} width={120} height={120} />
+        ) : (
+          <ClipLoader size={20} color={"#fd9253"} />
+        )}
       </div>
       <div className={classes.content}>
         <h4>{item.title}</h4>
-        <p className={classes.time}>
+        <div className={classes.time}>
           {item.dong} · {minutesAgo} 전
-        </p>
-        <p className={classes.price}>
+        </div>
+        <div className={classes.price}>
           {item.soldout && <p className={classes.soldout}>판매완료</p>}
           {price}
-        </p>
+        </div>
       </div>
 
-      <button onClick={likeBtnHandler} className={classes.likeButton}>
+      <button
+        onClick={likeBtnHandler}
+        className={classes.likeButton}
+        disabled={isLoggedIn}
+      >
         {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
         {likesNumber}
       </button>

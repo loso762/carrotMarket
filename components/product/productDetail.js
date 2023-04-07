@@ -10,6 +10,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { firestore } from "../firebase";
 import UserContext from "../context/user-context";
 import { doc, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { ClipLoader } from "react-spinners";
 
 //시간 구하는 함수
 function calcTime(time) {
@@ -36,7 +37,7 @@ function ImoticonHandler(temp) {
   return tempImoticon;
 }
 
-function ProductDetail({ data, id, url }) {
+function ProductDetail({ data, id, url, isLoading }) {
   const router = useRouter();
   const { setIsEdit, SelectedCategory, setSelectedCategory } =
     useContext(ProductContext);
@@ -203,70 +204,76 @@ function ProductDetail({ data, id, url }) {
             </div>
           ))}
       </header>
-      <section className={classes.detail} onClick={() => setMenuOpen(false)}>
-        <figure className={classes.Img}>
-          <img src={url} alt={data.title} />
-        </figure>
+      {isLoading ? (
+        <div className={classes.Error}>
+          <ClipLoader color="#fd9253" size={30} />
+        </div>
+      ) : (
+        <section className={classes.detail} onClick={() => setMenuOpen(false)}>
+          <figure className={classes.Img}>
+            <img src={url} alt={data.title} />
+          </figure>
 
-        <div className={classes.userInfo}>
-          <div className={classes.userInfoBox}>
-            <Image
-              src="/images/profile.jpg"
-              alt="profileImg"
-              width={40}
-              height={40}
-            />
-            <p>{data.userName}</p>
-            <p>{data.dong}</p>
-          </div>
+          <div className={classes.userInfo}>
+            <div className={classes.userInfoBox}>
+              <Image
+                src="/images/profile.jpg"
+                alt="profileImg"
+                width={40}
+                height={40}
+              />
+              <p>{data.userName}</p>
+              <p>{data.dong}</p>
+            </div>
 
-          <div className={classes.temperatureBox}>
-            <div className={classes.tempInfo}>
-              <div className={classes.temperature}>
-                {data.temp}°C
-                <div className={classes.tempBar}>
-                  <p style={{ width: `${(data.temp / 80) * 100}%` }} />
+            <div className={classes.temperatureBox}>
+              <div className={classes.tempInfo}>
+                <div className={classes.temperature}>
+                  {data.temp}°C
+                  <div className={classes.tempBar}>
+                    <p style={{ width: `${(data.temp / 80) * 100}%` }} />
+                  </div>
+                </div>
+                <div className={classes.tempImoticon}>
+                  {ImoticonHandler(data.temp)}
                 </div>
               </div>
-              <div className={classes.tempImoticon}>
-                {ImoticonHandler(data.temp)}
-              </div>
+              <p className={classes.tempEx}>매너온도</p>
             </div>
-            <p className={classes.tempEx}>매너온도</p>
           </div>
-        </div>
 
-        <div className={classes.productInfo}>
-          <h1>{data.title}</h1>
-          <div>
-            <Link href={`/${data.category}`}>{data.category} </Link>
-            <p>·{calcTime(data.time)} 전</p>
+          <div className={classes.productInfo}>
+            <h1>{data.title}</h1>
+            <div>
+              <Link href={`/${data.category}`}>{data.category} </Link>
+              <p>·{calcTime(data.time)} 전</p>
+            </div>
+            <p>{data.description}</p>
           </div>
-          <p>{data.description}</p>
-        </div>
 
-        <div className={classes.footer}>
-          <button onClick={likeBtnHandler} className={classes.likeButton}>
-            {isLike ? (
-              <AiFillHeart className={classes.fill} />
-            ) : (
-              <AiOutlineHeart />
-            )}
-          </button>
-          <p className={classes.price}>
-            {price}
-            {data.soldout && <p className={classes.soldout}>판매완료</p>}
-          </p>
-          <button
-            className={`${classes.chatButton} ${
-              !isLoggedIn || (data.soldout && classes.disabled)
-            }`}
-            onClick={chatBtnHandler}
-          >
-            채팅하기
-          </button>
-        </div>
-      </section>
+          <div className={classes.footer}>
+            <button onClick={likeBtnHandler} className={classes.likeButton}>
+              {isLike ? (
+                <AiFillHeart className={classes.fill} />
+              ) : (
+                <AiOutlineHeart />
+              )}
+            </button>
+            <p className={classes.price}>
+              {price}
+              {data.soldout && <p className={classes.soldout}>판매완료</p>}
+            </p>
+            <button
+              className={`${classes.chatButton} ${
+                !isLoggedIn || (data.soldout && classes.disabled)
+              }`}
+              onClick={chatBtnHandler}
+            >
+              채팅하기
+            </button>
+          </div>
+        </section>
+      )}
     </>
   );
 }

@@ -38,7 +38,6 @@ function WriteProduct() {
   const categoryRef = useRef();
   const titleInputRef = useRef();
   const priceInputRef = useRef();
-  const imgInputRef = useRef();
   const descriptionInputRef = useRef();
 
   const now = Date.now();
