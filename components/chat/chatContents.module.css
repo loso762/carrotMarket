@@ -87,6 +87,7 @@
 .chatUl li .time {
   order: 1;
   margin: 0 5px;
+  font-size: 13px;
 }
 
 .chatUl li.me .msg {

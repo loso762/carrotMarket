@@ -13,15 +13,7 @@ import {
   addDoc,
 } from "firebase/firestore";
 
-const today = new Date();
-const hours = today.getHours();
-const minutes = today.getMinutes();
-const ampm = hours >= 12 ? "오후" : "오전";
-const formattedHours = hours % 12 || 12; // convert to 12-hour format
-
-const now = `${ampm} ${formattedHours}:${minutes < 10 ? "0" : ""}${minutes}`;
-
-function ChatHeader({ name, chatId }) {
+function ChatHeader({ name, chatId, now }) {
   const router = useRouter();
 
   async function chatOffHandler() {

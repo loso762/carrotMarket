@@ -4,19 +4,13 @@ import { firestore } from "@/components/firebase";
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import UserContext from "../context/user-context";
 
-function ChatContents({ chatId }) {
+function ChatContents({ chatId, now }) {
   const { loginDisplayName } = useContext(UserContext);
-  const chatRef = useRef();
   const [messages, setMessages] = useState([]);
+  const chatRef = useRef();
+  const lastMsgRef = useRef();
 
-  const today = new Date();
-  const hours = today.getHours();
-  const minutes = today.getMinutes();
-  const ampm = hours >= 12 ? "오후" : "오전";
-  const formattedHours = hours % 12 || 12; // convert to 12-hour format
-
-  const now = `${ampm} ${formattedHours}:${minutes < 10 ? "0" : ""}${minutes}`;
-
+  //실시간 채팅상황 구독
   useEffect(() => {
     const messagesRef = collection(firestore, "chat", chatId, "message");
 
@@ -33,6 +27,7 @@ function ChatContents({ chatId }) {
     };
   }, [chatId]);
 
+  //메세지 입력시 message 컬렉션에 doc 추가
   async function messageHandler(e) {
     e.preventDefault();
 
@@ -46,7 +41,18 @@ function ChatContents({ chatId }) {
     });
 
     chatRef.current.value = "";
+
+    //마지막 메세지에 포커스
+    if (lastMsgRef.current) {
+      lastMsgRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }
+
+  useEffect(() => {
+    if (lastMsgRef.current) {
+      lastMsgRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   return (
     <>
@@ -54,10 +60,15 @@ function ChatContents({ chatId }) {
         <ul className={classes.chatUl}>
           {messages &&
             messages.map((m, idx) => {
+              // 마지막 메세지에만 lastMsgRef추가
+              const isLast = idx === messages.length - 1;
+              const ref = isLast ? lastMsgRef : null;
+
               return (
                 <li
                   key={`${Date.now()}_${idx}`}
                   className={`${m.who == loginDisplayName && classes.me}`}
+                  ref={ref}
                 >
                   <p className={classes.time}>{m.time}</p>
                   <p className={classes.msg}>{m.msg}</p>
