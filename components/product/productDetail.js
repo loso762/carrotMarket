@@ -1,5 +1,5 @@
 import classes from "./ProductDetail.module.css";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ProductContext from "../context/product-context";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,10 +15,12 @@ function ProductDetail({ data, id }) {
   const router = useRouter();
   const { setIsEdit, SelectedCategory, setSelectedCategory } =
     useContext(ProductContext);
-  const { loginDisplayName, likeProducts, isLoggedIn } =
+  const { loginDisplayName, likeProducts, isLoggedIn, setlikeProducts } =
     useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isPop, setIsPop] = useState(false);
+  const buyerRef = useRef();
 
   let price;
   if (data.price == "나눔") {
@@ -56,8 +58,19 @@ function ProductDetail({ data, id }) {
 
     if (isLike == false) {
       updatedNumber += 1;
+      setlikeProducts((prev) => [
+        ...prev,
+        {
+          id: id,
+          data: {
+            ...data,
+            likes: updatedNumber,
+          },
+        },
+      ]);
     } else if (isLike == true) {
       updatedNumber -= 1;
+      setlikeProducts((prev) => prev.filter((item) => item.id !== id));
     }
 
     await setDoc(doc(firestore, "products", id), {
@@ -74,21 +87,38 @@ function ProductDetail({ data, id }) {
       alert("로그인을 해주세요!");
       return;
     }
+
+    if (data.soldout) {
+      alert("판매완료된 상품입니다!");
+      return;
+    }
     if (data.userName == loginDisplayName) {
       return;
     }
     await setDoc(
-      doc(firestore, "chat", `${loginDisplayName}_${data.userName}`),
+      doc(
+        firestore,
+        "chat",
+        `${loginDisplayName}_${data.userName}-${data.title}`
+      ),
       {
         party: [loginDisplayName, data.userName],
         product: id,
         img: data.img,
         dong: data.dong,
+        title: data.title,
         date: Date.now(),
       }
     );
 
-    router.push(`/Chat/${loginDisplayName}_${data.userName}`);
+    //채팅목록에 추가
+    if (!data.chat.includes(loginDisplayName)) {
+      updateDoc(doc(firestore, "products", id), {
+        chat: [...data.chat, loginDisplayName],
+      });
+    }
+
+    router.push(`/Chat/${loginDisplayName}_${data.userName}-${data.title}`);
   }
 
   //게시물삭제
@@ -101,9 +131,10 @@ function ProductDetail({ data, id }) {
   function soldOutHandler() {
     updateDoc(doc(firestore, "products", id), {
       soldout: "true",
+      buyer: buyerRef.current.value,
     });
     setMenuOpen((prev) => !prev);
-    console.log(menuOpen);
+    setIsPop(false);
   }
 
   //게시물 수정
@@ -112,8 +143,36 @@ function ProductDetail({ data, id }) {
     setIsEdit(true);
   }
 
+  //판매완료
+  function popupCancelHandler() {
+    setIsPop(false);
+    setMenuOpen((prev) => !prev);
+  }
+
   return (
     <>
+      {isPop && (
+        <>
+          <div className={classes.popup}>
+            누구와 거래하셨나요?
+            <select ref={buyerRef}>
+              {data.chat.map((chatPartner, idx) => {
+                return (
+                  <option value={chatPartner} key={idx}>
+                    {chatPartner}
+                  </option>
+                );
+              })}
+            </select>
+            <div>
+              <button onClick={popupCancelHandler}>취소</button>
+              <button onClick={soldOutHandler}>확인</button>
+            </div>
+          </div>
+          <div className={classes.backdrop}></div>
+        </>
+      )}
+
       <header className={classes.header}>
         <Link href={`/${SelectedCategory}`}>
           <IoIosArrowBack />
@@ -133,7 +192,7 @@ function ProductDetail({ data, id }) {
             <div className={classes.menuBox}>
               <p onClick={EditHandler}>게시글 수정</p>
               <p onClick={deleteBtnHandler}>게시글 삭제</p>
-              <p onClick={soldOutHandler}>판매완료</p>
+              <p onClick={() => setIsPop(true)}>판매완료</p>
             </div>
           ))}
       </header>
@@ -191,7 +250,7 @@ function ProductDetail({ data, id }) {
           </p>
           <button
             className={`${classes.chatButton} ${
-              !isLoggedIn && classes.disabled
+              !isLoggedIn || (data.soldout && classes.disabled)
             }`}
             onClick={chatBtnHandler}
           >

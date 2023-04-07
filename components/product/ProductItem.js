@@ -11,7 +11,7 @@ function ProductItem({ id, item, likes }) {
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
 
-  const { loginID, isLoggedIn } = useContext(UserContext);
+  const { loginID, isLoggedIn, setlikeProducts } = useContext(UserContext);
 
   //유저가 찜한 매물이면 바로 좋아요 상태
   useEffect(() => {
@@ -19,13 +19,14 @@ function ProductItem({ id, item, likes }) {
   }, [likes]);
 
   //좋아요 버튼 클릭시
-  const ClickLikeButton = async (e) => {
+  const likeBtnHandler = async (e) => {
     e.stopPropagation();
 
     if (!isLoggedIn) {
       router.push("/");
       return;
     }
+
     let updatedNumber = likesNumber;
 
     if (isLike == false) {
@@ -43,6 +44,7 @@ function ProductItem({ id, item, likes }) {
       collection(firestore, "users", loginID, "likesproducts"),
       id
     );
+
     await setDoc(userDocRef, {
       ...item,
       likes: updatedNumber,
@@ -51,8 +53,20 @@ function ProductItem({ id, item, likes }) {
     setIsLike((prev) => !prev);
 
     if (!isLike) {
+      setlikeProducts((prev) => [
+        ...prev,
+        {
+          id: id,
+          data: {
+            ...item,
+            likes: updatedNumber,
+          },
+        },
+      ]);
       setlikesNumber((prev) => prev + 1);
     } else {
+      setlikeProducts((prev) => prev.filter((item) => item.id !== id));
+
       const productDocRef = doc(
         collection(firestore, "users", loginID, "likesproducts"),
         id
@@ -82,7 +96,6 @@ function ProductItem({ id, item, likes }) {
   } else {
     minutesAgo = `${Math.floor(minutesAgo / 60 / 24)}일`;
   }
-  console.log(item.soldout);
 
   return (
     <li className={classes.item} onClick={showDetailsHandler}>
@@ -100,7 +113,7 @@ function ProductItem({ id, item, likes }) {
         </p>
       </div>
 
-      <button onClick={ClickLikeButton} className={classes.likeButton}>
+      <button onClick={likeBtnHandler} className={classes.likeButton}>
         {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
         {likesNumber}
       </button>

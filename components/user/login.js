@@ -39,7 +39,6 @@ function Login(props) {
       6;
       if (doc.exists) {
         const userData = doc.data();
-        console.log(userRef);
         const { nickname, temp } = userData;
         setIsLoggedIn(true);
         setloginTemp(temp);

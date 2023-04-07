@@ -12,6 +12,7 @@ export const UserContextProvider = (props) => {
   const [loginID, setloginID] = useState("");
   const [likeProducts, setlikeProducts] = useState([]);
   const [sellProducts, setsellProducts] = useState([]);
+  const [buyProducts, setBuyProducts] = useState([]);
 
   //찜한 매물 불러오기
   useEffect(() => {
@@ -63,6 +64,29 @@ export const UserContextProvider = (props) => {
     }
   }, [loginDisplayName, isLoggedIn]);
 
+  //구매한 매물 불러오기
+  useEffect(() => {
+    if (isLoggedIn) {
+      async function fetchBuyProducts(context) {
+        let ProductsData = [];
+
+        const buyListRef = collection(firestore, "products");
+
+        const q = query(buyListRef, where("buyer", "==", loginDisplayName));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          ProductsData.push({
+            id: doc.id,
+            data: doc.data(),
+          });
+        });
+        setBuyProducts(ProductsData);
+      }
+      fetchBuyProducts();
+    }
+  }, [loginDisplayName, isLoggedIn]);
+
   return (
     <UserContext.Provider
       value={{
@@ -76,7 +100,8 @@ export const UserContextProvider = (props) => {
         setloginTemp,
         likeProducts,
         sellProducts,
-        setsellProducts,
+        buyProducts,
+        setlikeProducts,
       }}
     >
       {props.children}

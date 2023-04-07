@@ -5,15 +5,14 @@ import { useContext, useEffect, useState } from "react";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
-import { Oval } from "react-loader-spinner";
 
 function ProductList({ list, range }) {
   const { setIsEdit, SelectedCategory } = useContext(ProductContext);
-  const { isLoggedIn, likeProducts, sellProducts } = useContext(UserContext);
+  const { isLoggedIn, likeProducts, sellProducts, buyProducts } =
+    useContext(UserContext);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -23,7 +22,6 @@ function ProductList({ list, range }) {
     //내 근처 매물 불러오기
     if (SelectedCategory == "Near") {
       nearbyLocationsFn();
-      setIsLoading(false);
     }
   }, [nearbyLocationsFn, SelectedCategory]);
 
@@ -35,9 +33,17 @@ function ProductList({ list, range }) {
     showList = likeProducts;
   } else if (SelectedCategory == "판매내역") {
     showList = sellProducts;
+  } else if (SelectedCategory == "구매내역") {
+    showList = buyProducts;
   } else {
     showList = list;
   }
+
+  const writeBtnOn =
+    SelectedCategory !== "구매내역" &&
+    SelectedCategory !== "판매내역" &&
+    SelectedCategory !== "관심목록";
+  console.log(writeBtnOn);
 
   return (
     <>
@@ -56,7 +62,7 @@ function ProductList({ list, range }) {
         })}
       </ul>
 
-      {isLoggedIn && (
+      {isLoggedIn && writeBtnOn && (
         <Link
           href="WriteProduct"
           className={`${classes.writeButton} ${isScroll && classes.onScroll}`}

@@ -8,11 +8,12 @@ import UserContext from "@/components/context/user-context";
 
 function ChatRoom() {
   const [messageData, setMessageData] = useState();
+  const [chatpartner, setchatpartner] = useState();
   const router = useRouter();
   const { loginDisplayName } = useContext(UserContext);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchChat() {
       //메세지 내용가져오기
       const messagesRef = collection(
         firestore,
@@ -30,11 +31,17 @@ function ChatRoom() {
       setMessageData(messages);
     }
 
-    fetchData();
+    fetchChat();
   }, [router.query.chatId]);
 
-  const temp = router.query.chatId && router.query.chatId.replace(`_`, "");
-  const chatPartner = temp && temp.replace(loginDisplayName, "");
+  //채팅상대 이름 불러오기
+  useEffect(() => {
+    let chatPartner =
+      router.query.chatId &&
+      router.query.chatId.replace(`_`, "").replace(loginDisplayName, "");
+    let index = chatPartner.indexOf("-");
+    setchatpartner(chatPartner.substring(0, index));
+  }, [loginDisplayName, router.query.chatId]);
 
   //현재 시간 구하는 함수
   const today = new Date();
@@ -47,7 +54,7 @@ function ChatRoom() {
 
   return (
     <>
-      <ChatHeader name={chatPartner} chatId={router.query.chatId} now={now} />
+      <ChatHeader name={chatpartner} chatId={router.query.chatId} now={now} />
       {router.query.chatId && messageData && (
         <ChatContents
           msgs={messageData}

@@ -82,6 +82,7 @@ function WriteProduct() {
       userName: loginDisplayName,
       temp: loginTemp,
       ID: loginID,
+      chat: [],
     };
 
     if (category == "카테고리") {

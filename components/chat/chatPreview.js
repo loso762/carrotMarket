@@ -18,9 +18,10 @@ function ChatPreview({ c, key, LoadingEnd }) {
   const [lastTime, setlastTime] = useState("");
 
   //상대방 아이디 가져오기
-  function filteringName(ChatId, myName) {
-    const temp = ChatId.replace("_", "");
-    return temp.replace(myName, "");
+  function filteringName(ChatId, title, myName) {
+    const temp = ChatId.replace(title, "");
+    const temp2 = temp.replace("_", "").replace("-", "");
+    return temp2.replace(myName, "");
   }
 
   useEffect(() => {
@@ -59,15 +60,15 @@ function ChatPreview({ c, key, LoadingEnd }) {
     fetchData();
   }, [c.id]);
 
+  function openChatHandler() {
+    router.push(`/Chat/${c.id}`);
+  }
+
   return (
-    <li
-      className={classes.chatli}
-      onClick={() => router.push(`/Chat/${c.id}`)}
-      key={key}
-    >
+    <li className={classes.chatli} onClick={openChatHandler} key={key}>
       <img src="/images/profile.jpg" alt="profile" />
       <div>
-        <p>{filteringName(c.id, loginDisplayName)}</p>
+        <p>{filteringName(c.id, c.title, loginDisplayName)}</p>
         {lastTime} 전 · {c.dong}
       </div>
       <p>{lastMsg}</p>
