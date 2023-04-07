@@ -3,7 +3,8 @@ import classes from "./WriteProduct.module.css";
 import { useRouter } from "next/router";
 import { IoIosArrowBack } from "react-icons/io";
 import ProductContext from "../context/product-context";
-import { firestore } from "../firebase";
+import { firestore, storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import UserContext from "../context/user-context";
 
@@ -25,10 +26,14 @@ const category = [
 ];
 
 function WriteProduct() {
+  const router = useRouter();
   const { isEdit, latitude, longitude, dong, SelectedCategory } =
     useContext(ProductContext);
   const { loginDisplayName, loginTemp, loginID } = useContext(UserContext);
-  const router = useRouter();
+  const [isFree, setIsFree] = useState(false);
+  //수정일 경우 데이터 가져오기
+  const [product, setProduct] = useState({});
+  const productId = router.query.id;
 
   const categoryRef = useRef();
   const titleInputRef = useRef();
@@ -36,11 +41,9 @@ function WriteProduct() {
   const imgInputRef = useRef();
   const descriptionInputRef = useRef();
 
-  const [isFree, setIsFree] = useState(false);
+  const now = Date.now();
 
-  //수정일 경우 데이터 가져오기
-  const [product, setProduct] = useState({});
-  const productId = router.query.id;
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (isEdit) {
@@ -55,15 +58,26 @@ function WriteProduct() {
     }
   }, [productId, isEdit]);
 
-  const submitHandler = (e) => {
+  function ImageHandler(e) {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  }
+
+  function ImgUpload() {
+    const imageRef = ref(storage, `images/${now}`);
+    uploadBytes(imageRef, image);
+  }
+
+  function submitHandler(e) {
     e.preventDefault();
 
     const category = categoryRef.current.value;
     const enteredTitle = titleInputRef.current.value;
     const enteredPrice = isFree ? "나눔" : priceInputRef.current.value;
-    const enteredImg = imgInputRef.current.value;
     const enteredDescription = descriptionInputRef.current.value;
-    const now = Date.now();
+
+    ImgUpload();
 
     if (!isFree && !priceInputRef.current.value) {
       alert("가격을 입력해주세요");
@@ -74,7 +88,6 @@ function WriteProduct() {
       title: enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
-      img: enteredImg,
       Latitude: latitude,
       Longitude: longitude,
       category: category,
@@ -109,15 +122,15 @@ function WriteProduct() {
     WriteData();
 
     router.push("/Main");
-  };
+  }
 
-  const cancelHandler = () => {
+  function cancelHandler() {
     if (!isEdit) {
       router.push(SelectedCategory);
     } else {
       router.push(`/${product.category}/${productId}`);
     }
-  };
+  }
 
   return (
     <>
@@ -166,13 +179,7 @@ function WriteProduct() {
           />
         </p>
         <p>
-          <input
-            placeholder={product?.img || "이미지"}
-            ref={imgInputRef}
-            type="url"
-            name="image"
-            required
-          />
+          <input type="file" onChange={ImageHandler} />
         </p>
         <p>
           <textarea

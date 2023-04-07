@@ -1,10 +1,11 @@
 .ProductsHeader {
-  height: 50px;
+  height: 60px;
   padding: 10px 20px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgb(100, 100, 100);
-  font-size: 22px;
+  font-size: 24px;
+  position: relative;
 }
 
 .ProductsHeader a {
@@ -23,9 +24,10 @@
 .ProductsHeader svg.searchBtn {
   position: absolute;
   right: 25px;
-  top: 15px;
-  width: 16px;
-  height: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
 }
 
 .ProductsHeader svg.searchBtn2 {
@@ -39,11 +41,12 @@
 
 .rangeselect {
   position: absolute;
-  left: 80px;
+  left: 85px;
   background-color: transparent;
   border-radius: 5px;
   padding: 2px 5px;
   border: none;
+  font-size: 16px;
 }
 
 .rangeselect option {

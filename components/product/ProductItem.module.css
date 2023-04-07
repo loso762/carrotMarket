@@ -6,19 +6,20 @@
   cursor: pointer;
   border-bottom: 1px solid rgb(60, 60, 60);
   position: relative;
+  height: 135px;
 }
 
 .image {
-  width: 118px;
-  height: 118px;
+  width: 124px;
+  height: 124px;
   overflow: hidden;
   display: flex;
   justify-content: center;
 }
 
 .image img {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border-radius: 10px;
 }
 
@@ -29,7 +30,7 @@
 }
 
 .content h4 {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: rgb(212, 212, 212);
   margin-bottom: 10px;
 }
@@ -47,11 +48,12 @@
   bottom: 10px;
   display: flex;
   align-items: center;
+  font-size: 18px;
 }
 
 .likeButton svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   transform: translateY(-1px);
   margin-right: 5px;
   fill: rgb(255, 255, 255);
@@ -69,7 +71,7 @@
   background-color: gray;
   width: 55px;
   border-radius: 5px;
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
   padding: 5px 0;
   margin-right: 10px;

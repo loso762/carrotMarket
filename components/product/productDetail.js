@@ -11,7 +11,32 @@ import { firestore } from "../firebase";
 import UserContext from "../context/user-context";
 import { doc, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
 
-function ProductDetail({ data, id }) {
+//시간 구하는 함수
+function calcTime(time) {
+  const now = Date.now();
+  let minutesAgo = Math.round((now - time) / 1000 / 60);
+  if (minutesAgo < 60) {
+    minutesAgo = `${minutesAgo}분`;
+  } else if (minutesAgo < 60 * 24) {
+    minutesAgo = `${Math.round(minutesAgo / 60)}시간`;
+  } else {
+    minutesAgo = `${Math.floor(minutesAgo / 60 / 24)}일`;
+  }
+  return minutesAgo;
+}
+
+//온도 이모티콘 구하는 함수
+function ImoticonHandler(temp) {
+  let tempImoticon = "🙂";
+  if (temp < 35) {
+    tempImoticon = "😨";
+  } else if (temp > 38) {
+    tempImoticon = "😍";
+  }
+  return tempImoticon;
+}
+
+function ProductDetail({ data, id, url }) {
   const router = useRouter();
   const { setIsEdit, SelectedCategory, setSelectedCategory } =
     useContext(ProductContext);
@@ -32,25 +57,6 @@ function ProductDetail({ data, id }) {
   useEffect(() => {
     likeProducts.some((like) => like.id == id) && setIsLike(true);
   }, [id, likeProducts]);
-
-  const now = Date.now();
-  let minutesAgo = Math.round((now - data.time) / 1000 / 60);
-
-  if (minutesAgo < 60) {
-    minutesAgo = `${minutesAgo}분`;
-  } else if (minutesAgo < 60 * 24) {
-    minutesAgo = `${Math.round(minutesAgo / 60)}시간`;
-  } else {
-    minutesAgo = `${Math.floor(minutesAgo / 60 / 24)}일`;
-  }
-
-  const temp = data.temp || 36.5;
-  let tempImoticon = "🙂";
-  if (temp < 35) {
-    tempImoticon = "😨";
-  } else if (temp > 38) {
-    tempImoticon = "😍";
-  }
 
   //좋아요버튼 클릭시
   async function likeBtnHandler(e) {
@@ -104,7 +110,7 @@ function ProductDetail({ data, id }) {
       {
         party: [loginDisplayName, data.userName],
         product: id,
-        img: data.img,
+        img: url,
         dong: data.dong,
         title: data.title,
         date: Date.now(),
@@ -135,6 +141,7 @@ function ProductDetail({ data, id }) {
     });
     setMenuOpen((prev) => !prev);
     setIsPop(false);
+    router.push(`/${SelectedCategory}`);
   }
 
   //게시물 수정
@@ -143,7 +150,7 @@ function ProductDetail({ data, id }) {
     setIsEdit(true);
   }
 
-  //판매완료
+  //팝업 종료
   function popupCancelHandler() {
     setIsPop(false);
     setMenuOpen((prev) => !prev);
@@ -198,7 +205,7 @@ function ProductDetail({ data, id }) {
       </header>
       <section className={classes.detail} onClick={() => setMenuOpen(false)}>
         <figure className={classes.Img}>
-          <img src={data.img} alt={data.title} />
+          <img src={url} alt={data.title} />
         </figure>
 
         <div className={classes.userInfo}>
@@ -206,8 +213,8 @@ function ProductDetail({ data, id }) {
             <Image
               src="/images/profile.jpg"
               alt="profileImg"
-              width={35}
-              height={35}
+              width={40}
+              height={40}
             />
             <p>{data.userName}</p>
             <p>{data.dong}</p>
@@ -216,12 +223,14 @@ function ProductDetail({ data, id }) {
           <div className={classes.temperatureBox}>
             <div className={classes.tempInfo}>
               <div className={classes.temperature}>
-                {temp}°C
+                {data.temp}°C
                 <div className={classes.tempBar}>
-                  <p style={{ width: `${(temp / 80) * 100}%` }} />
+                  <p style={{ width: `${(data.temp / 80) * 100}%` }} />
                 </div>
               </div>
-              <div className={classes.tempImoticon}>{tempImoticon}</div>
+              <div className={classes.tempImoticon}>
+                {ImoticonHandler(data.temp)}
+              </div>
             </div>
             <p className={classes.tempEx}>매너온도</p>
           </div>
@@ -231,7 +240,7 @@ function ProductDetail({ data, id }) {
           <h1>{data.title}</h1>
           <div>
             <Link href={`/${data.category}`}>{data.category} </Link>
-            <p>·{minutesAgo} 전</p>
+            <p>·{calcTime(data.time)} 전</p>
           </div>
           <p>{data.description}</p>
         </div>

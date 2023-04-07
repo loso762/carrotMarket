@@ -1,17 +1,26 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { firestore } from "../firebase";
+import { firestore, storage } from "../firebase";
 import classes from "./ProductItem.module.css";
 import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
 import UserContext from "../context/user-context";
+import { ref, getDownloadURL } from "firebase/storage";
 
 function ProductItem({ id, item, likes }) {
   const router = useRouter();
   const [isLike, setIsLike] = useState(false);
   const [likesNumber, setlikesNumber] = useState(item.likes);
+  const [image, setImage] = useState([]);
 
   const { loginID, isLoggedIn, setlikeProducts } = useContext(UserContext);
+
+  useEffect(() => {
+    const imageRef = ref(storage, `images/${id}`);
+    getDownloadURL(imageRef).then((url) => {
+      setImage(url);
+    });
+  }, []);
 
   //유저가 찜한 매물이면 바로 좋아요 상태
   useEffect(() => {
@@ -100,7 +109,7 @@ function ProductItem({ id, item, likes }) {
   return (
     <li className={classes.item} onClick={showDetailsHandler}>
       <div className={classes.image}>
-        <img src={item.img} alt={item.title} />
+        <img src={image} alt={item.title} />
       </div>
       <div className={classes.content}>
         <h4>{item.title}</h4>

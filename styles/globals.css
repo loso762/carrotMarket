@@ -21,7 +21,7 @@ html {
 body {
   margin: 0 auto;
   max-width: 414px;
-  height: 667px;
+  height: 800px;
   background-color: rgb(37, 37, 37);
   position: relative;
   border-radius: 10px;
@@ -39,10 +39,12 @@ ul {
 #__next {
   background-color: rgb(37, 37, 37);
   height: 100%;
-  margin: 70px 0;
+  margin: 20px 0;
   border-radius: 10px;
   overflow: hidden;
+  border: 1px solid rgb(240, 240, 240);
 }
+
 ::-webkit-scrollbar {
   display: none;
 }
@@ -51,5 +53,11 @@ ul {
   #__next {
     border-radius: 0;
     margin: 0;
+  }
+}
+
+@media only screen and (max-width: 376px) {
+  body {
+    height: 667px;
   }
 }

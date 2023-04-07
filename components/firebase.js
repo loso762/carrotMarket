@@ -1,6 +1,7 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import 'firebase/compat/auth';
+import "firebase/compat/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBkujqvCNPtbN5EQME3QnUEuXYVwryMWQ4",
@@ -14,7 +15,8 @@ const firebaseConfig = {
 };
 
 // firebaseConfig 정보로 firebase 시작
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
+export const storage = getStorage(app);
 
 // firebase의 firestore 인스턴스를 변수에 저장
 const firestore = firebase.firestore();

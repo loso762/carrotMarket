@@ -105,3 +105,7 @@
   height: 100%;
   margin-right: 5px;
 }
+.form input[type="file"] {
+  font-size: 14px;
+  color: rgb(140, 140, 140);
+}

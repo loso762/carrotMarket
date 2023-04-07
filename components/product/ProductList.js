@@ -43,7 +43,6 @@ function ProductList({ list, range }) {
     SelectedCategory !== "구매내역" &&
     SelectedCategory !== "판매내역" &&
     SelectedCategory !== "관심목록";
-  console.log(writeBtnOn);
 
   return (
     <>
