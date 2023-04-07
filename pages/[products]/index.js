@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ProductList from "../../components/product/ProductList";
 import Header from "@/components/layout/Header";
 import FooterMenu from "../../components/layout/FooterMenu";

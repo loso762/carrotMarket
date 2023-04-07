@@ -82,6 +82,7 @@ function ProductItem({ id, item, likes }) {
   } else {
     minutesAgo = `${Math.floor(minutesAgo / 60 / 24)}일`;
   }
+  console.log(item.soldout);
 
   return (
     <li className={classes.item} onClick={showDetailsHandler}>
@@ -93,7 +94,10 @@ function ProductItem({ id, item, likes }) {
         <p className={classes.time}>
           {item.dong} · {minutesAgo} 전
         </p>
-        <p>{price}</p>
+        <p className={classes.price}>
+          {item.soldout && <p className={classes.soldout}>판매완료</p>}
+          {price}
+        </p>
       </div>
 
       <button onClick={ClickLikeButton} className={classes.likeButton}>

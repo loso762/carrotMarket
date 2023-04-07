@@ -11,7 +11,7 @@ import {
 import UserContext from "../context/user-context";
 import { useRouter } from "next/router";
 
-function ChatPreview({ c, key }) {
+function ChatPreview({ c, key, LoadingEnd }) {
   const router = useRouter();
   const { loginDisplayName } = useContext(UserContext);
   const [lastMsg, setLastMsg] = useState("");
@@ -53,6 +53,7 @@ function ChatPreview({ c, key }) {
           calcTime(latestData.realtime);
         }
       });
+      LoadingEnd;
     }
 
     fetchData();

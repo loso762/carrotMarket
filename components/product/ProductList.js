@@ -5,15 +5,16 @@ import { useContext, useEffect, useState } from "react";
 import { useNearbyLocations } from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
+import { Oval } from "react-loader-spinner";
 
 function ProductList({ list, range }) {
   const { setIsEdit, SelectedCategory } = useContext(ProductContext);
-  const { isLoggedIn, likeProducts } = useContext(UserContext);
+  const { isLoggedIn, likeProducts, sellProducts } = useContext(UserContext);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
-  const [IsScroll, setIsScroll] = useState(false);
+  const [isScroll, setIsScroll] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // //스크롤 시에 글쓰기 버튼 애니메이션
   const handleScroll = () => {
     setIsScroll(true);
   };
@@ -22,6 +23,7 @@ function ProductList({ list, range }) {
     //내 근처 매물 불러오기
     if (SelectedCategory == "Near") {
       nearbyLocationsFn();
+      setIsLoading(false);
     }
   }, [nearbyLocationsFn, SelectedCategory]);
 
@@ -31,6 +33,8 @@ function ProductList({ list, range }) {
     showList = nearProduct;
   } else if (SelectedCategory == "관심목록") {
     showList = likeProducts;
+  } else if (SelectedCategory == "판매내역") {
+    showList = sellProducts;
   } else {
     showList = list;
   }
@@ -55,11 +59,11 @@ function ProductList({ list, range }) {
       {isLoggedIn && (
         <Link
           href="WriteProduct"
-          className={`${classes.writeButton} ${IsScroll && classes.onScroll}`}
+          className={`${classes.writeButton} ${isScroll && classes.onScroll}`}
           onClick={() => setIsEdit(false)}
           onMouseOver={() => setIsScroll(false)}
         >
-          {IsScroll ? "+" : "+ 글쓰기"}
+          {isScroll ? "+" : "+ 글쓰기"}
         </Link>
       )}
     </>

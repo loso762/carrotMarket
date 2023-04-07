@@ -60,3 +60,17 @@
 .likeButton svg.fill {
   fill: rgb(255, 0, 0);
 }
+
+.price {
+  display: flex;
+  align-items: center;
+}
+.soldout {
+  background-color: gray;
+  width: 55px;
+  border-radius: 5px;
+  font-size: 12px;
+  text-align: center;
+  padding: 5px 0;
+  margin-right: 10px;
+}

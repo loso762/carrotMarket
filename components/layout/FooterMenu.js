@@ -20,7 +20,7 @@ function FooterMenu(props) {
 
   return (
     <ul className={classes.footer}>
-      <li onClick={props.searchBoxCancel}>
+      <li>
         <Link href="/Main" onClick={clickHomeBtn}>
           {router.route == "/Main" ? <AiFillHome /> : <AiOutlineHome />}
           <p>홈</p>

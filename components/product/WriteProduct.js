@@ -104,6 +104,7 @@ function WriteProduct() {
         console.error("게시글 등록 실패", e);
       }
     };
+
     WriteData();
 
     router.push("/Main");

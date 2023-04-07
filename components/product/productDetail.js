@@ -9,11 +9,12 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
 import { firestore } from "../firebase";
 import UserContext from "../context/user-context";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
 
 function ProductDetail({ data, id }) {
   const router = useRouter();
-  const { setIsEdit, SelectedCategory } = useContext(ProductContext);
+  const { setIsEdit, SelectedCategory, setSelectedCategory } =
+    useContext(ProductContext);
   const { loginDisplayName, likeProducts, isLoggedIn } =
     useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
@@ -50,7 +51,7 @@ function ProductDetail({ data, id }) {
   }
 
   //좋아요버튼 클릭시
-  const likeBtnHandler = async (e) => {
+  async function likeBtnHandler(e) {
     let updatedNumber = data.likes;
 
     if (isLike == false) {
@@ -65,13 +66,7 @@ function ProductDetail({ data, id }) {
     });
 
     setIsLike((prev) => !prev);
-  };
-
-  //게시물삭제
-  const deleteBtnHandler = () => {
-    deleteDoc(doc(firestore, "products", id));
-    router.push(`/${data.category}`);
-  };
+  }
 
   //채팅버튼 클릭시
   async function chatBtnHandler() {
@@ -96,6 +91,27 @@ function ProductDetail({ data, id }) {
     router.push(`/Chat/${loginDisplayName}_${data.userName}`);
   }
 
+  //게시물삭제
+  function deleteBtnHandler() {
+    deleteDoc(doc(firestore, "products", id));
+    router.push(`/${data.category}`);
+  }
+
+  //판매완료
+  function soldOutHandler() {
+    updateDoc(doc(firestore, "products", id), {
+      soldout: "true",
+    });
+    setMenuOpen((prev) => !prev);
+    console.log(menuOpen);
+  }
+
+  //게시물 수정
+  function EditHandler() {
+    router.push(`/WriteProduct?id=${id}`);
+    setIsEdit(true);
+  }
+
   return (
     <>
       <header className={classes.header}>
@@ -103,7 +119,7 @@ function ProductDetail({ data, id }) {
           <IoIosArrowBack />
         </Link>
 
-        <Link href={`/Home`}>
+        <Link href={`/Main`} onClick={() => setSelectedCategory("카테고리")}>
           <AiFillHome />
         </Link>
 
@@ -115,15 +131,9 @@ function ProductDetail({ data, id }) {
             </button>
           ) : (
             <div className={classes.menuBox}>
-              <Link
-                href={`/WriteProduct?id=${id}`}
-                onClick={() => {
-                  setIsEdit(true);
-                }}
-              >
-                게시글 수정
-              </Link>
+              <p onClick={EditHandler}>게시글 수정</p>
               <p onClick={deleteBtnHandler}>게시글 삭제</p>
+              <p onClick={soldOutHandler}>판매완료</p>
             </div>
           ))}
       </header>
@@ -175,7 +185,10 @@ function ProductDetail({ data, id }) {
               <AiOutlineHeart />
             )}
           </button>
-          <p>{price}</p>
+          <p className={classes.price}>
+            {price}
+            {data.soldout && <p className={classes.soldout}>판매완료</p>}
+          </p>
           <button
             className={`${classes.chatButton} ${
               !isLoggedIn && classes.disabled

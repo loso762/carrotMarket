@@ -41,16 +41,20 @@ function Mypage(props) {
           </Link>
         </li>
         <li>
-          <BiReceipt />
-          판매내역
+          <Link href="sell" onClick={() => setSelectedCategory("판매내역")}>
+            <BiReceipt />
+            판매내역
+          </Link>
         </li>
         <li>
           <BiShoppingBag />
           구매내역
         </li>
         <li>
-          <BiChat />
-          채팅내역
+          <Link href="Chat">
+            <BiChat />
+            채팅내역
+          </Link>
         </li>
       </ul>
     </div>

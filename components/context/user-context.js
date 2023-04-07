@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../firebase";
 
 const UserContext = createContext({});
@@ -11,10 +11,11 @@ export const UserContextProvider = (props) => {
   const [loginTemp, setloginTemp] = useState("");
   const [loginID, setloginID] = useState("");
   const [likeProducts, setlikeProducts] = useState([]);
+  const [sellProducts, setsellProducts] = useState([]);
 
+  //찜한 매물 불러오기
   useEffect(() => {
     if (isLoggedIn) {
-      // 유저가 찜한 매물 불러오기
       async function fetchLikeProducts(context) {
         let ProductsData = [];
 
@@ -39,6 +40,29 @@ export const UserContextProvider = (props) => {
     }
   }, [loginID, isLoggedIn]);
 
+  //판매하는 매물 불러오기
+  useEffect(() => {
+    if (isLoggedIn) {
+      async function fetchSellProducts(context) {
+        let ProductsData = [];
+
+        const sellListRef = collection(firestore, "products");
+
+        const q = query(sellListRef, where("userName", "==", loginDisplayName));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          ProductsData.push({
+            id: doc.id,
+            data: doc.data(),
+          });
+        });
+        setsellProducts(ProductsData);
+      }
+      fetchSellProducts();
+    }
+  }, [loginDisplayName, isLoggedIn]);
+
   return (
     <UserContext.Provider
       value={{
@@ -51,6 +75,8 @@ export const UserContextProvider = (props) => {
         loginTemp,
         setloginTemp,
         likeProducts,
+        sellProducts,
+        setsellProducts,
       }}
     >
       {props.children}
