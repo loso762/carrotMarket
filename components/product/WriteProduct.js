@@ -25,7 +25,8 @@ const category = [
 ];
 
 function WriteProduct() {
-  const { isEdit, latitude, longitude, dong } = useContext(ProductContext);
+  const { isEdit, latitude, longitude, dong, SelectedCategory } =
+    useContext(ProductContext);
   const { loginDisplayName, loginTemp, loginID } = useContext(UserContext);
   const router = useRouter();
 
@@ -100,17 +101,17 @@ function WriteProduct() {
           time,
         });
       } catch (e) {
-        console.error("Error adding document: ", e);
+        console.error("게시글 등록 실패", e);
       }
     };
     WriteData();
 
-    router.push("/Home");
+    router.push("/Main");
   };
 
   const cancelHandler = () => {
     if (!isEdit) {
-      router.push("/Home");
+      router.push(SelectedCategory);
     } else {
       router.push(`/${product.category}/${productId}`);
     }
@@ -184,7 +185,7 @@ function WriteProduct() {
           />
         </p>
         <div className={classes.actions}>
-          <button type="button" onClick={() => router.push("/Home")}>
+          <button type="button" onClick={cancelHandler}>
             Cancel
           </button>
           <button>완료</button>

@@ -12,10 +12,16 @@ function FooterMenu(props) {
   const router = useRouter();
   const { setSelectedCategory } = useContext(ProductContext);
 
+  function clickHomeBtn() {
+    setTimeout(() => {
+      setSelectedCategory("카테고리");
+    }, 300);
+  }
+
   return (
     <ul className={classes.footer}>
       <li onClick={props.searchBoxCancel}>
-        <Link href="/Main" onClick={() => setSelectedCategory("카테고리")}>
+        <Link href="/Main" onClick={clickHomeBtn}>
           {router.route == "/Main" ? <AiFillHome /> : <AiOutlineHome />}
           <p>홈</p>
         </Link>
@@ -29,7 +35,6 @@ function FooterMenu(props) {
       <li>
         <Link href="/Chat">
           {router.route == "/Chat" ? <BsFillChatDotsFill /> : <BsChatDots />}
-
           <p>채팅</p>
         </Link>
       </li>

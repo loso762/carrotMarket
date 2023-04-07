@@ -25,6 +25,7 @@ function Login(props) {
     setPassword(event.target.value);
   };
 
+  //이메일 로그인
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -52,6 +53,48 @@ function Login(props) {
     }
   };
 
+  //구글 로그인
+  const handleGoogleLogin = (e) => {
+    e.preventDefault();
+
+    auth.signInWithPopup(googleAuthProvider).then((result) => {
+      const user = result.user;
+
+      // Get the user's nickname from Firestore
+      const userRef = firestore.collection("users").doc(user.uid);
+      userRef.get().then((doc) => {
+        if (doc.exists) {
+          const userData = doc.data();
+          const { nickname, temp } = userData;
+          setIsLoggedIn(true);
+          setloginTemp(temp);
+          setloginID(user.uid);
+          setloginDisplayName(nickname);
+        } else {
+          // If the user doesn't exist in Firestore, add them with default data
+          firestore
+            .collection("users")
+            .doc(user.uid)
+            .set({
+              email: user.email,
+              displayName: user.displayName,
+              temp,
+            })
+            .then(() => {
+              setIsLoggedIn(true);
+              setloginTemp(temp);
+              setloginID(user.uid);
+              setloginDisplayName(user.displayName);
+            })
+            .catch((error) => {
+              setError("구글메일을 다시 확인해주세요");
+            });
+        }
+      });
+    });
+  };
+
+  //구글 회원가입
   const handleGoogleSignup = (e) => {
     e.preventDefault();
 
@@ -60,7 +103,7 @@ function Login(props) {
       .then((result) => {
         const credential = result.credential;
         const user = result.user;
-        const { displayName, email } = user;
+        const { nickname, email } = user;
 
         // Check if the user already exists in Firestore
         firestore
@@ -77,7 +120,7 @@ function Login(props) {
                 .doc(user.uid)
                 .set({
                   email,
-                  displayName,
+                  nickname,
                   temp,
                 })
                 .then(() => {
@@ -138,11 +181,18 @@ function Login(props) {
           </button>
         </form>
         <div className={classes.buttonContainer}>
+          <button
+            type="button"
+            className={classes.button2}
+            onClick={handleGoogleLogin}
+          >
+            구글 로그인
+          </button>
           <button className={classes.button2}>
             <Link href={"/sign"}>이메일 가입</Link>
           </button>
           <button onClick={handleGoogleSignup} className={classes.button2}>
-            Google로 가입
+            구글로 가입
           </button>
         </div>
       </div>

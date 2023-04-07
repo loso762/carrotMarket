@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import ChatPreview from "./chatPreview";
 
 function ChatListForm(props) {
-  const { loginDisplayName } = useContext(UserContext);
+  const { loginDisplayName, isLoggedIn } = useContext(UserContext);
   const [chatList, setChatList] = useState([]);
 
   useEffect(() => {
@@ -33,11 +33,17 @@ function ChatListForm(props) {
   return (
     <>
       <header className={classes.header}>채팅</header>
-      <ul className={classes.chatul}>
-        {chatList.map((c) => {
-          return <ChatPreview c={c} key={c.id} />;
-        })}
-      </ul>
+      {!isLoggedIn ? (
+        <div className={classes.notLogin}>로그인이 필요해요!</div>
+      ) : chatList.length === 0 ? (
+        <div className={classes.notLogin}>채팅을 시작해 보세요!</div>
+      ) : (
+        <ul className={classes.chatul}>
+          {chatList.map((c) => {
+            return <ChatPreview c={c} key={c.id} />;
+          })}
+        </ul>
+      )}
     </>
   );
 }

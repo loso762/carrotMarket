@@ -30,7 +30,7 @@ export async function getStaticProps(context) {
 
   const Productlist = await getDocs(collection(firestore, "products"));
 
-  if (section == "likes") {
+  if (section == "likes" && section == "sell") {
     ProductsData = [];
   }
 

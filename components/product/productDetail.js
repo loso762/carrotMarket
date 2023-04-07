@@ -49,7 +49,8 @@ function ProductDetail({ data, id }) {
     tempImoticon = "😍";
   }
 
-  const LikeBtnHandler = async (e) => {
+  //좋아요버튼 클릭시
+  const likeBtnHandler = async (e) => {
     let updatedNumber = data.likes;
 
     if (isLike == false) {
@@ -66,12 +67,14 @@ function ProductDetail({ data, id }) {
     setIsLike((prev) => !prev);
   };
 
+  //게시물삭제
   const deleteBtnHandler = () => {
     deleteDoc(doc(firestore, "products", id));
     router.push(`/${data.category}`);
   };
 
-  async function ClickLikeButton() {
+  //채팅버튼 클릭시
+  async function chatBtnHandler() {
     if (!isLoggedIn) {
       alert("로그인을 해주세요!");
       return;
@@ -90,7 +93,7 @@ function ProductDetail({ data, id }) {
       }
     );
 
-    router.push("/Chat");
+    router.push(`/Chat/${loginDisplayName}_${data.userName}`);
   }
 
   return (
@@ -165,7 +168,7 @@ function ProductDetail({ data, id }) {
         </div>
 
         <div className={classes.footer}>
-          <button onClick={LikeBtnHandler} className={classes.likeButton}>
+          <button onClick={likeBtnHandler} className={classes.likeButton}>
             {isLike ? (
               <AiFillHeart className={classes.fill} />
             ) : (
@@ -177,7 +180,7 @@ function ProductDetail({ data, id }) {
             className={`${classes.chatButton} ${
               !isLoggedIn && classes.disabled
             }`}
-            onClick={ClickLikeButton}
+            onClick={chatBtnHandler}
           >
             채팅하기
           </button>

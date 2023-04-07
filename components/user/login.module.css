@@ -79,7 +79,8 @@
   position: relative;
 }
 
-.button2:first-child::after {
+.button2:first-child::after,
+.button2:nth-child(2)::after {
   display: block;
   width: 1px;
   height: 40%;

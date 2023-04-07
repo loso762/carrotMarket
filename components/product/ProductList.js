@@ -13,19 +13,10 @@ function ProductList({ list, range }) {
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [IsScroll, setIsScroll] = useState(false);
 
+  // //스크롤 시에 글쓰기 버튼 애니메이션
   const handleScroll = () => {
     setIsScroll(true);
   };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      window.addEventListener("scroll", handleScroll);
-    }, 500);
-    return () => {
-      clearInterval(timer);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     //내 근처 매물 불러오기
