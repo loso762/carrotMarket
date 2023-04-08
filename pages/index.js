@@ -1,4 +1,3 @@
-import { ProductContextProvider } from "@/components/context/product-context";
 import React, { useContext } from "react";
 import FooterMenu from "@/components/layout/FooterMenu";
 import Mypage from "@/components/user/mypage";

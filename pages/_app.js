@@ -4,10 +4,10 @@ import { UserContextProvider } from "@/components/context/user-context";
 
 export default function App({ Component, pageProps }) {
   return (
-    <UserContextProvider>
-      <ProductContextProvider>
+    <ProductContextProvider>
+      <UserContextProvider>
         <Component {...pageProps} />
-      </ProductContextProvider>
-    </UserContextProvider>
+      </UserContextProvider>
+    </ProductContextProvider>
   );
 }

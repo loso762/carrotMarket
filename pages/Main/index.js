@@ -20,7 +20,7 @@ function Main(props) {
     setOnSearch(true);
   };
 
-  function Productsfilter(filter) {
+  async function Productsfilter(filter) {
     const tempData = [];
 
     props.ProductsData.forEach((product) => {

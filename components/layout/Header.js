@@ -1,8 +1,10 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef } from "react";
 import { BsSearch } from "react-icons/bs";
 import { IoIosArrowBack } from "react-icons/io";
 import classes from "./Header.module.css";
 import ProductContext from "../context/product-context";
+import { firestore } from "@/components/firebase";
+import { doc, updateDoc, setDoc, increment, getDoc } from "firebase/firestore";
 
 function Header({
   Productsfilter,
@@ -16,9 +18,20 @@ function Header({
 
   const { SelectedCategory } = useContext(ProductContext);
 
-  const SubmitHandler = (e) => {
+  const SubmitHandler = async (e) => {
     e.preventDefault();
     Productsfilter(searchRef.current.value);
+
+    const searchListRef = doc(firestore, "searchlist", searchRef.current.value);
+    const data = await getDoc(searchListRef);
+
+    if (data.data()) {
+      updateDoc(searchListRef, { num: increment(1) });
+    } else {
+      setDoc(searchListRef, { num: 1 });
+    }
+
+    searchRef.current.value = "";
   };
 
   let searchBtn;

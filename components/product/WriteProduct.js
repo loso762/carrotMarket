@@ -127,6 +127,7 @@ function WriteProduct() {
       temp: loginTemp,
       ID: loginID,
       chat: [],
+      show: 0,
     };
 
     //사진은 firestorage로 나머지 정보는 firestore로 업로드

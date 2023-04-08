@@ -15,7 +15,7 @@ function FooterMenu(props) {
   function clickHomeBtn() {
     setTimeout(() => {
       setSelectedCategory("카테고리");
-    }, 300);
+    }, 500);
   }
 
   return (

@@ -56,7 +56,6 @@
   justify-content: right;
   align-items: center;
   font-size: 18px;
-  z-index: 99;
   width: 50px;
   height: 30px;
   padding-right: 5px;
@@ -65,6 +64,7 @@
 .likeButton:hover svg {
   fill: rgb(238, 39, 208);
 }
+
 .likeButton svg {
   width: 24px;
   height: 24px;
@@ -82,6 +82,7 @@
   display: flex;
   align-items: center;
 }
+
 .soldout {
   background-color: gray;
   width: 55px;

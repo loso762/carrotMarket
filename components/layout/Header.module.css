@@ -82,7 +82,7 @@
 
 .ProductsHeader .searchBox svg {
   position: relative;
-  top: 0;
+  top: 2px;
   left: 0;
   width: 16px;
   height: 16px;

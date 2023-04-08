@@ -21,7 +21,7 @@ function ProductDetailPage(props) {
   return (
     <>
       <ProductDetail
-        data={props.ProductData}
+        item={props.ProductData}
         id={router.query.productId}
         url={image}
         isLoading={isLoading}

@@ -1,14 +1,15 @@
 import classes from "./ProductDetail.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
 import ProductContext from "../context/product-context";
+import UserContext from "../context/user-context";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
-import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
+import { BiDotsVerticalRounded } from "react-icons/bi";
+import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
 import { firestore } from "../firebase";
-import UserContext from "../context/user-context";
+import { ClipLoader } from "react-spinners";
 import {
   doc,
   setDoc,
@@ -16,7 +17,6 @@ import {
   updateDoc,
   collection,
 } from "firebase/firestore";
-import { ClipLoader } from "react-spinners";
 
 //시간 구하는 함수
 function calcTime(time) {
@@ -43,7 +43,7 @@ function ImoticonHandler(temp) {
   return tempImoticon;
 }
 
-function ProductDetail({ data, id, url, isLoading }) {
+function ProductDetail({ item, id, url, isLoading }) {
   const router = useRouter();
   const { setIsEdit, SelectedCategory, setSelectedCategory } =
     useContext(ProductContext);
@@ -55,101 +55,110 @@ function ProductDetail({ data, id, url, isLoading }) {
     loginID,
   } = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
+  const [LikeNum, setLikeNum] = useState(item.likes);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
   const buyerRef = useRef();
 
   let price;
-  if (data.price == "나눔") {
-    price = data.price;
-  } else if (data.price) {
-    price = `${data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
+  if (item.price == "나눔") {
+    price = item.price;
+  } else if (item.price) {
+    price = `${item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
   }
 
   useEffect(() => {
-    likeProducts.some((like) => like.id == id) && setIsLike(true);
+    if (likeProducts.some((like) => like.id == id)) {
+      setIsLike(true);
+    }
   }, [id, likeProducts]);
 
-  //좋아요버튼 클릭시
-  async function likeBtnHandler(e) {
-    let updatedNumber = data.likes;
+  //좋아요 클릭
+  function likeBtnHandler(e) {
+    e.stopPropagation();
 
-    if (isLike == false) {
-      updatedNumber += 1;
-      setlikeProducts((prev) => [
-        ...prev,
-        {
-          id: id,
-          data: {
-            ...data,
-            likes: updatedNumber,
-          },
-        },
-      ]);
-    } else if (isLike == true) {
-      updatedNumber -= 1;
-      setlikeProducts((prev) => prev.filter((item) => item.id !== id));
+    if (isLoggedIn) {
+      if (loginDisplayName == item.userName) {
+        errorHandler();
+        return;
+      } else {
+        if (isLike) {
+          setDoc(doc(firestore, "products", id), {
+            ...item,
+            likes: LikeNum - 1,
+          });
+
+          deleteDoc(
+            doc(collection(firestore, "users", loginID, "likesproducts"), id)
+          );
+          setIsLike(false);
+          setLikeNum((prev) => prev - 1);
+        } else if (!isLike) {
+          setDoc(doc(firestore, "products", id), {
+            ...item,
+            likes: LikeNum + 1,
+          });
+
+          setDoc(
+            doc(collection(firestore, "users", loginID, "likesproducts"), id),
+            {
+              ...item,
+              likes: LikeNum + 1,
+            }
+          );
+
+          setIsLike(true);
+          setLikeNum((prev) => prev + 1);
+        }
+      }
+    } else {
+      router.push("/");
     }
-
-    await setDoc(doc(firestore, "products", id), {
-      ...data,
-      likes: updatedNumber,
-    });
-
-    const userDocRef = doc(
-      collection(firestore, "users", loginID, "likesproducts"),
-      id
-    );
-
-    await setDoc(userDocRef, {
-      ...data,
-      likes: updatedNumber,
-    });
-
-    setIsLike((prev) => !prev);
   }
 
-  //채팅버튼 클릭시
+  //채팅버튼 클릭
   async function chatBtnHandler() {
     if (!isLoggedIn) {
       alert("로그인을 해주세요!");
       return;
     }
 
-    if (data.soldout) {
+    if (item.soldout) {
       alert("판매완료된 상품입니다!");
       return;
     }
-    if (data.userName == loginDisplayName) {
+    if (item.userName == loginDisplayName) {
+      alert("본인과는 채팅하실수 없습니다!");
       return;
     }
+
     await setDoc(
       doc(
         firestore,
         "chat",
-        `${loginDisplayName}_${data.userName}-${data.title}`
+        `${loginDisplayName}_${item.userName}-${item.title}`
       ),
       {
-        party: [loginDisplayName, data.userName],
+        party: [loginDisplayName, item.userName],
         product: id,
         img: url,
-        dong: data.dong,
-        title: data.title,
+        dong: item.dong,
+        title: item.title,
         date: Date.now(),
       }
     );
 
     //채팅목록에 추가
-    if (!data.chat.includes(loginDisplayName)) {
+    if (!item.chat.includes(loginDisplayName)) {
       updateDoc(doc(firestore, "products", id), {
-        chat: [...data.chat, loginDisplayName],
+        chat: [...item.chat, loginDisplayName],
       });
     }
 
-    router.push(`/Chat/${loginDisplayName}_${data.userName}-${data.title}`);
+    router.push(`/Chat/${loginDisplayName}_${item.userName}-${item.title}`);
   }
 
-  //게시물삭제
+  //게시물 삭제
   async function deleteBtnHandler() {
     // products 컬렉션에서 삭제
     deleteDoc(doc(firestore, "products", id));
@@ -166,7 +175,7 @@ function ProductDetail({ data, id, url, isLoading }) {
       setlikeProducts((prev) => prev.filter((product) => product.id !== id));
     }
 
-    router.push(`/${data.category}`);
+    router.push(`/${item.category}`);
   }
 
   //판매완료
@@ -199,7 +208,7 @@ function ProductDetail({ data, id, url, isLoading }) {
           <div className={classes.popup}>
             누구와 거래하셨나요?
             <select ref={buyerRef}>
-              {data.chat.map((chatPartner, idx) => {
+              {item.chat.map((chatPartner, idx) => {
                 return (
                   <option value={chatPartner} key={idx}>
                     {chatPartner}
@@ -226,7 +235,7 @@ function ProductDetail({ data, id, url, isLoading }) {
         </Link>
 
         {/* 게시글 작성자만 게시글 수정 및 삭제 가능하도록 하는 코드*/}
-        {loginDisplayName == data.userName &&
+        {loginDisplayName == item.userName &&
           (!menuOpen ? (
             <button onClick={() => setMenuOpen((prev) => !prev)}>
               <BiDotsVerticalRounded />
@@ -246,7 +255,7 @@ function ProductDetail({ data, id, url, isLoading }) {
       ) : (
         <section className={classes.detail} onClick={() => setMenuOpen(false)}>
           <figure className={classes.Img}>
-            <img src={url} alt={data.title} />
+            <Image src={url} alt={item.title} width={412} height={335} />
           </figure>
 
           <div className={classes.userInfo}>
@@ -257,20 +266,20 @@ function ProductDetail({ data, id, url, isLoading }) {
                 width={40}
                 height={40}
               />
-              <p>{data.userName}</p>
-              <p>{data.dong}</p>
+              <p>{item.userName}</p>
+              <p>{item.dong}</p>
             </div>
 
             <div className={classes.temperatureBox}>
               <div className={classes.tempInfo}>
                 <div className={classes.temperature}>
-                  {data.temp}°C
+                  {item.temp}°C
                   <div className={classes.tempBar}>
-                    <p style={{ width: `${(data.temp / 80) * 100}%` }} />
+                    <p style={{ width: `${(item.temp / 80) * 100}%` }} />
                   </div>
                 </div>
                 <div className={classes.tempImoticon}>
-                  {ImoticonHandler(data.temp)}
+                  {ImoticonHandler(item.temp)}
                 </div>
               </div>
               <p className={classes.tempEx}>매너온도</p>
@@ -278,12 +287,15 @@ function ProductDetail({ data, id, url, isLoading }) {
           </div>
 
           <div className={classes.productInfo}>
-            <h1>{data.title}</h1>
+            <h1>{item.title}</h1>
             <div>
-              <Link href={`/${data.category}`}>{data.category} </Link>
-              <p>·{calcTime(data.time)} 전</p>
+              <Link href={`/${item.category}`}>{item.category} </Link>
+              <p>·{calcTime(item.time)} 전</p>
             </div>
-            <p>{data.description}</p>
+            <p>{item.description}</p>
+            <p className={classes.likeInfo}>
+              관심 {LikeNum} · 조회 {item.show}
+            </p>
           </div>
 
           <div className={classes.footer}>
@@ -296,15 +308,17 @@ function ProductDetail({ data, id, url, isLoading }) {
             </button>
             <p className={classes.price}>
               {price}
-              {data.soldout && <p className={classes.soldout}>판매완료</p>}
+              {item.soldout && <p className={classes.soldout}>판매완료</p>}
             </p>
             <button
               className={`${classes.chatButton} ${
-                !isLoggedIn || (data.soldout && classes.disabled)
+                !isLoggedIn || (item.soldout && classes.disabled)
               }`}
               onClick={chatBtnHandler}
             >
-              채팅하기
+              {item.userName == loginDisplayName
+                ? "대화중인 채팅방"
+                : "채팅하기"}
             </button>
           </div>
         </section>
