@@ -32,6 +32,7 @@
   text-align: left;
   width: calc(100% - 115px);
   padding: 0.8rem;
+  position: relative;
 }
 
 .content h4 {
@@ -52,8 +53,13 @@
   right: 20px;
   bottom: 10px;
   display: flex;
+  justify-content: right;
   align-items: center;
   font-size: 18px;
+  z-index: 99;
+  width: 50px;
+  height: 30px;
+  padding-right: 5px;
 }
 
 .likeButton svg {

@@ -65,7 +65,7 @@ function ChatPreview({ c, key, LoadingEnd }) {
   }
 
   return (
-    <li className={classes.chatli} onClick={openChatHandler} key={key}>
+    <li className={classes.chatli} onClick={openChatHandler}>
       <img src="/images/profile.jpg" alt="profile" />
       <div>
         <p>{filteringName(c.id, c.title, loginDisplayName)}</p>

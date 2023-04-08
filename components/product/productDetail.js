@@ -9,7 +9,13 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IoIosArrowBack } from "react-icons/io";
 import { firestore } from "../firebase";
 import UserContext from "../context/user-context";
-import { doc, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  deleteDoc,
+  updateDoc,
+  collection,
+} from "firebase/firestore";
 import { ClipLoader } from "react-spinners";
 
 //시간 구하는 함수
@@ -41,8 +47,13 @@ function ProductDetail({ data, id, url, isLoading }) {
   const router = useRouter();
   const { setIsEdit, SelectedCategory, setSelectedCategory } =
     useContext(ProductContext);
-  const { loginDisplayName, likeProducts, isLoggedIn, setlikeProducts } =
-    useContext(UserContext);
+  const {
+    loginDisplayName,
+    likeProducts,
+    isLoggedIn,
+    setlikeProducts,
+    loginID,
+  } = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
@@ -81,6 +92,16 @@ function ProductDetail({ data, id, url, isLoading }) {
     }
 
     await setDoc(doc(firestore, "products", id), {
+      ...data,
+      likes: updatedNumber,
+    });
+
+    const userDocRef = doc(
+      collection(firestore, "users", loginID, "likesproducts"),
+      id
+    );
+
+    await setDoc(userDocRef, {
       ...data,
       likes: updatedNumber,
     });
@@ -129,8 +150,22 @@ function ProductDetail({ data, id, url, isLoading }) {
   }
 
   //게시물삭제
-  function deleteBtnHandler() {
+  async function deleteBtnHandler() {
+    // products 컬렉션에서 삭제
     deleteDoc(doc(firestore, "products", id));
+
+    // 찜한 목록에 있으면 user의 likesproducts 컬렉션에서 삭제
+    if (likeProducts.some((arr) => arr.id == id)) {
+      const userDocRef = doc(
+        collection(firestore, "users", loginID, "likesproducts"),
+        id
+      );
+
+      await deleteDoc(userDocRef);
+
+      setlikeProducts((prev) => prev.filter((product) => product.id !== id));
+    }
+
     router.push(`/${data.category}`);
   }
 

@@ -21,7 +21,7 @@ export const ProductContextProvider = (props) => {
 
     const mapScript = document.createElement("script");
     mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=ed86928ac206d7e1c95266631cccfd91&libraries=services&autoload=false`;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KakaoMap_API_Key}&libraries=services&autoload=false`;
     document.head.appendChild(mapScript);
 
     const onLoadKakaoMap = () => {
@@ -32,7 +32,7 @@ export const ProductContextProvider = (props) => {
             const dongAddress = result[0].region_3depth_name;
             setDong(dongAddress);
           } else {
-            console.error("Failed to get the dong address");
+            console.error("주소 불러오기 실패!");
           }
         });
       });

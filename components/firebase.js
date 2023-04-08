@@ -4,7 +4,7 @@ import "firebase/compat/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBkujqvCNPtbN5EQME3QnUEuXYVwryMWQ4",
+  apiKey: process.env.NEXT_PUBLIC_Firebase_API_Key,
   authDomain: "carrot-621db.firebaseapp.com",
   databaseURL: "https://carrot-621db-default-rtdb.firebaseio.com",
   projectId: "carrot-621db",

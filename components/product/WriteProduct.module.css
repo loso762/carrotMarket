@@ -1,16 +1,19 @@
 .header {
   position: relative;
   padding: 5px 0 10px;
-  height: 60px;
+  height: 70px;
   line-height: 30px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgb(60, 60, 60);
+  font-size: 20px;
 }
+
 .header svg {
-  width: 25px;
-  height: 25px;
-  margin-right: 15px;
+  width: 28px;
+  height: 28px;
+  margin-right: 20px;
+  margin-left: 10px;
 }
 
 .form {
@@ -48,7 +51,7 @@
   color: rgb(140, 140, 140);
   margin-bottom: 20px;
   border-bottom: 1px solid rgb(60, 60, 60);
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .form input,
@@ -56,6 +59,7 @@
   font: inherit;
   padding: 0.25rem;
   padding-left: 5px;
+  font-size: 18px;
 }
 
 .actions {
@@ -99,13 +103,57 @@
   width: 15px;
   position: relative;
 }
+
 .priceBox label {
   display: block;
   width: 40px;
   height: 100%;
   margin-right: 5px;
 }
-.form input[type="file"] {
-  font-size: 14px;
-  color: rgb(140, 140, 140);
+
+.form p.filebox {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 5px 15px;
+  margin: 0 auto;
+}
+
+.filebox .uploadName {
+  display: inline-block;
+  height: 40px;
+  padding: 0 10px;
+  vertical-align: middle;
+  border: 1px solid rgb(60, 60, 60);
+  width: calc(100% - 90px);
+  color: rgb(130, 130, 130);
+  border-radius: 5px;
+}
+
+.filebox label {
+  background-color: rgb(130, 130, 130);
+  cursor: pointer;
+  width: 60px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 23px;
+  border-radius: 5px;
+  border: 1px solid rgb(180, 180, 180);
+}
+
+.filebox input[type="file"] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+}
+
+.priceBox input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }

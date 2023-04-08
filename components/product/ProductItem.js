@@ -32,6 +32,7 @@ function ProductItem({ id, item, likes }) {
   //좋아요 버튼 클릭시
   const likeBtnHandler = async (e) => {
     e.stopPropagation();
+    console.log("click");
 
     if (!isLoggedIn) {
       router.push("/");

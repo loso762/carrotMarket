@@ -12,6 +12,7 @@ function ProductList({ list, range, img }) {
     useContext(UserContext);
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
+  const [showList, setShowList] = useState([]);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -25,18 +26,27 @@ function ProductList({ list, range, img }) {
   }, [nearbyLocationsFn, SelectedCategory]);
 
   //섹션에 따라 다른 리스트 보여주기
-  let showList;
-  if (SelectedCategory == "Near") {
-    showList = nearProduct;
-  } else if (SelectedCategory == "관심목록") {
-    showList = likeProducts;
-  } else if (SelectedCategory == "판매내역") {
-    showList = sellProducts;
-  } else if (SelectedCategory == "구매내역") {
-    showList = buyProducts;
-  } else {
-    showList = list;
-  }
+
+  useEffect(() => {
+    if (SelectedCategory == "Near") {
+      setShowList(nearProduct);
+    } else if (SelectedCategory == "관심목록") {
+      setShowList(likeProducts);
+    } else if (SelectedCategory == "판매내역") {
+      setShowList(sellProducts);
+    } else if (SelectedCategory == "구매내역") {
+      setShowList(buyProducts);
+    } else {
+      setShowList(list);
+    }
+  }, [
+    SelectedCategory,
+    likeProducts,
+    sellProducts,
+    buyProducts,
+    list,
+    nearProduct,
+  ]);
 
   const writeBtnOn =
     SelectedCategory !== "구매내역" &&

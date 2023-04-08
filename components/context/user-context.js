@@ -101,6 +101,7 @@ export const UserContextProvider = (props) => {
         likeProducts,
         sellProducts,
         buyProducts,
+        setsellProducts,
         setlikeProducts,
       }}
     >
