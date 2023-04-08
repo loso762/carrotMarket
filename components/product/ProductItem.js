@@ -30,9 +30,8 @@ function ProductItem({ id, item, likes }) {
   }, [likes]);
 
   //좋아요 버튼 클릭시
-  const likeBtnHandler = async (e) => {
+  async function likeBtnHandler(e) {
     e.stopPropagation();
-    console.log("click");
 
     if (!isLoggedIn) {
       router.push("/");
@@ -86,7 +85,7 @@ function ProductItem({ id, item, likes }) {
       deleteDoc(productDocRef);
       setlikesNumber((prev) => prev - 1);
     }
-  };
+  }
 
   function showDetailsHandler() {
     router.push(`${item.category}/${id}`);
@@ -129,11 +128,7 @@ function ProductItem({ id, item, likes }) {
         </div>
       </div>
 
-      <button
-        onClick={likeBtnHandler}
-        className={classes.likeButton}
-        disabled={isLoggedIn}
-      >
+      <button onClick={likeBtnHandler} className={classes.likeButton}>
         {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
         {likesNumber}
       </button>
