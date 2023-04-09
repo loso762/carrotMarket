@@ -1,19 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import classes from "./chatPreview.module.css";
-import { firestore } from "@/components/firebase";
-import {
-  query,
-  orderBy,
-  limit,
-  collection,
-  onSnapshot,
-} from "firebase/firestore";
+import {firestore} from "@/components/firebase";
+import Image from "next/image";
+import {query, orderBy, limit, collection, onSnapshot} from "firebase/firestore";
 import UserContext from "../context/user-context";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
-function ChatPreview({ c, key, LoadingEnd }) {
+function ChatPreview({c, LoadingEnd}) {
   const router = useRouter();
-  const { loginDisplayName } = useContext(UserContext);
+  const {loginDisplayName} = useContext(UserContext);
   const [lastMsg, setLastMsg] = useState("");
   const [lastTime, setlastTime] = useState("");
 
@@ -54,11 +49,12 @@ function ChatPreview({ c, key, LoadingEnd }) {
           calcTime(latestData.realtime);
         }
       });
+
       LoadingEnd;
     }
 
     fetchData();
-  }, [c.id]);
+  }, [c.id, LoadingEnd]);
 
   function openChatHandler() {
     router.push(`/Chat/${c.id}`);
@@ -66,13 +62,13 @@ function ChatPreview({ c, key, LoadingEnd }) {
 
   return (
     <li className={classes.chatli} onClick={openChatHandler}>
-      <img src="/images/profile.jpg" alt="profile" />
+      <Image src="/images/profile.jpg" alt="profile" width={40} height={40} />
       <div>
         <p>{filteringName(c.id, c.title, loginDisplayName)}</p>
         {lastTime} 전 · {c.dong}
       </div>
       <p>{lastMsg}</p>
-      <img src={c.img} alt="productImg" />
+      <Image src={c.img} alt="productImg" width={40} height={40} />
     </li>
   );
 }

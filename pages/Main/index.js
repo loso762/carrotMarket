@@ -1,9 +1,9 @@
 import Header from "@/components/layout/Header";
-import React, { useState } from "react";
-import Categories from "../../components/main/Categories";
+import React, {useState} from "react";
+import Category from "../../components/main/Category";
 import FooterMenu from "@/components/layout/FooterMenu";
-import { firestore } from "@/components/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import {firestore} from "@/components/firebase";
+import {collection, getDocs} from "firebase/firestore";
 import SearchList from "@/components/product/SearchList";
 
 function Main(props) {
@@ -20,6 +20,7 @@ function Main(props) {
     setOnSearch(true);
   };
 
+  //검색어로 제품 필터링하기
   async function Productsfilter(filter) {
     const tempData = [];
 
@@ -40,7 +41,7 @@ function Main(props) {
         searchBoxOpen={searchBoxOpen}
         Productsfilter={Productsfilter}
       />
-      {onSearch ? <SearchList list={filterdProducts} /> : <Categories />}
+      {onSearch ? <SearchList list={filterdProducts} /> : <Category />}
       <FooterMenu searchBoxCancel={searchBoxCancel} />
     </>
   );
@@ -54,16 +55,11 @@ export async function getStaticProps(context) {
   const Productlist = await getDocs(collection(firestore, "products"));
 
   Productlist.forEach((doc) => {
-    ProductsData.push({
-      id: doc.id,
-      data: doc.data(),
-    });
+    ProductsData.push({id: doc.id, data: doc.data()});
   });
 
   return {
-    props: {
-      ProductsData,
-    },
+    props: {ProductsData},
     revalidate: 1,
   };
 }

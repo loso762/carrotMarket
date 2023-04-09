@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { firestore } from "../firebase";
+import React, {createContext, useState, useEffect, useContext} from "react";
+import {collection, onSnapshot, query, where} from "firebase/firestore";
+import {firestore} from "../firebase";
 
 const UserContext = createContext({});
 export default UserContext;
@@ -15,20 +15,12 @@ export const UserContextProvider = (props) => {
   //찜한 매물 불러오기
   useEffect(() => {
     if (isLoggedIn) {
-      const likesDocRef = collection(
-        firestore,
-        "users",
-        loginID,
-        "likesproducts"
-      );
+      const likesDocRef = collection(firestore, "users", loginID, "likesproducts");
 
       const unsubscribe = onSnapshot(likesDocRef, (snapshot) => {
         const ProductsData = [];
         snapshot.forEach((doc) => {
-          ProductsData.push({
-            id: doc.id,
-            data: doc.data(),
-          });
+          ProductsData.push({id: doc.id, data: doc.data()});
         });
         setlikeProducts(ProductsData);
       });
@@ -50,8 +42,7 @@ export const UserContextProvider = (props) => {
         setloginTemp,
         likeProducts,
         setlikeProducts,
-      }}
-    >
+      }}>
       {props.children}
     </UserContext.Provider>
   );

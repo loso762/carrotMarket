@@ -1,8 +1,8 @@
-import { useState, useCallback, useContext } from "react";
+import {useState, useCallback, useContext} from "react";
 import ProductContext from "@/components/context/product-context";
 
 export const useNearbyLocations = (range, list) => {
-  const { longitude: myLng, latitude: myLat } = useContext(ProductContext);
+  const {longitude: myLng, latitude: myLat} = useContext(ProductContext);
 
   const [nearProduct, setNearProduct] = useState([]);
 
@@ -23,9 +23,7 @@ export const useNearbyLocations = (range, list) => {
 
   const nearbyLocationsFn = useCallback(() => {
     const NearList = list.filter(
-      (arr) =>
-        calcDistance(myLat, myLng, arr.data.Latitude, arr.data.Longitude) <=
-        range
+      (arr) => calcDistance(myLat, myLng, arr.data.Latitude, arr.data.Longitude) <= range
     );
 
     NearList.sort(function (a, b) {

@@ -1,17 +1,17 @@
 import classes from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
-import { useNearbyLocations } from "@/Hooks/useNearbylocation";
+import {useContext, useEffect, useState} from "react";
+import {useNearbyLocations} from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
-import { firestore } from "../firebase";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import {firestore} from "../firebase";
+import {collection, onSnapshot, query, where} from "firebase/firestore";
+import Image from "next/image";
 
-function ProductList({ list, range }) {
-  const { setIsEdit, SelectedCategory } = useContext(ProductContext);
-  const { isLoggedIn, likeProducts, loginDisplayName } =
-    useContext(UserContext);
+function ProductList({list, range}) {
+  const {setIsEdit, SelectedCategory} = useContext(ProductContext);
+  const {isLoggedIn, likeProducts, loginDisplayName} = useContext(UserContext);
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
   const [showList, setShowList] = useState([]);
@@ -44,10 +44,7 @@ function ProductList({ list, range }) {
         const ProductsData = [];
 
         snapshot.forEach((doc) => {
-          ProductsData.push({
-            id: doc.id,
-            data: doc.data(),
-          });
+          ProductsData.push({id: doc.id, data: doc.data()});
         });
         setShowList(ProductsData);
       });
@@ -61,10 +58,7 @@ function ProductList({ list, range }) {
         const unsubscribe = onSnapshot(q, (snapshot) => {
           const ProductsData = [];
           snapshot.forEach((doc) => {
-            ProductsData.push({
-              id: doc.id,
-              data: doc.data(),
-            });
+            ProductsData.push({id: doc.id, data: doc.data()});
           });
           setShowList(ProductsData);
         });
@@ -75,14 +69,7 @@ function ProductList({ list, range }) {
       setShowList(list);
     }
     setIsLoading(false);
-  }, [
-    SelectedCategory,
-    likeProducts,
-    list,
-    nearProduct,
-    isLoggedIn,
-    loginDisplayName,
-  ]);
+  }, [SelectedCategory, likeProducts, list, nearProduct, isLoggedIn, loginDisplayName]);
 
   const nowriteCategory = ["구매내역", "판매내역", "관심목록"];
   const writeBtnOff = nowriteCategory.includes(SelectedCategory);
@@ -99,7 +86,7 @@ function ProductList({ list, range }) {
       {/* 게시물리스트 있을때와 없을때 */}
       {!isLoading && showList.length === 0 ? (
         <div className={classes.empty}>
-          <img src="/images/empty.png" />텅
+          <Image src="/images/empty.png" alt="" width={100} height={100} />텅
         </div>
       ) : (
         <ul className={classes.list} onScroll={handleScroll}>
@@ -124,8 +111,7 @@ function ProductList({ list, range }) {
           href="WriteProduct"
           className={`${classes.writeButton} ${isScroll && classes.onScroll}`}
           onClick={() => setIsEdit(false)}
-          onMouseOver={() => setIsScroll(false)}
-        >
+          onMouseOver={() => setIsScroll(false)}>
           {isScroll ? "+" : "+ 글쓰기"}
         </Link>
       )}

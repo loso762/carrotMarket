@@ -1,22 +1,23 @@
-import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-import { firestore, storage } from "../firebase";
+import {useRouter} from "next/router";
+import {useContext, useEffect, useState} from "react";
+import {AiOutlineHeart, AiFillHeart} from "react-icons/ai";
+import {firestore, storage} from "../firebase";
 import classes from "./ProductItem.module.css";
-import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
+import {collection, doc, setDoc, deleteDoc} from "firebase/firestore";
 import UserContext from "../context/user-context";
-import { ref, getDownloadURL } from "firebase/storage";
+import {ref, getDownloadURL} from "firebase/storage";
 import Image from "next/image";
-import { ClipLoader } from "react-spinners";
+import {ClipLoader} from "react-spinners";
 
-function ProductItem({ id, item, isliked, errorHandler }) {
+function ProductItem({id, item, isliked, errorHandler}) {
   const router = useRouter();
   const [isLike, setIsLike] = useState(false);
   const [LikeNum, setLikeNum] = useState(item.likes);
   const [image, setImage] = useState();
 
-  const { loginID, loginDisplayName, isLoggedIn } = useContext(UserContext);
+  const {loginID, loginDisplayName, isLoggedIn} = useContext(UserContext);
 
+  //firebase storage에서 이미지 가져오기
   useEffect(() => {
     const imageRef = ref(storage, `images/${id}`);
     getDownloadURL(imageRef).then((url) => {
@@ -40,30 +41,18 @@ function ProductItem({ id, item, isliked, errorHandler }) {
       } else {
         if (isLike) {
           setIsLike(false);
-          setDoc(doc(firestore, "products", id), {
-            ...item,
-            likes: LikeNum - 1,
-          });
-
-          deleteDoc(
-            doc(collection(firestore, "users", loginID, "likesproducts"), id)
-          );
+          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum - 1});
+          deleteDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id));
 
           setLikeNum((prev) => prev - 1);
         } else if (!isLike) {
           setIsLike(true);
-          setDoc(doc(firestore, "products", id), {
+          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum + 1});
+
+          setDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id), {
             ...item,
             likes: LikeNum + 1,
           });
-
-          setDoc(
-            doc(collection(firestore, "users", loginID, "likesproducts"), id),
-            {
-              ...item,
-              likes: LikeNum + 1,
-            }
-          );
 
           setLikeNum((prev) => prev + 1);
         }
@@ -80,21 +69,11 @@ function ProductItem({ id, item, isliked, errorHandler }) {
     let show = item.show || 0;
     show += 1;
 
-    await setDoc(doc(firestore, "products", id), {
-      ...item,
-      show: show,
-    });
+    await setDoc(doc(firestore, "products", id), {...item, show: show});
 
     if (isLoggedIn && isliked) {
-      const userDocRef = doc(
-        collection(firestore, "users", loginID, "likesproducts"),
-        id
-      );
-
-      await setDoc(userDocRef, {
-        ...item,
-        show: show,
-      });
+      const userDocRef = doc(collection(firestore, "users", loginID, "likesproducts"), id);
+      setDoc(userDocRef, {...item, show: show});
     }
 
     router.push(`${item.category}/${id}`);

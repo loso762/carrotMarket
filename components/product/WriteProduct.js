@@ -1,41 +1,18 @@
-import { useRef, useEffect, useState, useContext } from "react";
+import {useRef, useEffect, useState, useContext} from "react";
 import classes from "./WriteProduct.module.css";
-import { useRouter } from "next/router";
-import { IoIosArrowBack } from "react-icons/io";
+import {useRouter} from "next/router";
+import {IoIosArrowBack} from "react-icons/io";
 import ProductContext from "../context/product-context";
-import { firestore, storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {firestore, storage} from "../firebase";
+import {ref, uploadBytes} from "firebase/storage";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 import UserContext from "../context/user-context";
-import { MdAddAPhoto } from "react-icons/md";
-const category = [
-  "카테고리",
-  "디지털기기",
-  "생활가전",
-  "가구",
-  "유아동",
-  "의류",
-  "뷰티",
-  "스포츠",
-  "취미",
-  "도서",
-  "티켓/교환권",
-  "반려동물용품",
-  "식물",
-  "삽니다",
-];
+import {MdAddAPhoto} from "react-icons/md";
 
 function WriteProduct() {
   const router = useRouter();
-  const { isEdit, latitude, longitude, dong, SelectedCategory } =
-    useContext(ProductContext);
-  const {
-    loginDisplayName,
-    loginTemp,
-    loginID,
-    setsellProducts,
-    sellProducts,
-  } = useContext(UserContext);
+  const {isEdit, latitude, longitude, dong, SelectedCategory, category} = useContext(ProductContext);
+  const {loginDisplayName, loginTemp, loginID, setsellProducts} = useContext(UserContext);
   const [isFree, setIsFree] = useState(false);
   //수정일 경우 데이터 가져오기
   const [product, setProduct] = useState({});
@@ -55,18 +32,14 @@ function WriteProduct() {
       async function getData() {
         const docRef = doc(firestore, "products", productId);
         const docSnap = await getDoc(docRef);
-
         setProduct(docSnap.data());
       }
-
       getData();
     }
   }, [productId, isEdit]);
 
   function ImageHandler(e) {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
-    }
+    e.target.files[0] && setImage(e.target.files[0]);
   }
 
   function ImgUpload() {
@@ -81,11 +54,7 @@ function WriteProduct() {
   //db에 새로 올린 게시물 추가하는 함수
   const WriteData = async (newProduct) => {
     try {
-      const docRef = await setDoc(doc(firestore, "products", ProductID), {
-        ...newProduct,
-        likes,
-        time,
-      });
+      await setDoc(doc(firestore, "products", ProductID), {...newProduct, likes, time});
     } catch (e) {
       console.error("게시글 등록 실패", e);
     }
@@ -134,10 +103,8 @@ function WriteProduct() {
     ImgUpload();
     WriteData(newProduct);
 
-    setsellProducts((prev) => [
-      ...prev,
-      { id: now, data: { ...newProduct, time: time, likes: likes } },
-    ]);
+    setsellProducts &&
+      setsellProducts((prev) => [...prev, {id: now, data: {...newProduct, time: time, likes: likes}}]);
 
     router.push("/Main");
   }
@@ -150,23 +117,20 @@ function WriteProduct() {
     }
   }
 
+  category.splice(0, 1, "카테고리");
+
   return (
     <>
       <header className={classes.header}>
-        <IoIosArrowBack onClick={cancelHandler} />{" "}
-        {isEdit ? "수정하기" : "중고거래 글쓰기"}
+        <IoIosArrowBack onClick={cancelHandler} /> {isEdit ? "수정하기" : "중고거래 글쓰기"}
       </header>
 
       <form id="form" className={classes.form} onSubmit={submitHandler}>
         <p>
           <select ref={categoryRef}>
             {category.map((category, idx) => {
-              return product?.category == category ? (
-                <option key={idx} value={category} selected>
-                  {category}
-                </option>
-              ) : (
-                <option key={idx} value={category}>
+              return (
+                <option key={idx} value={category} selected={SelectedCategory == category}>
                   {category}
                 </option>
               );
@@ -189,19 +153,10 @@ function WriteProduct() {
             disabled={isFree}
           />
           <label htmlFor="freeCheck">나눔</label>
-          <input
-            type="checkbox"
-            name="freeCheck"
-            value="0"
-            onClick={() => setIsFree((prev) => !prev)}
-          />
+          <input type="checkbox" name="freeCheck" value="0" onClick={() => setIsFree((prev) => !prev)} />
         </p>
         <p className={classes.filebox}>
-          <input
-            className={classes.uploadName}
-            value={image.name}
-            placeholder="첨부파일"
-          />
+          <input className={classes.uploadName} value={image.name} placeholder="첨부파일" />
           <label htmlFor="file">
             <MdAddAPhoto />
           </label>

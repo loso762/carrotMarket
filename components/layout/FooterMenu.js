@@ -1,48 +1,41 @@
-import React, { useContext } from "react";
-import Link from "next/link";
+import React, {useContext} from "react";
 import classes from "./FooterMenu.module.css";
-import { AiFillHome, AiOutlineHome } from "react-icons/ai";
-import { MdOutlineLocationOn, MdLocationOn } from "react-icons/md";
-import { BsChatDots, BsFillChatDotsFill } from "react-icons/bs";
-import { CgProfile } from "react-icons/cg";
-import { useRouter } from "next/router";
+import {AiFillHome, AiOutlineHome} from "react-icons/ai";
+import {MdOutlineLocationOn, MdLocationOn} from "react-icons/md";
+import {BsChatDots, BsFillChatDotsFill} from "react-icons/bs";
+import {CgProfile} from "react-icons/cg";
+import {useRouter} from "next/router";
 import ProductContext from "../context/product-context";
 
-function FooterMenu(props) {
+function FooterMenu() {
   const router = useRouter();
-  const { setSelectedCategory } = useContext(ProductContext);
+  const {setSelectedCategory} = useContext(ProductContext);
 
   function clickHomeBtn() {
+    router.push("/Main");
     setTimeout(() => {
       setSelectedCategory("카테고리");
-    }, 500);
+    }, 400);
+  }
+
+  function clickNearBtn() {
+    router.push("/Near");
+    setSelectedCategory("Near");
   }
 
   return (
     <ul className={classes.footer}>
-      <li>
-        <Link href="/Main" onClick={clickHomeBtn}>
-          {router.route == "/Main" ? <AiFillHome /> : <AiOutlineHome />}
-          <p>홈</p>
-        </Link>
+      <li onClick={clickHomeBtn}>{router.route == "/Main" ? <AiFillHome /> : <AiOutlineHome />}홈</li>
+      <li onClick={clickNearBtn}>
+        {router.route == "/Near" ? <MdLocationOn /> : <MdOutlineLocationOn />}내근처
       </li>
-      <li>
-        <Link href="/Near" onClick={() => setSelectedCategory("Near")}>
-          {router.route == "/Near" ? <MdLocationOn /> : <MdOutlineLocationOn />}
-          <p>내근처</p>
-        </Link>
+      <li onClick={() => router.push("/Chat")}>
+        {router.route == "/Chat" ? <BsFillChatDotsFill /> : <BsChatDots />}
+        채팅
       </li>
-      <li>
-        <Link href="/Chat">
-          {router.route == "/Chat" ? <BsFillChatDotsFill /> : <BsChatDots />}
-          <p>채팅</p>
-        </Link>
-      </li>
-      <li>
-        <Link href="/">
-          <CgProfile />
-          <p>나의당근</p>
-        </Link>
+      <li onClick={() => router.push("/")}>
+        <CgProfile />
+        나의당근
       </li>
     </ul>
   );

@@ -1,11 +1,12 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
+import React, {useContext, useRef, useState, useEffect} from "react";
 import classes from "./chatContents.module.css";
-import { firestore } from "@/components/firebase";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import {firestore} from "@/components/firebase";
+import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import UserContext from "../context/user-context";
+import Image from "next/image";
 
-function ChatContents({ chatId, now }) {
-  const { loginDisplayName } = useContext(UserContext);
+function ChatContents({chatId, now}) {
+  const {loginDisplayName} = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const chatRef = useRef();
   const lastMsgRef = useRef();
@@ -16,7 +17,7 @@ function ChatContents({ chatId, now }) {
 
     const unsubscribe = onSnapshot(messagesRef, (querySnapshot) => {
       const messagesData = querySnapshot.docs.map((doc) => doc.data());
-      messagesData.sort(function (a, b) {
+      messagesData.sort((a, b) => {
         return a.realtime - b.realtime;
       });
       setMessages(messagesData);
@@ -43,14 +44,12 @@ function ChatContents({ chatId, now }) {
     chatRef.current.value = "";
 
     //마지막 메세지에 포커스
-    if (lastMsgRef.current) {
-      lastMsgRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    lastMsgRef.current && lastMsgRef.current.scrollIntoView({behavior: "smooth"});
   }
 
   useEffect(() => {
     if (lastMsgRef.current) {
-      lastMsgRef.current.scrollIntoView({ behavior: "smooth" });
+      lastMsgRef.current.scrollIntoView({behavior: "smooth"});
     }
   }, [messages]);
 
@@ -68,8 +67,7 @@ function ChatContents({ chatId, now }) {
                 <li
                   key={`${Date.now()}_${idx}`}
                   className={`${m.who == loginDisplayName && classes.me}`}
-                  ref={ref}
-                >
+                  ref={ref}>
                   <p className={classes.time}>{m.time}</p>
                   <p className={classes.msg}>{m.msg}</p>
                 </li>
@@ -81,7 +79,7 @@ function ChatContents({ chatId, now }) {
         <form onSubmit={messageHandler}>
           <input placeholder="메시지 보내기" ref={chatRef}></input>
           <button>
-            <img src="/images/send.png" />
+            <Image src="/images/send.png" alt="send" width={26} height={26} />
           </button>
         </form>
       </footer>

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import ProductDetail from "@/components/product/productDetail";
-import { useRouter } from "next/router";
-import { doc, getDoc } from "firebase/firestore";
-import { firestore, storage } from "@/components/firebase";
-import { ref, getDownloadURL } from "firebase/storage";
+import {useRouter} from "next/router";
+import {doc, getDoc} from "firebase/firestore";
+import {firestore, storage} from "@/components/firebase";
+import {ref, getDownloadURL} from "firebase/storage";
 
 function ProductDetailPage(props) {
   const router = useRouter();
@@ -19,14 +19,7 @@ function ProductDetailPage(props) {
   }, [imageRef]);
 
   return (
-    <>
-      <ProductDetail
-        item={props.ProductData}
-        id={router.query.productId}
-        url={image}
-        isLoading={isLoading}
-      />
-    </>
+    <ProductDetail item={props.ProductData} id={router.query.productId} url={image} isLoading={isLoading} />
   );
 }
 
@@ -35,7 +28,7 @@ export default ProductDetailPage;
 export async function getStaticPaths(context) {
   return {
     fallback: "blocking",
-    paths: [{ params: { products: "의류", productId: "1680885265084" } }],
+    paths: [{params: {products: "의류", productId: "1680885265084"}}],
   };
 }
 
@@ -49,9 +42,7 @@ export async function getStaticProps(context) {
   let ProductData = docSnap.data();
 
   return {
-    props: {
-      ProductData,
-    },
+    props: {ProductData},
     revalidate: 1,
   };
 }

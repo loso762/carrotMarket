@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { auth } from "../firebase";
 import UserContext from "../context/user-context";
 import Link from "next/link";
+import Image from "next/image";
 import ProductContext from "../context/product-context";
 import classes from "./mypage.module.css";
 import { BiShoppingBag, BiReceipt, BiHeart, BiChat } from "react-icons/bi";
@@ -19,13 +20,18 @@ function Mypage(props) {
     <div className={classes.container}>
       <div className={classes.profile}>
         <figure>
-          <img src="/images/profile.jpg" alt={loginDisplayName} />
+          <Image
+            src="/images/profile.jpg"
+            alt={loginDisplayName}
+            width={35}
+            height={35}
+          />
           <figcaption className={classes.name}>{loginDisplayName}</figcaption>
           <button onClick={handleLogout}>로그아웃</button>
         </figure>
         <div className={classes.pay}>
           <figure>
-            <img src="/images/pay.png" alt="payPic" />
+            <Image src="/images/pay.png" alt="payPic" width={80} height={45} />
             <figcaption>1,000원</figcaption>
           </figure>
           <button>+충전</button>

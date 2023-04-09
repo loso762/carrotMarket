@@ -1,22 +1,16 @@
 import classes from "./ProductDetail.module.css";
-import { useContext, useEffect, useRef, useState } from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import ProductContext from "../context/product-context";
 import UserContext from "../context/user-context";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { IoIosArrowBack } from "react-icons/io";
-import { BiDotsVerticalRounded } from "react-icons/bi";
-import { AiOutlineHeart, AiFillHeart, AiFillHome } from "react-icons/ai";
-import { firestore } from "../firebase";
-import { ClipLoader } from "react-spinners";
-import {
-  doc,
-  setDoc,
-  deleteDoc,
-  updateDoc,
-  collection,
-} from "firebase/firestore";
+import {useRouter} from "next/router";
+import {IoIosArrowBack} from "react-icons/io";
+import {BiDotsVerticalRounded} from "react-icons/bi";
+import {AiOutlineHeart, AiFillHeart, AiFillHome} from "react-icons/ai";
+import {firestore} from "../firebase";
+import {ClipLoader} from "react-spinners";
+import {doc, setDoc, deleteDoc, updateDoc, collection} from "firebase/firestore";
 
 //시간 구하는 함수
 function calcTime(time) {
@@ -43,17 +37,10 @@ function ImoticonHandler(temp) {
   return tempImoticon;
 }
 
-function ProductDetail({ item, id, url, isLoading }) {
+function ProductDetail({item, id, url, isLoading}) {
   const router = useRouter();
-  const { setIsEdit, SelectedCategory, setSelectedCategory } =
-    useContext(ProductContext);
-  const {
-    loginDisplayName,
-    likeProducts,
-    isLoggedIn,
-    setlikeProducts,
-    loginID,
-  } = useContext(UserContext);
+  const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
+  const {loginDisplayName, likeProducts, isLoggedIn, setlikeProducts, loginID} = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [LikeNum, setLikeNum] = useState(item.likes);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -79,33 +66,22 @@ function ProductDetail({ item, id, url, isLoading }) {
 
     if (isLoggedIn) {
       if (loginDisplayName == item.userName) {
-        errorHandler();
+        alert("본인의 게시글은 좋아요를 누르실수 없습니다.");
         return;
       } else {
         if (isLike) {
-          setDoc(doc(firestore, "products", id), {
-            ...item,
-            likes: LikeNum - 1,
-          });
+          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum - 1});
 
-          deleteDoc(
-            doc(collection(firestore, "users", loginID, "likesproducts"), id)
-          );
+          deleteDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id));
           setIsLike(false);
           setLikeNum((prev) => prev - 1);
         } else if (!isLike) {
-          setDoc(doc(firestore, "products", id), {
+          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum + 1});
+
+          setDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id), {
             ...item,
             likes: LikeNum + 1,
           });
-
-          setDoc(
-            doc(collection(firestore, "users", loginID, "likesproducts"), id),
-            {
-              ...item,
-              likes: LikeNum + 1,
-            }
-          );
 
           setIsLike(true);
           setLikeNum((prev) => prev + 1);
@@ -132,21 +108,14 @@ function ProductDetail({ item, id, url, isLoading }) {
       return;
     }
 
-    await setDoc(
-      doc(
-        firestore,
-        "chat",
-        `${loginDisplayName}_${item.userName}-${item.title}`
-      ),
-      {
-        party: [loginDisplayName, item.userName],
-        product: id,
-        img: url,
-        dong: item.dong,
-        title: item.title,
-        date: Date.now(),
-      }
-    );
+    await setDoc(doc(firestore, "chat", `${loginDisplayName}_${item.userName}-${item.title}`), {
+      party: [loginDisplayName, item.userName],
+      product: id,
+      img: url,
+      dong: item.dong,
+      title: item.title,
+      date: Date.now(),
+    });
 
     //채팅목록에 추가
     if (!item.chat.includes(loginDisplayName)) {
@@ -165,14 +134,8 @@ function ProductDetail({ item, id, url, isLoading }) {
 
     // 찜한 목록에 있으면 user의 likesproducts 컬렉션에서 삭제
     if (likeProducts.some((arr) => arr.id == id)) {
-      const userDocRef = doc(
-        collection(firestore, "users", loginID, "likesproducts"),
-        id
-      );
-
+      const userDocRef = doc(collection(firestore, "users", loginID, "likesproducts"), id);
       await deleteDoc(userDocRef);
-
-      setlikeProducts((prev) => prev.filter((product) => product.id !== id));
     }
 
     router.push(`/${item.category}`);
@@ -180,10 +143,7 @@ function ProductDetail({ item, id, url, isLoading }) {
 
   //판매완료
   function soldOutHandler() {
-    updateDoc(doc(firestore, "products", id), {
-      soldout: "true",
-      buyer: buyerRef.current.value,
-    });
+    updateDoc(doc(firestore, "products", id), {soldout: "true", buyer: buyerRef.current.value});
     setMenuOpen((prev) => !prev);
     setIsPop(false);
     router.push(`/${SelectedCategory}`);
@@ -224,7 +184,6 @@ function ProductDetail({ item, id, url, isLoading }) {
           <div className={classes.backdrop}></div>
         </>
       )}
-
       <header className={classes.header}>
         <Link href={`/${SelectedCategory}`}>
           <IoIosArrowBack />
@@ -260,12 +219,7 @@ function ProductDetail({ item, id, url, isLoading }) {
 
           <div className={classes.userInfo}>
             <div className={classes.userInfoBox}>
-              <Image
-                src="/images/profile.jpg"
-                alt="profileImg"
-                width={40}
-                height={40}
-              />
+              <Image src="/images/profile.jpg" alt="profileImg" width={40} height={40} />
               <p>{item.userName}</p>
               <p>{item.dong}</p>
             </div>
@@ -275,12 +229,10 @@ function ProductDetail({ item, id, url, isLoading }) {
                 <div className={classes.temperature}>
                   {item.temp}°C
                   <div className={classes.tempBar}>
-                    <p style={{ width: `${(item.temp / 80) * 100}%` }} />
+                    <p style={{width: `${(item.temp / 80) * 100}%`}} />
                   </div>
                 </div>
-                <div className={classes.tempImoticon}>
-                  {ImoticonHandler(item.temp)}
-                </div>
+                <div className={classes.tempImoticon}>{ImoticonHandler(item.temp)}</div>
               </div>
               <p className={classes.tempEx}>매너온도</p>
             </div>
@@ -300,25 +252,16 @@ function ProductDetail({ item, id, url, isLoading }) {
 
           <div className={classes.footer}>
             <button onClick={likeBtnHandler} className={classes.likeButton}>
-              {isLike ? (
-                <AiFillHeart className={classes.fill} />
-              ) : (
-                <AiOutlineHeart />
-              )}
+              {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
             </button>
             <p className={classes.price}>
               {price}
               {item.soldout && <p className={classes.soldout}>판매완료</p>}
             </p>
             <button
-              className={`${classes.chatButton} ${
-                !isLoggedIn || (item.soldout && classes.disabled)
-              }`}
-              onClick={chatBtnHandler}
-            >
-              {item.userName == loginDisplayName
-                ? "대화중인 채팅방"
-                : "채팅하기"}
+              className={`${classes.chatButton} ${!isLoggedIn || (item.soldout && classes.disabled)}`}
+              onClick={chatBtnHandler}>
+              {item.userName == loginDisplayName ? "대화중인 채팅방" : "채팅하기"}
             </button>
           </div>
         </section>
