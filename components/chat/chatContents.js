@@ -32,19 +32,27 @@ function ChatContents({chatId, now}) {
   async function messageHandler(e) {
     e.preventDefault();
 
-    const messagesRef = collection(firestore, "chat", chatId, "message");
+    if (chatRef.current.value === "") {
+      chatRef.current.value = "메세지를 입력해주세요";
+      setTimeout(() => {
+        chatRef.current.value = "";
+      }, 500);
+      return;
+    } else {
+      const messagesRef = collection(firestore, "chat", chatId, "message");
 
-    await addDoc(messagesRef, {
-      msg: chatRef.current.value,
-      who: loginDisplayName,
-      time: now,
-      realtime: Date.now(),
-    });
+      await addDoc(messagesRef, {
+        msg: chatRef.current.value,
+        who: loginDisplayName,
+        time: now,
+        realtime: Date.now(),
+      });
 
-    chatRef.current.value = "";
+      chatRef.current.value = "";
 
-    //마지막 메세지에 포커스
-    lastMsgRef.current && lastMsgRef.current.scrollIntoView({behavior: "smooth"});
+      //마지막 메세지에 포커스
+      lastMsgRef.current && lastMsgRef.current.scrollIntoView({behavior: "smooth"});
+    }
   }
 
   useEffect(() => {

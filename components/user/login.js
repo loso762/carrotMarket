@@ -1,19 +1,21 @@
-import React, { useState, useContext } from "react";
+import React, {useState, useContext} from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { auth, firestore, googleAuthProvider } from "../firebase";
+import {useRouter} from "next/router";
+import {auth, firestore, googleAuthProvider} from "../firebase";
 import classes from "./login.module.css";
 import Image from "next/image";
 import UserContext from "../context/user-context";
+import {FadeLoader} from "react-spinners";
 
 function Login(props) {
   const router = useRouter();
-  const { setloginDisplayName, setIsLoggedIn, setloginTemp, setloginID } =
-    useContext(UserContext);
+  const {setloginDisplayName, setIsLoggedIn, setloginTemp, setloginID} = useContext(UserContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const [loginProcess, setloginProcess] = useState(false);
 
   const temp = 36.5;
 
@@ -25,12 +27,11 @@ function Login(props) {
     setPassword(event.target.value);
   };
 
-
   //이메일 로그인
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    typeof window !== undefined && sessionStorage.setItem("login","true");
+    setloginProcess(true);
 
     try {
       await auth.signInWithEmailAndPassword(email, password);
@@ -39,10 +40,10 @@ function Login(props) {
       const user = auth.currentUser;
       const userRef = firestore.collection("users").doc(user.uid);
       const doc = await userRef.get();
-      6;
+
       if (doc.exists) {
         const userData = doc.data();
-        const { nickname, temp } = userData;
+        const {nickname, temp} = userData;
         setIsLoggedIn(true);
         setloginTemp(temp);
         setloginID(user.uid);
@@ -53,6 +54,8 @@ function Login(props) {
     } catch (error) {
       setError("아이디/비밀번호를 다시 입력해주세요");
     }
+
+    setloginProcess(false);
   };
 
   //구글 로그인
@@ -67,7 +70,7 @@ function Login(props) {
       userRef.get().then((doc) => {
         if (doc.exists) {
           const userData = doc.data();
-          const { nickname, temp } = userData;
+          const {nickname, temp} = userData;
           setIsLoggedIn(true);
           setloginTemp(temp);
           setloginID(user.uid);
@@ -105,7 +108,7 @@ function Login(props) {
       .then((result) => {
         const credential = result.credential;
         const user = result.user;
-        const { nickname, email } = user;
+        const {nickname, email} = user;
 
         // Check if the user already exists in Firestore
         firestore
@@ -142,15 +145,18 @@ function Login(props) {
       });
   };
 
+  const LoadingDiv = (
+    <div className={classes.loading}>
+      <FadeLoader color={"#fd9253"} />
+      <p>로그인 중입니다.</p>
+    </div>
+  );
+
   return (
     <>
       <div className={classes.container}>
-        <Image
-          src="/images/Marketlogo.png"
-          alt="profileImg"
-          width={110}
-          height={130}
-        />
+        {loginProcess && LoadingDiv}
+        <Image src="/images/Marketlogo.png" alt="profileImg" width={110} height={130} />
         <form onSubmit={handleLogin} className={classes.form}>
           <div>
             <label htmlFor="email" className={classes.label}>
@@ -183,11 +189,7 @@ function Login(props) {
           </button>
         </form>
         <div className={classes.buttonContainer}>
-          <button
-            type="button"
-            className={classes.button2}
-            onClick={handleGoogleLogin}
-          >
+          <button type="button" className={classes.button2} onClick={handleGoogleLogin}>
             구글 로그인
           </button>
           <button className={classes.button2}>

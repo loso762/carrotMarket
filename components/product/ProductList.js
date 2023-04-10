@@ -65,6 +65,8 @@ function ProductList({list, range}) {
 
         return () => unsubscribe();
       }
+    } else if (SelectedCategory == "카테고리") {
+      return;
     } else {
       setShowList(list);
     }

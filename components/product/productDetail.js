@@ -45,6 +45,7 @@ function ProductDetail({item, id, url, isLoading}) {
   const [LikeNum, setLikeNum] = useState(item.likes);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
+  const [errMsg, seterrMsg] = useState(null);
   const buyerRef = useRef();
 
   let price;
@@ -60,13 +61,20 @@ function ProductDetail({item, id, url, isLoading}) {
     }
   }, [id, likeProducts]);
 
+  function errHandler(text) {
+    seterrMsg(text);
+    setTimeout(() => {
+      seterrMsg(null);
+    }, 500);
+  }
+
   //좋아요 클릭
   function likeBtnHandler(e) {
     e.stopPropagation();
 
     if (isLoggedIn) {
       if (loginDisplayName == item.userName) {
-        alert("본인의 게시글은 좋아요를 누르실수 없습니다.");
+        errHandler("본인의 게시글은 좋아요를 누르실수 없습니다.");
         return;
       } else {
         if (isLike) {
@@ -95,16 +103,16 @@ function ProductDetail({item, id, url, isLoading}) {
   //채팅버튼 클릭
   async function chatBtnHandler() {
     if (!isLoggedIn) {
-      alert("로그인을 해주세요!");
+      errHandler("로그인을 해주세요!");
       return;
     }
 
     if (item.soldout) {
-      alert("판매완료된 상품입니다!");
+      errHandler("판매완료된 상품입니다!");
       return;
     }
     if (item.userName == loginDisplayName) {
-      alert("본인과는 채팅하실수 없습니다!");
+      router.push(`/Chat`);
       return;
     }
 
@@ -161,29 +169,45 @@ function ProductDetail({item, id, url, isLoading}) {
     setMenuOpen((prev) => !prev);
   }
 
+  const sellpopup = (
+    <>
+      <div className={classes.popup}>
+        누구와 거래하셨나요?
+        <select ref={buyerRef}>
+          {item.chat.map((chatPartner, idx) => {
+            return (
+              <option value={chatPartner} key={idx}>
+                {chatPartner}
+              </option>
+            );
+          })}
+        </select>
+        <div>
+          <button onClick={popupCancelHandler}>취소</button>
+          <button onClick={soldOutHandler}>확인</button>
+        </div>
+      </div>
+      <div className={classes.backdrop}></div>
+    </>
+  );
+
+  const menuOpenBtn = (
+    <button onClick={() => setMenuOpen((prev) => !prev)}>
+      <BiDotsVerticalRounded />
+    </button>
+  );
+
+  const menuBox = (
+    <div className={classes.menuBox}>
+      <p onClick={EditHandler}>게시글 수정</p>
+      <p onClick={deleteBtnHandler}>게시글 삭제</p>
+      <p onClick={() => setIsPop(true)}>판매완료</p>
+    </div>
+  );
+
   return (
     <>
-      {isPop && (
-        <>
-          <div className={classes.popup}>
-            누구와 거래하셨나요?
-            <select ref={buyerRef}>
-              {item.chat.map((chatPartner, idx) => {
-                return (
-                  <option value={chatPartner} key={idx}>
-                    {chatPartner}
-                  </option>
-                );
-              })}
-            </select>
-            <div>
-              <button onClick={popupCancelHandler}>취소</button>
-              <button onClick={soldOutHandler}>확인</button>
-            </div>
-          </div>
-          <div className={classes.backdrop}></div>
-        </>
-      )}
+      {isPop && sellpopup}
       <header className={classes.header}>
         <Link href={`/${SelectedCategory}`}>
           <IoIosArrowBack />
@@ -194,21 +218,10 @@ function ProductDetail({item, id, url, isLoading}) {
         </Link>
 
         {/* 게시글 작성자만 게시글 수정 및 삭제 가능하도록 하는 코드*/}
-        {loginDisplayName == item.userName &&
-          (!menuOpen ? (
-            <button onClick={() => setMenuOpen((prev) => !prev)}>
-              <BiDotsVerticalRounded />
-            </button>
-          ) : (
-            <div className={classes.menuBox}>
-              <p onClick={EditHandler}>게시글 수정</p>
-              <p onClick={deleteBtnHandler}>게시글 삭제</p>
-              <p onClick={() => setIsPop(true)}>판매완료</p>
-            </div>
-          ))}
+        {loginDisplayName == item.userName && (!menuOpen ? menuOpenBtn : menuBox)}
       </header>
       {isLoading ? (
-        <div className={classes.Error}>
+        <div className={classes.loading}>
           <ClipLoader color="#fd9253" size={30} />
         </div>
       ) : (
@@ -266,6 +279,7 @@ function ProductDetail({item, id, url, isLoading}) {
           </div>
         </section>
       )}
+      {errMsg && <div className={classes.errMsg}>{errMsg}</div>}
     </>
   );
 }
