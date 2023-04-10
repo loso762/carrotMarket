@@ -7,19 +7,38 @@ import {ref, getDownloadURL} from "firebase/storage";
 
 function ProductDetailPage(props) {
   const router = useRouter();
-  const [image, setImage] = useState();
+  const [productUrl, setproductUrl] = useState();
+  const [userUrl, setuserUrl] = useState("/images/profile.jpg");
   const [isLoading, setIsLoading] = useState(true);
 
   const imageRef = ref(storage, `images/${router.query.productId}`);
+  const imageRef2 = ref(storage, `profile/${props.ProductData.userName}`);
+
   useEffect(() => {
     getDownloadURL(imageRef).then((url) => {
-      setImage(url);
+      setproductUrl(url);
       setIsLoading(false);
     });
-  }, [imageRef]);
+  }, []);
+
+  useEffect(() => {
+    getDownloadURL(imageRef2)
+      .then((url) => {
+        setuserUrl(url);
+      })
+      .catch(() => {
+        return;
+      });
+  }, []);
 
   return (
-    <ProductDetail item={props.ProductData} id={router.query.productId} url={image} isLoading={isLoading} />
+    <ProductDetail
+      item={props.ProductData}
+      id={router.query.productId}
+      productUrl={productUrl}
+      userUrl={userUrl}
+      isLoading={isLoading}
+    />
   );
 }
 

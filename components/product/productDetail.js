@@ -37,7 +37,7 @@ function ImoticonHandler(temp) {
   return tempImoticon;
 }
 
-function ProductDetail({item, id, url, isLoading}) {
+function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
   const router = useRouter();
   const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
   const {loginDisplayName, likeProducts, isLoggedIn, setlikeProducts, loginID} = useContext(UserContext);
@@ -227,12 +227,12 @@ function ProductDetail({item, id, url, isLoading}) {
       ) : (
         <section className={classes.detail} onClick={() => setMenuOpen(false)}>
           <figure className={classes.Img}>
-            <Image src={url} alt={item.title} width={412} height={335} />
+            <Image src={productUrl} alt={item.title} width={412} height={335} />
           </figure>
 
           <div className={classes.userInfo}>
             <div className={classes.userInfoBox}>
-              <Image src="/images/profile.jpg" alt="profileImg" width={40} height={40} />
+              <Image src={userUrl} alt="profileImg" width={40} height={40} />
               <p>{item.userName}</p>
               <p>{item.dong}</p>
             </div>

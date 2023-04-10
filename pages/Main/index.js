@@ -27,6 +27,7 @@ function Main(props) {
     props.ProductsData.forEach((product) => {
       if (product.data.title.includes(filter)) {
         tempData.push(product);
+        ㅎ;
       }
     });
 

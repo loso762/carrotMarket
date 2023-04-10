@@ -5,12 +5,15 @@ import Image from "next/image";
 import {query, orderBy, limit, collection, onSnapshot} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import {useRouter} from "next/router";
+import {storage} from "@/components/firebase";
+import {ref, getDownloadURL} from "firebase/storage";
 
 function ChatPreview({c, LoadingEnd}) {
   const router = useRouter();
   const {loginDisplayName} = useContext(UserContext);
   const [lastMsg, setLastMsg] = useState("");
   const [lastTime, setlastTime] = useState("");
+  const [userUrl, setuserUrl] = useState("/images/profile.jpg");
 
   //상대방 아이디 가져오기
   function filteringName(ChatId, title, myName) {
@@ -18,6 +21,18 @@ function ChatPreview({c, LoadingEnd}) {
     const temp2 = temp.replace("_", "").replace("-", "");
     return temp2.replace(myName, "");
   }
+  const UserName = filteringName(c.id, c.title, loginDisplayName);
+  const imageRef = ref(storage, `profile/${UserName}`);
+
+  useEffect(() => {
+    getDownloadURL(imageRef)
+      .then((url) => {
+        setuserUrl(url);
+      })
+      .catch(() => {
+        return;
+      });
+  }, []);
 
   useEffect(() => {
     //마지막 채팅 시간
@@ -62,9 +77,9 @@ function ChatPreview({c, LoadingEnd}) {
 
   return (
     <li className={classes.chatli} onClick={openChatHandler}>
-      <Image src="/images/profile.jpg" alt="profile" width={40} height={40} />
+      {userUrl && <Image src={userUrl} alt="profile" width={40} height={40} />}
       <div>
-        <p>{filteringName(c.id, c.title, loginDisplayName)}</p>
+        <p>{UserName}</p>
         {lastTime} 전 · {c.dong}
       </div>
       <p>{lastMsg}</p>

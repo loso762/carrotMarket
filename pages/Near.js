@@ -6,21 +6,19 @@ import {firestore} from "@/components/firebase";
 import {collection, getDocs} from "firebase/firestore";
 import {useState, useContext} from "react";
 import SearchList from "@/components/product/SearchList";
-import ProductContext from '@/components/context/product-context';
-
+import ProductContext from "@/components/context/product-context";
 
 function Near(props) {
-  
   const {setSelectedCategory} = useContext(ProductContext);
 
   const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위
   const [isSearching, setIsSearching] = useState(false);
   const [filterdProducts, setfilterdProducts] = useState([]);
 
-  useEffect(()=>{
-    sessionStorage.setItem("category","Near");
+  useEffect(() => {
+    sessionStorage.setItem("category", "Near");
     setSelectedCategory(sessionStorage.getItem("category"));
-  },[setSelectedCategory])
+  }, [setSelectedCategory]);
 
   //검색범위 지정
   const searchRangeHandler = (range) => {
@@ -57,6 +55,7 @@ function Near(props) {
         range={searchRange}
         rangechange={searchRangeHandler}
         onSearch={isSearching}
+        å
         searchBoxCancel={searchBoxCancel}
         searchBoxOpen={searchBoxOpen}
         Productsfilter={Productsfilter}

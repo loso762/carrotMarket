@@ -67,6 +67,7 @@
   fill: rgb(254, 70, 70);
   transition: 0.5s;
   opacity: 0.6;
+  cursor: pointer;
 }
 
 .likeButton svg.fill {
