@@ -25,9 +25,12 @@ function Login(props) {
     setPassword(event.target.value);
   };
 
+
   //이메일 로그인
   const handleLogin = async (event) => {
     event.preventDefault();
+
+    typeof window !== undefined && sessionStorage.setItem("login","true");
 
     try {
       await auth.signInWithEmailAndPassword(email, password);

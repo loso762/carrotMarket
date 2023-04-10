@@ -4,13 +4,23 @@ import Header from "@/components/layout/Header";
 import FooterMenu from "@/components/layout/FooterMenu";
 import {firestore} from "@/components/firebase";
 import {collection, getDocs} from "firebase/firestore";
-import {useState} from "react";
+import {useState, useContext} from "react";
 import SearchList from "@/components/product/SearchList";
+import ProductContext from '@/components/context/product-context';
+
 
 function Near(props) {
+  
+  const {setSelectedCategory} = useContext(ProductContext);
+
   const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위
   const [isSearching, setIsSearching] = useState(false);
   const [filterdProducts, setfilterdProducts] = useState([]);
+
+  useEffect(()=>{
+    sessionStorage.setItem("category","Near");
+    setSelectedCategory(sessionStorage.getItem("category"));
+  },[setSelectedCategory])
 
   //검색범위 지정
   const searchRangeHandler = (range) => {

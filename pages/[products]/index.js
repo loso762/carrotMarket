@@ -1,10 +1,22 @@
-import React, {useEffect} from "react";
+import React, {useEffect,useContext} from "react";
 import ProductList from "../../components/product/ProductList";
 import Header from "@/components/layout/Header";
 import FooterMenu from "../../components/layout/FooterMenu";
 import {firestore} from "@/components/firebase";
 import {collection, getDocs} from "firebase/firestore";
+import ProductContext from '@/components/context/product-context';
+import { useRouter } from 'next/router';
+
 function Products(props) {
+  const router = useRouter();
+
+  const {setSelectedCategory} = useContext(ProductContext);
+  
+  useEffect(()=>{
+    sessionStorage.setItem("category",router.query.products);
+    setSelectedCategory(sessionStorage.getItem("category"));
+  },[setSelectedCategory,router.query.products])
+
   return (
     <>
       <Header />

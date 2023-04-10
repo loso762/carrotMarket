@@ -10,7 +10,7 @@ import {collection, onSnapshot, query, where} from "firebase/firestore";
 import Image from "next/image";
 
 function ProductList({list, range}) {
-  const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
+  const {setIsEdit, SelectedCategory} = useContext(ProductContext);
   const {isLoggedIn, likeProducts, loginDisplayName} = useContext(UserContext);
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
