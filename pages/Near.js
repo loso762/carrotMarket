@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import ProductList from "@/components/product/ProductList";
 import Header from "@/components/layout/Header";
 import FooterMenu from "@/components/layout/FooterMenu";
@@ -52,11 +52,19 @@ function Near(props) {
         Productsfilter={Productsfilter}
       />
 
-      <SearchList
-        list={isSearching ? filterdProducts : props.ProductsData}
-        section="내근처"
-        range={searchRange}
-      />
+      {!isSearching ? (
+        <ProductList
+          list={isSearching ? filterdProducts : props.ProductsData}
+          section="내근처"
+          range={searchRange}
+        />
+      ) : (
+        <SearchList
+          list={isSearching ? filterdProducts : props.ProductsData}
+          section="내근처"
+          range={searchRange}
+        />
+      )}
 
       <FooterMenu />
     </>

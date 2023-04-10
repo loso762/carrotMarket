@@ -33,7 +33,6 @@ export async function getStaticPaths(context) {
 }
 
 export async function getStaticProps(context) {
-  // fetch data for a single meetup
   const productId = context.params.productId;
 
   const docRef = doc(firestore, "products", productId);

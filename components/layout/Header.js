@@ -1,4 +1,4 @@
-import React, {useContext, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import {BsSearch} from "react-icons/bs";
 import {IoIosArrowBack} from "react-icons/io";
 import classes from "./Header.module.css";

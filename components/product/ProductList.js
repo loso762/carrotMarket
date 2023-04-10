@@ -10,12 +10,12 @@ import {collection, onSnapshot, query, where} from "firebase/firestore";
 import Image from "next/image";
 
 function ProductList({list, range}) {
-  const {setIsEdit, SelectedCategory} = useContext(ProductContext);
+  const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
   const {isLoggedIn, likeProducts, loginDisplayName} = useContext(UserContext);
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
   const [showList, setShowList] = useState([]);
-  const [noErr, setnoErr] = useState(true);
+  const [isError, setisError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleScroll = () => {
@@ -74,12 +74,19 @@ function ProductList({list, range}) {
   const nowriteCategory = ["구매내역", "판매내역", "관심목록"];
   const writeBtnOff = nowriteCategory.includes(SelectedCategory);
 
-  function errorHandler() {
-    setnoErr(false);
+  //자신의 글 좋아요 누른경우
+  const errorHandler = () => {
+    setisError(true);
+
     setTimeout(() => {
-      setnoErr(true);
-    }, 500);
-  }
+      setisError(false);
+    }, 1000);
+  };
+
+  // 유저가 찜한 매물인지 필터링하는 함수
+  const isLiked = (id) => {
+    return likeProducts.some((product) => product.id === id);
+  };
 
   return (
     <>
@@ -91,15 +98,13 @@ function ProductList({list, range}) {
       ) : (
         <ul className={classes.list} onScroll={handleScroll}>
           {showList.map((item) => {
-            // 유저가 찜한 매물인지 필터링하는 함수
-            const isLiked = likeProducts.some((i) => i.id === item.id);
             return (
               <ProductItem
+                errorHandler={errorHandler}
                 key={item.id}
                 id={item.id}
                 item={item.data}
-                isliked={isLiked}
-                errorHandler={errorHandler}
+                isliked={isLiked(item.id)}
               />
             );
           })}
@@ -115,7 +120,7 @@ function ProductList({list, range}) {
           {isScroll ? "+" : "+ 글쓰기"}
         </Link>
       )}
-      <div className={`${classes.errorBox} ${noErr && classes.hide}`}>
+      <div className={`${classes.errorBox} ${!isError && classes.hide}`}>
         본인의 글에는 좋아요를 누르실 수 없습니다
       </div>
     </>

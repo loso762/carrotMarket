@@ -42,7 +42,7 @@ function ChatRoom() {
   const today = new Date();
   const hours = today.getHours() % 12 || 12;
   const minutes = today.getMinutes();
-  const ampm = hours >= 12 ? "오후" : "오전";
+  const ampm = today.getHours() >= 12 ? "오후" : "오전";
   const now = `${ampm} ${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
 
   return (

@@ -2,9 +2,8 @@ import React, {useEffect} from "react";
 import ProductList from "../../components/product/ProductList";
 import Header from "@/components/layout/Header";
 import FooterMenu from "../../components/layout/FooterMenu";
-import {firestore, storage} from "@/components/firebase";
+import {firestore} from "@/components/firebase";
 import {collection, getDocs} from "firebase/firestore";
-import {ref} from "firebase/storage";
 function Products(props) {
   return (
     <>

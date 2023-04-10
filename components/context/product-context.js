@@ -6,7 +6,7 @@ export default ProductContext;
 
 export const ProductContextProvider = (props) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [SelectedCategory, setSelectedCategory] = useState("카테고리");
+  const [SelectedCategory, setSelectedCategory] = useState();
 
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();

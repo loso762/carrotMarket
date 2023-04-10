@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 import classes from "./Category.module.css";
 import ProductContext from "../context/product-context";
 import Image from "next/image";

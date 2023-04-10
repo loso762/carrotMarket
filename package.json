@@ -24,6 +24,7 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
     "react-spinners": "^0.13.8",
-    "redux": "^4.2.1"
+    "redux": "^4.2.1",
+    "session": "^0.1.0"
   }
 }

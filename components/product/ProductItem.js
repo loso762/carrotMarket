@@ -15,6 +15,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
   const [LikeNum, setLikeNum] = useState(item.likes);
   const [image, setImage] = useState();
 
+  //console.log(isliked);
   const {loginID, loginDisplayName, isLoggedIn} = useContext(UserContext);
 
   //firebase storage에서 이미지 가져오기

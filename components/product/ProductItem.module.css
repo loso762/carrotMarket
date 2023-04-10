@@ -28,8 +28,8 @@
 
 .content {
   text-align: left;
-  width: calc(100% - 140px);
-  padding: 0.8rem;
+  width: calc(100% - 120px);
+  padding: 0.7rem;
   position: relative;
 }
 
@@ -59,21 +59,19 @@
   padding-right: 5px;
 }
 
-.likeButton:hover svg {
-  fill: rgb(238, 39, 208);
-}
-
 .likeButton svg {
   width: 24px;
   height: 24px;
   transform: translateY(-1px);
   margin-right: 5px;
-  fill: rgb(255, 255, 255);
+  fill: rgb(254, 70, 70);
   transition: 0.5s;
+  opacity: 0.6;
 }
 
 .likeButton svg.fill {
-  fill: rgb(255, 0, 0);
+  fill: rgb(254, 70, 70);
+  opacity: 1;
 }
 
 .price {
