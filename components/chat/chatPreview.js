@@ -7,22 +7,27 @@ import UserContext from "../context/user-context";
 import {useRouter} from "next/router";
 import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
+import {doc, getDoc} from "firebase/firestore";
 
 function ChatPreview({c, LoadingEnd}) {
   const router = useRouter();
-  const {loginDisplayName} = useContext(UserContext);
+  const {loginID} = useContext(UserContext);
   const [lastMsg, setLastMsg] = useState("");
   const [lastTime, setlastTime] = useState("");
+  const [chatpartner, setchatpartner] = useState();
   const [userUrl, setuserUrl] = useState("/images/profile.jpg");
 
   //상대방 아이디 가져오기
-  function filteringName(ChatId, title, myName) {
-    const temp = ChatId.replace(title, "");
-    const temp2 = temp.replace("_", "").replace("-", "");
-    return temp2.replace(myName, "");
-  }
-  const UserName = filteringName(c.id, c.title, loginDisplayName);
-  const imageRef = ref(storage, `profile/${UserName}`);
+  useEffect(() => {
+    async function fetchpartner() {
+      const partnerID = c.partyID.filter((el) => el !== loginID);
+      const partnerInfo = await getDoc(doc(firestore, "users", ...partnerID));
+      setchatpartner(partnerInfo.data().nickname);
+    }
+    fetchpartner();
+  }, []);
+
+  const imageRef = ref(storage, `profile/${c.partyID.filter((p) => p !== loginID)}`);
 
   useEffect(() => {
     getDownloadURL(imageRef)
@@ -32,7 +37,7 @@ function ChatPreview({c, LoadingEnd}) {
       .catch(() => {
         return;
       });
-  }, []);
+  }, [chatpartner]);
 
   useEffect(() => {
     //마지막 채팅 시간
@@ -71,19 +76,27 @@ function ChatPreview({c, LoadingEnd}) {
     fetchData();
   }, [c.id, LoadingEnd]);
 
-  function openChatHandler() {
+  function openChatHandler(e) {
+    e.stopPropagation();
+    console.log("리스트클릭");
     router.push(`/Chat/${c.id}`);
+  }
+
+  function imgClickHandler(e) {
+    e.stopPropagation();
+    console.log("이미지클릭");
+    router.push(`/${c.category}/${c.product}`);
   }
 
   return (
     <li className={classes.chatli} onClick={openChatHandler}>
       {userUrl && <Image src={userUrl} alt="profile" width={40} height={40} />}
       <div>
-        <p>{UserName}</p>
+        <p>{chatpartner}</p>
         {lastTime} 전 · {c.dong}
       </div>
       <p>{lastMsg}</p>
-      <Image src={c.img} alt="productImg" width={40} height={40} />
+      <Image src={c.img} alt="productImg" width={40} height={40} onClick={imgClickHandler} />
     </li>
   );
 }

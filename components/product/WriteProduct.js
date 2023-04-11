@@ -92,11 +92,12 @@ function WriteProduct() {
       Longitude: longitude,
       category: category,
       dong: dong,
-      userName: loginDisplayName,
+      nickname: loginDisplayName,
       temp: loginTemp,
       ID: loginID,
       chat: [],
       show: 0,
+      wholike: [],
     };
 
     //사진은 firestorage로 나머지 정보는 firestore로 업로드
@@ -127,10 +128,10 @@ function WriteProduct() {
 
       <form id="form" className={classes.form} onSubmit={submitHandler}>
         <p>
-          <select ref={categoryRef}>
+          <select ref={categoryRef} value={product.category}>
             {category.map((category, idx) => {
               return (
-                <option key={idx} value={category} selected={SelectedCategory == category}>
+                <option key={idx} value={category}>
                   {category}
                 </option>
               );

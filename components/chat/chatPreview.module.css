@@ -29,6 +29,7 @@
   height: 50px;
   border-radius: 5px;
   margin: 20px 0;
+  cursor: pointer;
 }
 
 .chatli img:first-child {
@@ -41,4 +42,5 @@
 .chatli img:nth-child(4) {
   position: absolute;
   right: 15px;
+  z-index: 99;
 }

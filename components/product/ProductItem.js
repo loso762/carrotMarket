@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from "react";
 import {AiOutlineHeart, AiFillHeart} from "react-icons/ai";
 import {firestore, storage} from "../firebase";
 import classes from "./ProductItem.module.css";
-import {collection, doc, setDoc, deleteDoc} from "firebase/firestore";
+import {doc, increment, setDoc} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import {ref, getDownloadURL} from "firebase/storage";
 import Image from "next/image";
@@ -11,12 +11,8 @@ import {ClipLoader} from "react-spinners";
 
 function ProductItem({id, item, isliked, errorHandler}) {
   const router = useRouter();
-  const [isLike, setIsLike] = useState(false);
-  const [LikeNum, setLikeNum] = useState(item.likes);
   const [image, setImage] = useState();
-
-  //console.log(isliked);
-  const {loginID, loginDisplayName, isLoggedIn} = useContext(UserContext);
+  const {loginDisplayName, isLoggedIn, loginID} = useContext(UserContext);
 
   //firebase storage에서 이미지 가져오기
   useEffect(() => {
@@ -26,36 +22,29 @@ function ProductItem({id, item, isliked, errorHandler}) {
     });
   }, [id]);
 
-  //유저가 찜한 매물이면 바로 좋아요 상태
-  useEffect(() => {
-    isliked && setIsLike(true);
-  }, [isliked]);
-
   //좋아요 클릭
   function likeBtnHandler(e) {
     e.stopPropagation();
 
     if (isLoggedIn) {
-      if (loginDisplayName == item.userName) {
+      if (loginDisplayName == item.nickname) {
         errorHandler();
         return;
       } else {
-        if (isLike) {
-          setIsLike(false);
-          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum - 1});
-          deleteDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id));
-
-          setLikeNum((prev) => prev - 1);
-        } else if (!isLike) {
-          setIsLike(true);
-          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum + 1});
-
-          setDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id), {
+        if (isliked) {
+          item.likes -= 1;
+          setDoc(doc(firestore, "products", id), {
             ...item,
-            likes: LikeNum + 1,
+            likes: item.likes,
+            wholike: item.wholike.filter((item) => item !== loginID),
           });
-
-          setLikeNum((prev) => prev + 1);
+        } else if (!isliked) {
+          item.likes += 1;
+          setDoc(doc(firestore, "products", id), {
+            ...item,
+            likes: item.likes,
+            wholike: [...item.wholike, loginID],
+          });
         }
       }
     } else {
@@ -66,16 +55,12 @@ function ProductItem({id, item, isliked, errorHandler}) {
   //디테일 페이지 열기
   async function showDetailsHandler(e) {
     e.stopPropagation();
+
     //조회 수 업데이트 함수
     let show = item.show || 0;
     show += 1;
 
     await setDoc(doc(firestore, "products", id), {...item, show: show});
-
-    if (isLoggedIn && isliked) {
-      const userDocRef = doc(collection(firestore, "users", loginID, "likesproducts"), id);
-      setDoc(userDocRef, {...item, show: show});
-    }
 
     router.push(`${item.category}/${id}`);
   }
@@ -118,8 +103,8 @@ function ProductItem({id, item, isliked, errorHandler}) {
       </div>
 
       <button onClick={likeBtnHandler} className={classes.likeButton}>
-        {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
-        {LikeNum}
+        {isliked ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
+        {item.likes}
       </button>
     </li>
   );

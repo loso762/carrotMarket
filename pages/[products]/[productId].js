@@ -12,7 +12,7 @@ function ProductDetailPage(props) {
   const [isLoading, setIsLoading] = useState(true);
 
   const imageRef = ref(storage, `images/${router.query.productId}`);
-  const imageRef2 = ref(storage, `profile/${props.ProductData.userName}`);
+  const imageRef2 = ref(storage, `profile/${props.ProductData.ID}`);
 
   useEffect(() => {
     getDownloadURL(imageRef).then((url) => {

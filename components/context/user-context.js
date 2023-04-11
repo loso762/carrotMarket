@@ -12,12 +12,12 @@ export const UserContextProvider = (props) => {
   const [loginID, setloginID] = useState("");
   const [likeProducts, setlikeProducts] = useState([]);
 
-  //찜한 매물 불러오기
   useEffect(() => {
     if (isLoggedIn) {
-      const likesDocRef = collection(firestore, "users", loginID, "likesproducts");
+      const likesDocRef = collection(firestore, "products");
+      const q = query(likesDocRef, where("wholike", "array-contains", loginID));
 
-      const unsubscribe = onSnapshot(likesDocRef, (snapshot) => {
+      const unsubscribe = onSnapshot(q, (snapshot) => {
         const ProductsData = [];
         snapshot.forEach((doc) => {
           ProductsData.push({id: doc.id, data: doc.data()});

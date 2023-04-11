@@ -30,7 +30,6 @@ function ProductList({list, range}) {
   }, [nearbyLocationsFn, SelectedCategory]);
 
   //섹션에 따라 다른 리스트 보여주기
-
   useEffect(() => {
     if (SelectedCategory == "Near") {
       setShowList(nearProduct);
@@ -38,7 +37,7 @@ function ProductList({list, range}) {
       setShowList(likeProducts);
     } else if (SelectedCategory == "판매내역") {
       const sellListRef = collection(firestore, "products");
-      const q = query(sellListRef, where("userName", "==", loginDisplayName));
+      const q = query(sellListRef, where("nickname", "==", loginDisplayName));
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const ProductsData = [];

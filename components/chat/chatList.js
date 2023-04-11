@@ -7,7 +7,7 @@ import ChatPreview from "./chatPreview";
 import {ClipLoader} from "react-spinners";
 
 function ChatListForm() {
-  const {loginDisplayName, isLoggedIn} = useContext(UserContext);
+  const {loginDisplayName, isLoggedIn, loginID} = useContext(UserContext);
   const [chatList, setChatList] = useState([]);
   const [isLoading, setisLoading] = useState(true);
 
@@ -17,7 +17,7 @@ function ChatListForm() {
       const tempChat = [];
       const chatListRef = collection(firestore, "chat");
 
-      const q = query(chatListRef, where("party", "array-contains", loginDisplayName));
+      const q = query(chatListRef, where("partyID", "array-contains", loginID));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         tempChat.push({...doc.data(), id: doc.id});

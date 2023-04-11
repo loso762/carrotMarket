@@ -10,7 +10,7 @@ import {BiDotsVerticalRounded} from "react-icons/bi";
 import {AiOutlineHeart, AiFillHeart, AiFillHome} from "react-icons/ai";
 import {firestore} from "../firebase";
 import {ClipLoader} from "react-spinners";
-import {doc, setDoc, deleteDoc, updateDoc, collection} from "firebase/firestore";
+import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
 
 //시간 구하는 함수
 function calcTime(time) {
@@ -40,9 +40,8 @@ function ImoticonHandler(temp) {
 function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
   const router = useRouter();
   const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
-  const {loginDisplayName, likeProducts, isLoggedIn, setlikeProducts, loginID} = useContext(UserContext);
+  const {loginDisplayName, loginID, likeProducts, isLoggedIn} = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
-  const [LikeNum, setLikeNum] = useState(item.likes);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
   const [errMsg, seterrMsg] = useState(null);
@@ -56,8 +55,10 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
   }
 
   useEffect(() => {
-    if (likeProducts.some((like) => like.id == id)) {
+    if (likeProducts.some((item) => item.id === id)) {
       setIsLike(true);
+    } else {
+      setIsLike(false);
     }
   }, [id, likeProducts]);
 
@@ -73,26 +74,24 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
     e.stopPropagation();
 
     if (isLoggedIn) {
-      if (loginDisplayName == item.userName) {
+      if (loginDisplayName == item.nickname) {
         errHandler("본인의 게시글은 좋아요를 누르실수 없습니다.");
         return;
       } else {
         if (isLike) {
-          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum - 1});
-
-          deleteDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id));
-          setIsLike(false);
-          setLikeNum((prev) => prev - 1);
-        } else if (!isLike) {
-          setDoc(doc(firestore, "products", id), {...item, likes: LikeNum + 1});
-
-          setDoc(doc(collection(firestore, "users", loginID, "likesproducts"), id), {
+          item.likes -= 1;
+          setDoc(doc(firestore, "products", id), {
             ...item,
-            likes: LikeNum + 1,
+            likes: item.likes,
+            wholike: item.wholike.filter((item) => item !== loginID),
           });
-
-          setIsLike(true);
-          setLikeNum((prev) => prev + 1);
+        } else if (!isLike) {
+          item.likes += 1;
+          setDoc(doc(firestore, "products", id), {
+            ...item,
+            likes: item.likes,
+            wholike: [...item.wholike, loginID],
+          });
         }
       }
     } else {
@@ -111,16 +110,17 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
       errHandler("판매완료된 상품입니다!");
       return;
     }
-    if (item.userName == loginDisplayName) {
+    if (item.nickname == loginDisplayName) {
       router.push(`/Chat`);
       return;
     }
 
-    await setDoc(doc(firestore, "chat", `${loginDisplayName}_${item.userName}-${item.title}`), {
-      party: [loginDisplayName, item.userName],
+    await setDoc(doc(firestore, "chat", `${loginID}_${item.ID}-${item.title}`), {
+      partyID: [loginID, item.ID],
       product: id,
-      img: url,
+      img: productUrl,
       dong: item.dong,
+      category: item.category,
       title: item.title,
       date: Date.now(),
     });
@@ -132,19 +132,13 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
       });
     }
 
-    router.push(`/Chat/${loginDisplayName}_${item.userName}-${item.title}`);
+    router.push(`/Chat/${loginID}_${item.ID}-${item.title}`);
   }
 
   //게시물 삭제
   async function deleteBtnHandler() {
     // products 컬렉션에서 삭제
     deleteDoc(doc(firestore, "products", id));
-
-    // 찜한 목록에 있으면 user의 likesproducts 컬렉션에서 삭제
-    if (likeProducts.some((arr) => arr.id == id)) {
-      const userDocRef = doc(collection(firestore, "users", loginID, "likesproducts"), id);
-      await deleteDoc(userDocRef);
-    }
 
     router.push(`/${item.category}`);
   }
@@ -205,11 +199,13 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
     </div>
   );
 
+  const backUrl = SelectedCategory == "카테고리" ? "Main" : SelectedCategory;
+
   return (
     <>
       {isPop && sellpopup}
       <header className={classes.header}>
-        <Link href={`/${SelectedCategory}`}>
+        <Link href={`/${backUrl}`}>
           <IoIosArrowBack />
         </Link>
 
@@ -218,7 +214,7 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
         </Link>
 
         {/* 게시글 작성자만 게시글 수정 및 삭제 가능하도록 하는 코드*/}
-        {loginDisplayName == item.userName && (!menuOpen ? menuOpenBtn : menuBox)}
+        {loginDisplayName == item.nickname && (!menuOpen ? menuOpenBtn : menuBox)}
       </header>
       {isLoading ? (
         <div className={classes.loading}>
@@ -233,7 +229,7 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
           <div className={classes.userInfo}>
             <div className={classes.userInfoBox}>
               <Image src={userUrl} alt="profileImg" width={40} height={40} />
-              <p>{item.userName}</p>
+              <p>{item.nickname}</p>
               <p>{item.dong}</p>
             </div>
 
@@ -259,7 +255,7 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
             </div>
             <p>{item.description}</p>
             <p className={classes.likeInfo}>
-              관심 {LikeNum} · 조회 {item.show}
+              관심 {item.likes} · 조회 {item.show}
             </p>
           </div>
 
@@ -267,14 +263,14 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
             <button onClick={likeBtnHandler} className={classes.likeButton}>
               {isLike ? <AiFillHeart className={classes.fill} /> : <AiOutlineHeart />}
             </button>
-            <p className={classes.price}>
+            <div className={classes.price}>
               {price}
               {item.soldout && <p className={classes.soldout}>판매완료</p>}
-            </p>
+            </div>
             <button
               className={`${classes.chatButton} ${!isLoggedIn || (item.soldout && classes.disabled)}`}
               onClick={chatBtnHandler}>
-              {item.userName == loginDisplayName ? "대화중인 채팅방" : "채팅하기"}
+              {item.nickname == loginDisplayName ? "대화중인 채팅방" : "채팅하기"}
             </button>
           </div>
         </section>

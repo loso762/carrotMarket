@@ -1,6 +1,6 @@
 import ChatHeader from "@/components/chat/chatHeader";
 import {firestore} from "@/components/firebase";
-import {getDocs, collection} from "firebase/firestore";
+import {doc, getDoc, getDocs, collection} from "firebase/firestore";
 import {useRouter} from "next/router";
 import React, {useEffect, useState, useContext} from "react";
 import ChatContents from "@/components/chat/chatContents";
@@ -10,7 +10,7 @@ function ChatRoom() {
   const [messageData, setMessageData] = useState();
   const [chatpartner, setchatpartner] = useState();
   const router = useRouter();
-  const {loginDisplayName} = useContext(UserContext);
+  const {loginID} = useContext(UserContext);
 
   useEffect(() => {
     async function fetchChat() {
@@ -27,16 +27,17 @@ function ChatRoom() {
       setMessageData(messages);
     }
 
+    async function fetchpartner() {
+      const partyID = router.query.chatId.split("-")[0].split("_");
+      const partnerID = partyID.filter((el) => el !== loginID);
+      const partnerInfo = await getDoc(doc(firestore, "users", ...partnerID));
+      setchatpartner(partnerInfo.data().nickname);
+    }
+
+    fetchpartner();
+
     fetchChat();
   }, [router.query.chatId]);
-
-  //채팅상대 이름 불러오기
-  useEffect(() => {
-    let chatPartner =
-      router.query.chatId && router.query.chatId.replace(`_`, "").replace(loginDisplayName, "");
-    let index = chatPartner.indexOf("-");
-    setchatpartner(chatPartner.substring(0, index));
-  }, [loginDisplayName, router.query.chatId]);
 
   //현재 시간 구하는 함수
   const today = new Date();

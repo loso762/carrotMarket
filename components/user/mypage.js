@@ -6,85 +6,43 @@ import Image from "next/image";
 import ProductContext from "../context/product-context";
 import classes from "./mypage.module.css";
 import {BiShoppingBag, BiReceipt, BiHeart, BiChat} from "react-icons/bi";
-import {FiSettings, FiCamera} from "react-icons/fi";
-import {IoIosArrowBack} from "react-icons/io";
-import {storage} from "@/components/firebase";
-import {ref, getDownloadURL, uploadBytes, deleteObject} from "firebase/storage";
-import {ClipLoader} from "react-spinners";
+import {FiSettings} from "react-icons/fi";
+import Setting from "./setting";
+import {storage, firestore} from "@/components/firebase";
+import {ref, getDownloadURL} from "firebase/storage";
 
 function Mypage(props) {
-  const {loginDisplayName, setIsLoggedIn} = useContext(UserContext);
+  const {loginDisplayName, setIsLoggedIn, loginID} = useContext(UserContext);
   const {setSelectedCategory} = useContext(ProductContext);
 
   const [isSetting, setIsSetting] = useState(false);
   const [image, setImage] = useState("/images/profile.jpg");
-  const [imageChange, setimageChange] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const imageRef = ref(storage, `profile/${loginDisplayName}`);
 
   const handleLogout = async () => {
     await auth.signOut();
     setIsLoggedIn(false);
   };
 
-  async function ImageHandler(e) {
-    setIsLoading(true);
-    e.target.files[0] &&
-      getDownloadURL(imageRef)
-        .then(() => {
-          deleteObject(imageRef).then(() => {
-            uploadBytes(imageRef, e.target.files[0]).then(() => {
-              setimageChange((prev) => !prev);
-            });
-          });
-        })
-        .catch(() => {
-          uploadBytes(imageRef, e.target.files[0]).then(() => {
-            setimageChange((prev) => !prev);
-          });
-        });
+  function urlHandler(url) {
+    setImage(url);
   }
+
+  const imageRef = ref(storage, `profile/${loginID}`);
 
   useEffect(() => {
     getDownloadURL(imageRef)
       .then((url) => {
-        setImage(url);
-        setIsLoading(false);
+        urlHandler(url);
       })
       .catch(() => {
         return;
       });
-  }, [imageChange]);
-
-  function submitHandler() {}
+  }, [image]);
 
   return (
     <div className={classes.container}>
       {isSetting ? (
-        <form className={classes.setBox}>
-          <div className={classes.header}>
-            <IoIosArrowBack onClick={() => setIsSetting(false)} />
-            프로필수정 <button onClick={submitHandler}>완료</button>
-          </div>
-          <div className={classes.info}>
-            {isLoading ? (
-              <div className={classes.loadingBox}>
-                <ClipLoader size={20} color={"#fd9253"} />
-              </div>
-            ) : (
-              <Image width={90} height={90} alt="profile" src={image} />
-            )}
-            <p>
-              <label htmlFor="file">
-                <FiCamera />
-              </label>
-            </p>
-            <input type="file" id="file" onChange={ImageHandler} />
-            <label htmlFor="name">닉네임</label>
-            <input placeholder={loginDisplayName} id="name" />
-          </div>
-        </form>
+        <Setting image={image} urlHandler={urlHandler} setoff={() => setIsSetting(false)} />
       ) : (
         <>
           <div className={classes.profile}>
