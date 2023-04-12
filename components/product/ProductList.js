@@ -5,7 +5,6 @@ import {useContext, useEffect, useState} from "react";
 import {useNearbyLocations} from "@/Hooks/useNearbylocation";
 import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
-import Image from "next/image";
 
 function ProductList({list, range}) {
   const {setIsEdit, SelectedCategory} = useContext(ProductContext);
@@ -14,7 +13,6 @@ function ProductList({list, range}) {
   const [isScroll, setIsScroll] = useState(false);
   const [showList, setShowList] = useState([]);
   const [isError, setisError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -31,6 +29,8 @@ function ProductList({list, range}) {
   useEffect(() => {
     if (SelectedCategory == "Near") {
       setShowList(nearProduct);
+    } else if (SelectedCategory == "카테고리") {
+      return;
     } else {
       setShowList(list);
     }

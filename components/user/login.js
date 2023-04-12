@@ -106,7 +106,6 @@ function Login(props) {
     auth
       .signInWithPopup(googleAuthProvider)
       .then((result) => {
-        const credential = result.credential;
         const user = result.user;
         const {nickname, email} = user;
 
@@ -169,6 +168,7 @@ function Login(props) {
               onChange={handleEmailChange}
               className={classes.input}
               placeholder="이메일"
+              autoComplete="none"
             />
           </div>
           <div>
@@ -181,6 +181,7 @@ function Login(props) {
               onChange={handlePasswordChange}
               className={classes.input}
               placeholder="비밀번호"
+              autoComplete="none"
             />
           </div>
           <p className={classes.error}>{error}</p>

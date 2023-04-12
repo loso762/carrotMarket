@@ -3,7 +3,7 @@ import ProductList from "@/components/product/ProductList";
 import Header from "@/components/layout/Header";
 import FooterMenu from "@/components/layout/FooterMenu";
 import {firestore} from "@/components/firebase";
-import {collection, getDocs} from "firebase/firestore";
+import {collection, onSnapshot} from "firebase/firestore";
 import {useState, useContext} from "react";
 import SearchList from "@/components/product/SearchList";
 import ProductContext from "@/components/context/product-context";
@@ -11,6 +11,7 @@ import ProductContext from "@/components/context/product-context";
 function Near(props) {
   const {setSelectedCategory} = useContext(ProductContext);
 
+  const [products, setproducts] = useState([]);
   const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위
   const [isSearching, setIsSearching] = useState(false);
   const [filterdProducts, setfilterdProducts] = useState([]);
@@ -19,6 +20,20 @@ function Near(props) {
     sessionStorage.setItem("category", "Near");
     setSelectedCategory(sessionStorage.getItem("category"));
   }, [setSelectedCategory]);
+
+  useEffect(() => {
+    const ProductRef = collection(firestore, "products");
+
+    const unsubscribe = onSnapshot(ProductRef, (snapshot) => {
+      const ProductsData = [];
+      snapshot.forEach((doc) => {
+        ProductsData.push({id: doc.id, data: doc.data()});
+      });
+      setproducts(ProductsData);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   //검색범위 지정
   const searchRangeHandler = (range) => {
@@ -55,24 +70,15 @@ function Near(props) {
         range={searchRange}
         rangechange={searchRangeHandler}
         onSearch={isSearching}
-        å
         searchBoxCancel={searchBoxCancel}
         searchBoxOpen={searchBoxOpen}
         Productsfilter={Productsfilter}
       />
 
       {!isSearching ? (
-        <ProductList
-          list={isSearching ? filterdProducts : props.ProductsData}
-          section="내근처"
-          range={searchRange}
-        />
+        <ProductList list={isSearching ? filterdProducts : products} section="내근처" range={searchRange} />
       ) : (
-        <SearchList
-          list={isSearching ? filterdProducts : props.ProductsData}
-          section="내근처"
-          range={searchRange}
-        />
+        <SearchList list={isSearching ? filterdProducts : products} section="내근처" range={searchRange} />
       )}
 
       <FooterMenu />
@@ -81,18 +87,3 @@ function Near(props) {
 }
 
 export default Near;
-
-export async function getStaticProps(context) {
-  let ProductsData = [];
-
-  const Productlist = await getDocs(collection(firestore, "products"));
-
-  Productlist.forEach((doc) => {
-    ProductsData.push({id: doc.id, data: doc.data()});
-  });
-
-  return {
-    props: {ProductsData},
-    revalidate: 1,
-  };
-}
