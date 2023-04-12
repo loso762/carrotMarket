@@ -14,6 +14,7 @@ function ProductList({list, range}) {
   const [isScroll, setIsScroll] = useState(false);
   const [showList, setShowList] = useState([]);
   const [isError, setisError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -55,18 +56,17 @@ function ProductList({list, range}) {
   return (
     <>
       <ul className={classes.list} onScroll={handleScroll}>
-        {showList.map((item) => {
-          return (
-            <ProductItem
-              errorHandler={errorHandler}
-              key={item.id}
-              id={item.id}
-              item={item.data}
-              isliked={isLiked(item.id)}
-            />
-          );
-        })}
+        {showList.map((item) => (
+          <ProductItem
+            errorHandler={errorHandler}
+            key={item.id}
+            id={item.id}
+            item={item.data}
+            isliked={isLiked(item.id)}
+          />
+        ))}
       </ul>
+
       {/* 글쓰기버튼 조건 */}
       {isLoggedIn && !writeBtnOff && (
         <Link
