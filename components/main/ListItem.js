@@ -10,7 +10,7 @@ const ListItem = React.memo(({category}) => {
   return (
     <li onClick={() => setSelectedCategory(category)}>
       <Link href={category} className={classes.link}>
-        <Image src={`/images/${category}.png`} alt="category" width={42} height={42} />
+        <Image src={`/images/${category}.webp`} alt="category" width={42} height={42} />
         <p>{category}</p>
       </Link>
     </li>

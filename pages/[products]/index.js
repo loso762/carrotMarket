@@ -8,7 +8,7 @@ import UserContext from "@/components/context/user-context";
 import ProductContext from "@/components/context/product-context";
 import Image from "next/image";
 
-function Products(props) {
+function Products() {
   const [products, setproducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -47,6 +47,12 @@ function Products(props) {
       snapshot.forEach((doc) => {
         ProductsData.push({id: doc.id, data: doc.data()});
       });
+
+      if (SelectedCategory !== "인기매물") {
+        ProductsData.sort((a, b) => {
+          return b.data.time - a.data.time;
+        });
+      }
       setproducts(ProductsData);
       setIsLoading(false);
     });
@@ -60,7 +66,7 @@ function Products(props) {
 
       {!isLoading && products.length === 0 ? (
         <div className="empty">
-          <Image src="/images/empty.png" alt="" width={100} height={100} />텅
+          <Image src="/images/empty.webp" alt="" width={100} height={100} />텅
         </div>
       ) : (
         <ProductList list={products} />

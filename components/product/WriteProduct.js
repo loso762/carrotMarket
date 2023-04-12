@@ -4,10 +4,11 @@ import {useRouter} from "next/router";
 import {IoIosArrowBack} from "react-icons/io";
 import ProductContext from "../context/product-context";
 import {firestore, storage} from "../firebase";
-import {ref, uploadBytes} from "firebase/storage";
+import {ref, uploadBytes, deleteObject} from "firebase/storage";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import {MdAddAPhoto} from "react-icons/md";
+import imageCompression from "browser-image-compression";
 
 function WriteProduct() {
   const router = useRouter();
@@ -38,13 +39,33 @@ function WriteProduct() {
     }
   }, [productId, isEdit]);
 
-  function ImageHandler(e) {
-    e.target.files[0] && setImage(e.target.files[0]);
+  async function ImageHandler(e) {
+    const imageFile = e.target.files[0];
+    const options = {
+      maxSizeMB: 0.2, // Maximum size in MB
+      maxWidthOrHeight: 1024, // Maximum width or height of the image
+      useWebWorker: true, // Use Web Worker for faster compression
+    };
+    try {
+      const compressedFile = await imageCompression(imageFile, options);
+      // 압축된 이미지 리턴
+      setImage(compressedFile);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function ImgUpload() {
-    const imageRef = ref(storage, `images/${now}`);
-    uploadBytes(imageRef, image);
+    // 게시물수정일 경우는 db에 있는 사진 수정
+    if (isEdit) {
+      const imageRef = ref(storage, `images/${product.time}`);
+      deleteObject(imageRef).then(() => {
+        uploadBytes(imageRef, image);
+      });
+    } else {
+      const imageRef = ref(storage, `images/${now}`);
+      uploadBytes(imageRef, image);
+    }
   }
 
   const ProductID = isEdit ? productId : `${now}`;
@@ -69,7 +90,7 @@ function WriteProduct() {
     const enteredPrice = isFree ? "나눔" : priceInputRef.current.value;
     const enteredDescription = descriptionInputRef.current.value;
 
-    if (!isFree && !priceInputRef.current.value) {
+    if (!isFree && !priceInputRef.current.value && !isEdit) {
       alert("가격을 입력해주세요!");
       return;
     }
@@ -79,15 +100,15 @@ function WriteProduct() {
       return;
     }
 
-    if (image == "첨부파일") {
+    if (image == "첨부파일" && !isEdit) {
       alert("이미지를 업로드해주세요!");
       return;
     }
 
     const newProduct = {
-      title: enteredTitle,
-      price: enteredPrice,
-      description: enteredDescription,
+      title: enteredTitle || product?.title,
+      price: enteredPrice || product?.price,
+      description: enteredDescription || product?.description,
       Latitude: latitude,
       Longitude: longitude,
       category: category,
@@ -100,8 +121,11 @@ function WriteProduct() {
       wholike: [],
     };
 
-    //사진은 firestorage로 나머지 정보는 firestore로 업로드
-    ImgUpload();
+    // 사진은 firestorage로 나머지 정보는 firestore로 업로드
+    // 게시물수정일 경우 사진을 안올리면 전에 있던 사진 유지
+    if (typeof image == "object") {
+      ImgUpload();
+    }
     WriteData(newProduct);
 
     setsellProducts &&
@@ -128,7 +152,7 @@ function WriteProduct() {
 
       <form id="form" className={classes.form} onSubmit={submitHandler}>
         <p>
-          <select ref={categoryRef} value={product.category}>
+          <select ref={categoryRef}>
             {category.map((category, idx) => {
               return (
                 <option key={idx} value={category}>
@@ -142,7 +166,7 @@ function WriteProduct() {
             ref={titleInputRef}
             type="text"
             name="title"
-            required
+            required={!isEdit}
           />
         </p>
         <p className={classes.priceBox}>
@@ -172,7 +196,7 @@ function WriteProduct() {
             ref={descriptionInputRef}
             name="description"
             rows="7"
-            required
+            required={!isEdit}
           />
         </p>
         <div className={classes.actions}>

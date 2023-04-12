@@ -8,5 +8,6 @@ module.exports = nextConfig;
 module.exports = {
   images: {
     domains: ["firebasestorage.googleapis.com"],
+    formats: ["image/webp"],
   },
 };
