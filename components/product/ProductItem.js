@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import {AiOutlineHeart, AiFillHeart} from "react-icons/ai";
 import {firestore, storage} from "../firebase";
 import classes from "./ProductItem.module.css";
@@ -23,47 +23,53 @@ function ProductItem({id, item, isliked, errorHandler}) {
   }, [id]);
 
   //좋아요 클릭
-  function likeBtnHandler(e) {
-    e.stopPropagation();
+  const likeBtnHandler = useCallback(
+    (e) => {
+      e.stopPropagation();
 
-    if (isLoggedIn) {
-      if (loginDisplayName == item.nickname) {
-        errorHandler();
-        return;
-      } else {
-        if (isliked) {
-          item.likes -= 1;
-          setDoc(doc(firestore, "products", id), {
-            ...item,
-            likes: item.likes,
-            wholike: item.wholike.filter((item) => item !== loginID),
-          });
-        } else if (!isliked) {
-          item.likes += 1;
-          setDoc(doc(firestore, "products", id), {
-            ...item,
-            likes: item.likes,
-            wholike: [...item.wholike, loginID],
-          });
+      if (isLoggedIn) {
+        if (loginDisplayName == item.nickname) {
+          errorHandler();
+          return;
+        } else {
+          if (isliked) {
+            item.likes -= 1;
+            setDoc(doc(firestore, "products", id), {
+              ...item,
+              likes: item.likes,
+              wholike: item.wholike.filter((item) => item !== loginID),
+            });
+          } else if (!isliked) {
+            item.likes += 1;
+            setDoc(doc(firestore, "products", id), {
+              ...item,
+              likes: item.likes,
+              wholike: [...item.wholike, loginID],
+            });
+          }
         }
+      } else {
+        router.push("/");
       }
-    } else {
-      router.push("/");
-    }
-  }
+    },
+    [loginID, item, isliked]
+  );
 
   //디테일 페이지 열기
-  async function showDetailsHandler(e) {
-    e.stopPropagation();
+  const showDetailsHandler = useCallback(
+    async (e) => {
+      e.stopPropagation();
 
-    //조회 수 업데이트 함수
-    let show = item.show || 0;
-    show += 1;
+      //조회 수 업데이트
+      let show = item.show || 0;
+      show += 1;
 
-    await setDoc(doc(firestore, "products", id), {...item, show: show});
+      await setDoc(doc(firestore, "products", id), {...item, show: show});
 
-    router.push(`${item.category}/${id}`);
-  }
+      router.push(`${item.category}/${id}`);
+    },
+    [id, item, router]
+  );
 
   let price;
   if (item.price == "나눔") {
@@ -94,7 +100,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
       <div className={classes.content}>
         <h4>{item.title}</h4>
         <div className={classes.time}>
-          {item.dong} · {minutesAgo} 전
+          {item.dong} · {minutesAgo}
         </div>
         <div className={classes.price}>
           {item.soldout && <p className={classes.soldout}>판매완료</p>}

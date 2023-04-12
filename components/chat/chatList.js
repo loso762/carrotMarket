@@ -33,7 +33,7 @@ function ChatListForm() {
     if (isLoggedIn) {
       fetchChatList();
     }
-  }, [loginDisplayName, isLoggedIn]);
+  }, [loginDisplayName, isLoggedIn, loginID]);
 
   const LoginErrorMsg = <div className={classes.Error}>로그인이 필요해요!</div>;
 

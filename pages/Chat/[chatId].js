@@ -37,7 +37,7 @@ function ChatRoom() {
     fetchpartner();
 
     fetchChat();
-  }, [router.query.chatId]);
+  }, [router.query.chatId, loginID]);
 
   //현재 시간 구하는 함수
   const today = new Date();

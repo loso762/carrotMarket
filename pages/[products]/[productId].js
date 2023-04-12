@@ -19,7 +19,7 @@ function ProductDetailPage(props) {
       setproductUrl(url);
       setIsLoading(false);
     });
-  }, []);
+  }, [imageRef]);
 
   useEffect(() => {
     getDownloadURL(imageRef2)
@@ -29,7 +29,7 @@ function ProductDetailPage(props) {
       .catch(() => {
         return;
       });
-  }, []);
+  }, [imageRef2]);
 
   return (
     <ProductDetail

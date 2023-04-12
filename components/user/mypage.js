@@ -8,10 +8,10 @@ import classes from "./mypage.module.css";
 import {BiShoppingBag, BiReceipt, BiHeart, BiChat} from "react-icons/bi";
 import {FiSettings} from "react-icons/fi";
 import Setting from "./setting";
-import {storage, firestore} from "@/components/firebase";
+import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 
-function Mypage(props) {
+function Mypage() {
   const {loginDisplayName, setIsLoggedIn, loginID} = useContext(UserContext);
   const {setSelectedCategory} = useContext(ProductContext);
 
@@ -37,7 +37,7 @@ function Mypage(props) {
       .catch(() => {
         return;
       });
-  }, [image]);
+  }, [image, imageRef]);
 
   return (
     <div className={classes.container}>

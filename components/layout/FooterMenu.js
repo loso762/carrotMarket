@@ -13,9 +13,7 @@ function FooterMenu() {
 
   function clickHomeBtn() {
     router.push("/Main");
-    setTimeout(() => {
-      setSelectedCategory("카테고리");
-    }, 400);
+    setSelectedCategory("카테고리");
   }
 
   function clickNearBtn() {

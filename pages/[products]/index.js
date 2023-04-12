@@ -1,73 +1,72 @@
-import React, {useEffect,useContext} from "react";
-import ProductList from "../../components/product/ProductList";
+import React, {useEffect, useContext, useState} from "react";
 import Header from "@/components/layout/Header";
 import FooterMenu from "../../components/layout/FooterMenu";
+import ProductList from "../../components/product/ProductList";
 import {firestore} from "@/components/firebase";
-import {collection, getDocs} from "firebase/firestore";
-import ProductContext from '@/components/context/product-context';
-import { useRouter } from 'next/router';
+import {collection, limit, onSnapshot, query, where, orderBy} from "firebase/firestore";
+import UserContext from "@/components/context/user-context";
+import ProductContext from "@/components/context/product-context";
+import Image from "next/image";
 
 function Products(props) {
-  const router = useRouter();
+  const [products, setproducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const {setSelectedCategory} = useContext(ProductContext);
-  
-  useEffect(()=>{
-    sessionStorage.setItem("category",router.query.products);
+  const {loginDisplayName, loginID} = useContext(UserContext);
+  const {setSelectedCategory, SelectedCategory} = useContext(ProductContext);
+
+  useEffect(() => {
+    sessionStorage.setItem("category", SelectedCategory);
     setSelectedCategory(sessionStorage.getItem("category"));
-  },[setSelectedCategory,router.query.products])
+  }, [setSelectedCategory, SelectedCategory]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const ProductRef = collection(firestore, "products");
+
+    let q;
+
+    if (SelectedCategory == "판매내역") {
+      q = query(ProductRef, where("nickname", "==", loginDisplayName));
+    } else if (SelectedCategory == "구매내역") {
+      q = query(ProductRef, where("buyer", "==", loginDisplayName));
+    } else if (SelectedCategory == "인기매물") {
+      q = query(ProductRef, orderBy("likes", "desc"), limit(10));
+    } else if (SelectedCategory == "관심목록") {
+      q = query(ProductRef, where("wholike", "array-contains", loginID));
+    } else if (SelectedCategory == "카테고리") {
+      return;
+    } else {
+      q = query(ProductRef, where("category", "==", SelectedCategory));
+    }
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const ProductsData = [];
+      snapshot.forEach((doc) => {
+        ProductsData.push({id: doc.id, data: doc.data()});
+      });
+      setproducts(ProductsData);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [SelectedCategory, loginDisplayName, loginID]);
 
   return (
     <>
       <Header />
-      <ProductList list={props.ProductsData} img={props.imgData} />
+
+      {!isLoading && products.length === 0 ? (
+        <div className="empty">
+          <Image src="/images/empty.png" alt="" width={100} height={100} />텅
+        </div>
+      ) : (
+        <ProductList list={products} />
+      )}
+
       <FooterMenu />
     </>
   );
 }
 
 export default Products;
-
-export async function getStaticPaths() {
-  return {
-    fallback: "blocking",
-    paths: [{params: {products: "의류"}}],
-  };
-}
-
-export async function getStaticProps(context) {
-  const section = context.params.products;
-  let ProductsData = [];
-
-  const Productlist = await getDocs(collection(firestore, "products"));
-
-  if (section == "likes" && section == "sell") {
-    ProductsData = [];
-  }
-
-  if (section == "인기매물") {
-    Productlist.forEach((doc) => {
-      ProductsData.push({id: doc.id, data: doc.data()});
-    });
-
-    //상위 5개 검색어만 표시
-    ProductsData = ProductsData.sort((a, b) => {
-      return b.data.likes - a.data.likes;
-    }).slice(0, 5);
-  } else {
-    Productlist.forEach((doc) => {
-      if (doc.data().category == section) {
-        ProductsData.push({id: doc.id, data: doc.data()});
-      }
-    });
-
-    ProductsData.sort((a, b) => {
-      return b.data.time - a.data.time;
-    });
-  }
-
-  return {
-    props: {ProductsData},
-    revalidate: 1,
-  };
-}

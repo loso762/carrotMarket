@@ -25,7 +25,7 @@ function ChatPreview({c, LoadingEnd}) {
       setchatpartner(partnerInfo.data().nickname);
     }
     fetchpartner();
-  }, []);
+  }, [c.partyID, loginID]);
 
   const imageRef = ref(storage, `profile/${c.partyID.filter((p) => p !== loginID)}`);
 
@@ -37,7 +37,7 @@ function ChatPreview({c, LoadingEnd}) {
       .catch(() => {
         return;
       });
-  }, [chatpartner]);
+  }, [imageRef]);
 
   useEffect(() => {
     //마지막 채팅 시간

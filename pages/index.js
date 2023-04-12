@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, {useContext} from "react";
 import FooterMenu from "@/components/layout/FooterMenu";
 import Mypage from "@/components/user/mypage";
 import Login from "@/components/user/login";
 import UserContext from "@/components/context/user-context";
 
 function Index() {
-  const { isLoggedIn } = useContext(UserContext);
+  const {isLoggedIn} = useContext(UserContext);
   return (
     <>
       {isLoggedIn ? <Mypage /> : <Login />}

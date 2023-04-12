@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { auth, firestore } from "../firebase";
+import {useState} from "react";
+import {auth, firestore} from "../firebase";
 import classes from "./Signup.module.css";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import FooterMenu from "@/components/layout/FooterMenu";
 
 function Signup() {
@@ -41,6 +41,7 @@ function Signup() {
                       email,
                       nickname,
                       temp,
+                      password,
                     });
 
                     router.push("/");

@@ -28,6 +28,7 @@
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
+  cursor: pointer;
 }
 
 .ProductsHeader svg.searchBtn2 {
@@ -37,6 +38,7 @@
   position: absolute;
   right: 7px;
   top: 6px;
+  cursor: pointer;
 }
 
 .rangeselect {

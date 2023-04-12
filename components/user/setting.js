@@ -13,6 +13,7 @@ function Setting({urlHandler, image, setoff}) {
   const {loginID, loginDisplayName, setloginDisplayName, likeProducts} = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [imageChange, setimageChange] = useState(true);
+  const [errorMsg, seterrorMsg] = useState(null);
   const inputRef = useRef();
   const imageRef = ref(storage, `profile/${loginID}`);
 
@@ -43,43 +44,41 @@ function Setting({urlHandler, image, setoff}) {
       .catch(() => {
         return;
       });
-  }, [imageChange]);
+  }, [imageChange, imageRef, urlHandler]);
 
   async function submitHandler(e) {
     e.preventDefault();
 
     if (inputRef.current.value !== "") {
-      const productRef = collection(firestore, "products");
-      const q = query(productRef, where("nickname", "==", loginDisplayName));
-      const querySnapshot = await getDocs(q);
+      //닉네임 중복여부 확인
+      firestore
+        .collection("users")
+        .where("nickname", "==", inputRef.current.value)
+        .get()
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            seterrorMsg("이미 존재하는 닉네임입니다.");
+            setTimeout(() => {
+              seterrorMsg(null);
+            }, 2000);
+          } else {
+            const productRef = collection(firestore, "products");
+            getDocs(query(productRef, where("nickname", "==", loginDisplayName))).then(() => {
+              querySnapshot.forEach((item) => {
+                updateDoc(doc(firestore, "products", item.id), {
+                  nickname: inputRef.current.value,
+                });
+              });
 
-      querySnapshot.forEach((item) => {
-        updateDoc(doc(firestore, "products", item.id), {
-          nickname: inputRef.current.value,
+              updateDoc(doc(firestore, "users", loginID), {
+                nickname: inputRef.current.value,
+              }).then(() => {
+                setloginDisplayName(inputRef.current.value);
+                setoff();
+              });
+            });
+          }
         });
-      });
-
-      await updateDoc(doc(firestore, "users", loginID), {
-        nickname: inputRef.current.value,
-      });
-
-      // likeProducts.forEach((item) => {
-      //   getDoc(doc(firestore, "products", item.id)).then((product) => {
-      //     const likepeople = product.data().wholike;
-      //     const idx = likepeople.findIndex((el) => el === loginDisplayName);
-      //     likepeople[idx] = inputRef.current.value;
-      //     console.log(likepeople);
-
-      //     setDoc(doc(firestore, "products", item.id), {
-      //       ...product.data(),
-      //       wholike: likepeople,
-      //     });
-      //   });
-      // });
-
-      setloginDisplayName(inputRef.current.value);
-
-      setoff();
     }
   }
 
@@ -106,6 +105,7 @@ function Setting({urlHandler, image, setoff}) {
         <label htmlFor="name">닉네임</label>
         <input placeholder={loginDisplayName} id="name" ref={inputRef} />
       </div>
+      {errorMsg && inputRef.current.value !== "" && <div className={classes.errorMsg}>{errorMsg}</div>}
     </form>
   );
 }
