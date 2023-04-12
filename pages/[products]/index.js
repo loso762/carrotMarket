@@ -36,6 +36,8 @@ function Products(props) {
       q = query(ProductRef, where("wholike", "array-contains", loginID));
     } else if (SelectedCategory == "카테고리") {
       return;
+    } else if (SelectedCategory == "Near") {
+      return;
     } else {
       q = query(ProductRef, where("category", "==", SelectedCategory));
     }
