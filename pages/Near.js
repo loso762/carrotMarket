@@ -54,7 +54,7 @@ function Near(props) {
   function Productsfilter(filter) {
     const tempData = [];
 
-    props.ProductsData.forEach((product) => {
+    products.forEach((product) => {
       if (product.data.title.includes(filter)) {
         tempData.push(product);
       }

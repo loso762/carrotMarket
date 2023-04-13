@@ -74,25 +74,23 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
     e.stopPropagation();
 
     if (isLoggedIn) {
-      if (loginDisplayName == item.nickname) {
-        errHandler("본인의 게시글은 좋아요를 누르실수 없습니다.");
-        return;
-      } else {
+      if (loginDisplayName !== item.nickname) {
         if (isLike) {
-          item.likes -= 1;
           setDoc(doc(firestore, "products", id), {
             ...item,
-            likes: item.likes,
+            likes: item.likes - 1,
             wholike: item.wholike.filter((item) => item !== loginID),
           });
         } else if (!isLike) {
-          item.likes += 1;
           setDoc(doc(firestore, "products", id), {
             ...item,
-            likes: item.likes,
+            likes: item.likes + 1,
             wholike: [...item.wholike, loginID],
           });
         }
+      } else {
+        errHandler("본인의 게시글은 좋아요를 누르실수 없습니다.");
+        return;
       }
     } else {
       router.push("/");
