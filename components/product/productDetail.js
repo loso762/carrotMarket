@@ -40,7 +40,7 @@ function ImoticonHandler(temp) {
 function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
   const router = useRouter();
   const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
-  const {loginDisplayName, loginID, likeProducts, isLoggedIn} = useContext(UserContext);
+  const {loginDisplayName, loginID, isLoggedIn} = useContext(UserContext);
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
@@ -55,12 +55,12 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
   }
 
   useEffect(() => {
-    if (likeProducts.some((item) => item.id === id)) {
+    if (item.wholike.includes(loginID)) {
       setIsLike(true);
     } else {
       setIsLike(false);
     }
-  }, [id, likeProducts]);
+  }, [item.wholike, loginID]);
 
   function errHandler(text) {
     seterrMsg(text);
@@ -218,7 +218,7 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
       </header>
       {isLoading ? (
         <div className={classes.loading}>
-          <ClipLoader color="#fd9253" size={30} />
+          <ClipLoader color="#fd9253" size={40} />
         </div>
       ) : (
         <section className={classes.detail} onClick={() => setMenuOpen(false)}>

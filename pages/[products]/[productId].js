@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import ProductDetail from "@/components/product/productDetail";
 import {useRouter} from "next/router";
-import {doc, getDoc, collection} from "firebase/firestore";
+import {doc, getDoc, collection, onSnapshot} from "firebase/firestore";
 import {firestore, storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 
-function ProductDetailPage(props) {
+function ProductDetailPage() {
   const router = useRouter();
   const [productUrl, setproductUrl] = useState();
   const [userUrl, setuserUrl] = useState("/images/profile.jpg");
@@ -14,30 +14,35 @@ function ProductDetailPage(props) {
 
   // 매물과 작성자 프로필 사진 불러오기
   useEffect(() => {
-    const itemImageRef = ref(storage, `images/${router.query.productId}`);
-
     async function fetchData() {
-      const itemData = await getDoc(doc(collection(firestore, "products"), router.query.productId));
+      if (router.query.productId) {
+        const itemImageRef = ref(storage, `images/${router.query.productId}`);
 
-      setItem(itemData.data());
-
-      const profileImageRef = ref(storage, `profile/${itemData.data().ID}`);
-
-      getDownloadURL(profileImageRef)
-        .then((url) => {
-          setuserUrl(url);
-        })
-        .catch(() => {
-          return;
+        getDownloadURL(itemImageRef).then((url) => {
+          setproductUrl(url);
+          setIsLoading(false);
         });
+
+        const ProductRef = doc(collection(firestore, "products"), router.query.productId);
+        const unsubscribe = onSnapshot(ProductRef, (item) => {
+          setItem(item.data());
+
+          getDownloadURL(ref(storage, `profile/${item.data().ID}`))
+            .then((url) => {
+              setuserUrl(url);
+            })
+            .catch(() => {
+              return;
+            });
+        });
+
+        return () => unsubscribe();
+      } else {
+        setIsLoading(false);
+      }
     }
 
     fetchData();
-
-    getDownloadURL(itemImageRef).then((url) => {
-      setproductUrl(url);
-      setIsLoading(false);
-    });
   }, [router.query.productId]);
 
   return (

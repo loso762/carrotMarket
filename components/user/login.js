@@ -36,7 +36,6 @@ function Login(props) {
     try {
       await auth.signInWithEmailAndPassword(email, password);
 
-      // Get the user's nickname from Firestore
       const user = auth.currentUser;
       const userRef = firestore.collection("users").doc(user.uid);
       const doc = await userRef.get();
@@ -65,7 +64,6 @@ function Login(props) {
     auth.signInWithPopup(googleAuthProvider).then((result) => {
       const user = result.user;
 
-      // Get the user's nickname from Firestore
       const userRef = firestore.collection("users").doc(user.uid);
       userRef.get().then((doc) => {
         if (doc.exists) {
@@ -76,7 +74,6 @@ function Login(props) {
           setloginID(user.uid);
           setloginDisplayName(nickname);
         } else {
-          // If the user doesn't exist in Firestore, add them with default data
           firestore
             .collection("users")
             .doc(user.uid)

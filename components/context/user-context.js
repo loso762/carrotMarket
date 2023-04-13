@@ -10,24 +10,6 @@ export const UserContextProvider = (props) => {
   const [loginDisplayName, setloginDisplayName] = useState();
   const [loginTemp, setloginTemp] = useState("");
   const [loginID, setloginID] = useState("");
-  const [likeProducts, setlikeProducts] = useState([]);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      const likesDocRef = collection(firestore, "products");
-      const q = query(likesDocRef, where("wholike", "array-contains", loginID));
-
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const ProductsData = [];
-        snapshot.forEach((doc) => {
-          ProductsData.push({id: doc.id, data: doc.data()});
-        });
-        setlikeProducts(ProductsData);
-      });
-
-      return () => unsubscribe();
-    }
-  }, [loginID, isLoggedIn]);
 
   return (
     <UserContext.Provider
@@ -40,8 +22,6 @@ export const UserContextProvider = (props) => {
         setloginID,
         loginTemp,
         setloginTemp,
-        likeProducts,
-        setlikeProducts,
       }}>
       {props.children}
     </UserContext.Provider>

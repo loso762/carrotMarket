@@ -1,12 +1,13 @@
 import React, {useEffect, useContext, useState} from "react";
 import Header from "@/components/layout/Header";
 import FooterMenu from "../../components/layout/FooterMenu";
-import ProductList from "../../components/product/ProductList";
 import {firestore} from "@/components/firebase";
 import {collection, limit, onSnapshot, query, where, orderBy} from "firebase/firestore";
 import UserContext from "@/components/context/user-context";
 import ProductContext from "@/components/context/product-context";
 import Image from "next/image";
+import {PulseLoader} from "react-spinners";
+import ProductList from "@/components/product/ProductList";
 
 function Products() {
   const [products, setproducts] = useState([]);
@@ -64,7 +65,9 @@ function Products() {
     <>
       <Header />
 
-      {!isLoading && products.length === 0 ? (
+      {isLoading ? (
+        <PulseLoader margin={10} size={12} color={"#fd9253"} className="loader" />
+      ) : !isLoading && products.length === 0 ? (
         <div className="empty">
           <Image src="/images/empty.webp" alt="" width={100} height={100} />텅
         </div>

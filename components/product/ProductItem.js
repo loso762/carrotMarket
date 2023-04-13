@@ -3,7 +3,7 @@ import {useCallback, useContext, useEffect, useState} from "react";
 import {AiOutlineHeart, AiFillHeart} from "react-icons/ai";
 import {firestore, storage} from "../firebase";
 import classes from "./ProductItem.module.css";
-import {doc, increment, setDoc} from "firebase/firestore";
+import {doc, setDoc} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import {ref, getDownloadURL} from "firebase/storage";
 import Image from "next/image";
@@ -52,7 +52,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
         router.push("/");
       }
     },
-    [loginID, item, isliked]
+    [loginID, item, isliked, errorHandler, id, isLoggedIn, loginDisplayName, router]
   );
 
   //디테일 페이지 열기
