@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import {IoIosArrowBack} from "react-icons/io";
 import ProductContext from "../context/product-context";
 import {firestore, storage} from "../firebase";
-import {ref, uploadBytes, deleteObject} from "firebase/storage";
+import {ref, uploadBytes, deleteObject, getDownloadURL} from "firebase/storage";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import {MdAddAPhoto} from "react-icons/md";
