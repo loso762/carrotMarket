@@ -45,12 +45,12 @@ CRUD 기능 뿐만 아니라 실시간 채팅 기능, 회원 가입이나 로그
 <p align="center">
   <img  width="700" src="https://user-images.githubusercontent.com/57396816/232154880-5c8aebc9-0bd0-4cd1-840e-5b76bc56463b.gif">    
 </p>
+
+- 게시물 디테일 페이지로 들어가면 채팅요청을 할 수 있습니다. <br>
+
 <p align="center">
   <img  width="700" src="https://user-images.githubusercontent.com/57396816/232155743-578311ac-cf86-4767-bd8f-5e27269a4773.gif">
 </p>
-
-
-- 게시물 디테일 페이지로 들어가면 채팅요청을 할 수 있습니다. <br>
 - 판매 완료 시 더 이상 상대방이 채팅을 요청 할 수 없도록 하였으며 채팅을 통해 거래가 완료 되면 구매자 등록을 할 수 있게 해 구매목록에 게시물이 추가되도록 했습니다.
 
 
