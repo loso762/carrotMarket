@@ -7,7 +7,7 @@ import ChatPreview from "./chatPreview";
 import {ClipLoader} from "react-spinners";
 
 const ChatListForm = () => {
-  const {loginDisplayName, isLoggedIn, loginID} = useContext(UserContext);
+  const {isLoggedIn, loginID} = useContext(UserContext);
   const [chatList, setChatList] = useState([]);
   const [isLoading, setisLoading] = useState(true);
 
@@ -17,20 +17,15 @@ const ChatListForm = () => {
       const chatListRef = collection(firestore, "chat");
       const q = query(chatListRef, where("partyID", "array-contains", loginID));
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
+      onSnapshot(q, (snapshot) => {
         const tempChat = [];
         snapshot.forEach((doc) => {
           tempChat.push({id: doc.id, data: doc.data()});
         });
 
-        if (tempChat.length == 0) {
-          setisLoading(false);
-          return;
-        }
         setChatList(tempChat);
+        setisLoading(false);
       });
-
-      return () => unsubscribe();
     }
   }, [isLoggedIn, loginID]);
 

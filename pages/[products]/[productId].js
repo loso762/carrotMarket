@@ -24,7 +24,7 @@ const ProductDetailPage = () => {
         });
 
         const ProductRef = doc(collection(firestore, "products"), router.query.productId);
-        const unsubscribe = onSnapshot(ProductRef, (item) => {
+        onSnapshot(ProductRef, (item) => {
           setItem(item.data());
 
           getDownloadURL(ref(storage, `profile/${item.data().ID}`))
@@ -35,8 +35,6 @@ const ProductDetailPage = () => {
               return;
             });
         });
-
-        return () => unsubscribe();
       } else {
         setIsLoading(false);
       }

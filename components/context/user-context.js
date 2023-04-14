@@ -11,6 +11,7 @@ export const UserContextProvider = (props) => {
   const [loginTemp, setloginTemp] = useState("");
   const [loginID, setloginID] = useState("");
 
+  console.log(loginID);
   return (
     <UserContext.Provider
       value={{

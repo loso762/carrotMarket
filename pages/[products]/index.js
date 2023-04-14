@@ -43,7 +43,7 @@ function Products() {
       q = query(ProductRef, where("category", "==", SelectedCategory));
     }
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    onSnapshot(q, (snapshot) => {
       const ProductsData = [];
       snapshot.forEach((doc) => {
         ProductsData.push({id: doc.id, data: doc.data()});
@@ -57,8 +57,6 @@ function Products() {
       setproducts(ProductsData);
       setIsLoading(false);
     });
-
-    return () => unsubscribe();
   }, [SelectedCategory, loginDisplayName, loginID]);
 
   return (
