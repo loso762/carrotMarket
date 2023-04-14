@@ -26,7 +26,9 @@ CRUD 기능 뿐만 아니라 실시간 채팅 기능, 회원 가입이나 로그
 
 ### 2. 게시물 관련 기능
 
-<p align="center"><img  width="200" src="https://user-images.githubusercontent.com/57396816/232037079-5c3a1134-9ed6-45b6-8d9e-0144cf5d509f.gif">
+<p align="center">
+  <img  width="200" src="https://user-images.githubusercontent.com/57396816/232147014-1cb2f391-0cf9-425a-9984-2c28bb9b97ba.gif">&nbsp &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp
+  <img  width="200" src="https://user-images.githubusercontent.com/57396816/232147009-5af0c5c4-d6fb-4790-80d0-3642f1ecef3a.gif">
 </p>
 
 - 로그인을 해야 글쓰기 버튼이 나타나도록 하였으며 로그인 후 글쓰기 버튼을 클릭하면 카테고리, 제목, 사진 등을 빈칸없이 기입해야 글이 등록 됩니다.<br>
@@ -38,7 +40,7 @@ CRUD 기능 뿐만 아니라 실시간 채팅 기능, 회원 가입이나 로그
 
 ### 3. 채팅 관련 기능
 
-<p align="center"><img  width="200" src="https://user-images.githubusercontent.com/57396816/232039906-c82bf70d-7c2d-46d5-a3b5-94f41cfa5d67.gif"> &nbsp &nbsp &nbsp &nbsp &nbsp <img  width="200" src="https://user-images.githubusercontent.com/57396816/232041361-697c8ae9-492a-432e-ac6c-b6e7e2963186.gif">
+<p align="center"><img  width="200" src="https://user-images.githubusercontent.com/57396816/232039906-c82bf70d-7c2d-46d5-a3b5-94f41cfa5d67.gif"> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <img  width="200" src="https://user-images.githubusercontent.com/57396816/232041361-697c8ae9-492a-432e-ac6c-b6e7e2963186.gif">
 </p>
 
 
