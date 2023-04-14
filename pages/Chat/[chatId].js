@@ -41,8 +41,9 @@ function ChatRoom() {
   //현재 시간 구하는 함수
   const today = new Date();
   const hours = today.getHours() % 12 || 12;
+  const minutes = today.getMinutes();
   const ampm = today.getHours() >= 12 ? "오후" : "오전";
-  const now = `${ampm} ${hours}:${today.getMinutes() < 10 ? "0" : ""}${minutes}`;
+  const now = `${ampm} ${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
 
   return (
     <>
