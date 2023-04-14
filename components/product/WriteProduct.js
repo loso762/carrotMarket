@@ -40,7 +40,7 @@ function WriteProduct() {
     }
   }, [productId, isEdit]);
 
-  async function ImageHandler(e) {
+  const ImageHandler = async (e) => {
     const imageFile = e.target.files[0];
     const options = {
       maxSizeMB: 0.2, // Maximum size in MB
@@ -54,9 +54,9 @@ function WriteProduct() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  function ImgUpload() {
+  const ImgUpload = () => {
     // 게시물수정일 경우는 db에 있는 사진 수정
     if (isEdit) {
       const imageRef = ref(storage, `images/${product.time}`);
@@ -67,7 +67,7 @@ function WriteProduct() {
       const imageRef = ref(storage, `images/${now}`);
       uploadBytes(imageRef, image);
     }
-  }
+  };
 
   const ProductID = isEdit ? productId : `${now}`;
   const likes = isEdit ? product.likes : 0;
@@ -83,7 +83,7 @@ function WriteProduct() {
   };
 
   //완료 버튼 클릭 시
-  function submitHandler(e) {
+  const submitHandler = (e) => {
     e.preventDefault();
 
     const category = categoryRef.current.value;
@@ -127,21 +127,22 @@ function WriteProduct() {
     if (typeof image == "object") {
       ImgUpload();
     }
+
     WriteData(newProduct);
 
     setsellProducts &&
       setsellProducts((prev) => [...prev, {id: now, data: {...newProduct, time: time, likes: likes}}]);
 
     router.push("/Main");
-  }
+  };
 
-  function cancelHandler() {
+  const cancelHandler = () => {
     if (!isEdit) {
       router.push(SelectedCategory);
     } else {
       router.push(`/${product.category}/${productId}`);
     }
-  }
+  };
 
   category.splice(0, 1, "카테고리");
 

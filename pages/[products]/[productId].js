@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import ProductDetail from "@/components/product/productDetail";
 import {useRouter} from "next/router";
-import {doc, getDoc, collection, onSnapshot} from "firebase/firestore";
+import {doc, collection, onSnapshot} from "firebase/firestore";
 import {firestore, storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 
-function ProductDetailPage() {
+const ProductDetailPage = () => {
   const router = useRouter();
   const [productUrl, setproductUrl] = useState();
   const [userUrl, setuserUrl] = useState("/images/profile.jpg");
@@ -14,7 +14,7 @@ function ProductDetailPage() {
 
   // 매물과 작성자 프로필 사진 불러오기
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       if (router.query.productId) {
         const itemImageRef = ref(storage, `images/${router.query.productId}`);
 
@@ -40,7 +40,7 @@ function ProductDetailPage() {
       } else {
         setIsLoading(false);
       }
-    }
+    };
 
     fetchData();
   }, [router.query.productId]);
@@ -58,6 +58,6 @@ function ProductDetailPage() {
       )}
     </>
   );
-}
+};
 
 export default ProductDetailPage;

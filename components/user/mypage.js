@@ -11,7 +11,7 @@ import Setting from "./setting";
 import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 
-function Mypage() {
+const Mypage = () => {
   const {loginDisplayName, setIsLoggedIn, loginID} = useContext(UserContext);
   const {setSelectedCategory} = useContext(ProductContext);
 
@@ -92,6 +92,6 @@ function Mypage() {
       )}
     </div>
   );
-}
+};
 
 export default Mypage;

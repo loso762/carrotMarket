@@ -13,7 +13,7 @@ import {ClipLoader} from "react-spinners";
 import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
 
 //시간 구하는 함수
-function calcTime(time) {
+const calcTime = (time) => {
   const now = Date.now();
   let minutesAgo = Math.round((now - time) / 1000 / 60);
   if (minutesAgo < 60) {
@@ -24,10 +24,10 @@ function calcTime(time) {
     minutesAgo = `${Math.floor(minutesAgo / 60 / 24)}일`;
   }
   return minutesAgo;
-}
+};
 
 //온도 이모티콘 구하는 함수
-function ImoticonHandler(temp) {
+const ImoticonHandler = (temp) => {
   let tempImoticon = "🙂";
   if (temp < 35) {
     tempImoticon = "😨";
@@ -35,9 +35,9 @@ function ImoticonHandler(temp) {
     tempImoticon = "😍";
   }
   return tempImoticon;
-}
+};
 
-function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
+const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
   const router = useRouter();
   const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
   const {loginDisplayName, loginID, isLoggedIn} = useContext(UserContext);
@@ -47,12 +47,7 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
   const [errMsg, seterrMsg] = useState(null);
   const buyerRef = useRef();
 
-  let price;
-  if (item.price == "나눔") {
-    price = item.price;
-  } else if (item.price) {
-    price = `${item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
-  }
+  const price = item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   useEffect(() => {
     if (item.wholike.includes(loginID)) {
@@ -62,15 +57,15 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
     }
   }, [item.wholike, loginID]);
 
-  function errHandler(text) {
+  const errHandler = (text) => {
     seterrMsg(text);
     setTimeout(() => {
       seterrMsg(null);
     }, 500);
-  }
+  };
 
   //좋아요 클릭
-  function likeBtnHandler(e) {
+  const likeBtnHandler = (e) => {
     e.stopPropagation();
 
     if (isLoggedIn) {
@@ -95,10 +90,10 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
     } else {
       router.push("/");
     }
-  }
+  };
 
   //채팅버튼 클릭
-  async function chatBtnHandler() {
+  const chatBtnHandler = async () => {
     if (!isLoggedIn) {
       errHandler("로그인을 해주세요!");
       return;
@@ -131,35 +126,35 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
     }
 
     router.push(`/Chat/${loginID}_${item.ID}-${item.title}`);
-  }
+  };
 
   //게시물 삭제
-  async function deleteBtnHandler() {
+  const deleteBtnHandler = async () => {
     // products 컬렉션에서 삭제
     deleteDoc(doc(firestore, "products", id));
 
     router.push(`/${item.category}`);
-  }
+  };
 
   //판매완료
-  function soldOutHandler() {
+  const soldOutHandler = async () => {
     updateDoc(doc(firestore, "products", id), {soldout: "true", buyer: buyerRef.current.value});
     setMenuOpen((prev) => !prev);
     setIsPop(false);
     router.push(`/${SelectedCategory}`);
-  }
+  };
 
   //게시물 수정
-  function EditHandler() {
+  const EditHandler = async () => {
     router.push(`/WriteProduct?id=${id}`);
     setIsEdit(true);
-  }
+  };
 
   //팝업 종료
-  function popupCancelHandler() {
+  const popupCancelHandler = async () => {
     setIsPop(false);
     setMenuOpen((prev) => !prev);
-  }
+  };
 
   const sellpopup = (
     <>
@@ -263,6 +258,7 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
             </button>
             <div className={classes.price}>
               {price}
+              {item.price !== "나눔" && "원"}
               {item.soldout && <p className={classes.soldout}>판매완료</p>}
             </div>
             <button
@@ -276,6 +272,6 @@ function ProductDetail({item, id, productUrl, userUrl, isLoading}) {
       {errMsg && <div className={classes.errMsg}>{errMsg}</div>}
     </>
   );
-}
+};
 
 export default ProductDetail;

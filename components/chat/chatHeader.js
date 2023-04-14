@@ -6,10 +6,10 @@ import Link from "next/link";
 import {firestore} from "@/components/firebase";
 import {doc, collection, updateDoc, getDoc, deleteDoc, addDoc} from "firebase/firestore";
 
-function ChatHeader({name, chatId, now}) {
+const ChatHeader = ({name, chatId, now}) => {
   const router = useRouter();
 
-  async function chatOffHandler() {
+  const chatOffHandler = async () => {
     const chatInfoRef = doc(collection(firestore, "chat"), chatId);
 
     const chatInfoSnap = await getDoc(chatInfoRef);
@@ -29,7 +29,7 @@ function ChatHeader({name, chatId, now}) {
         realtime: Date.now(),
       });
     }
-  }
+  };
 
   return (
     <header className={classes.header}>
@@ -44,6 +44,6 @@ function ChatHeader({name, chatId, now}) {
       </Link>
     </header>
   );
-}
+};
 
 export default ChatHeader;

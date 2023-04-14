@@ -5,7 +5,7 @@ import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import Image from "next/image";
 
-function ChatContents({chatId, now}) {
+const ChatContents = ({chatId, now}) => {
   const {loginDisplayName} = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const chatRef = useRef();
@@ -29,7 +29,7 @@ function ChatContents({chatId, now}) {
   }, [chatId]);
 
   //메세지 입력시 message 컬렉션에 doc 추가
-  async function messageHandler(e) {
+  const messageHandler = async (e) => {
     e.preventDefault();
 
     if (chatRef.current.value === "") {
@@ -53,7 +53,7 @@ function ChatContents({chatId, now}) {
       //마지막 메세지에 포커스
       lastMsgRef.current && lastMsgRef.current.scrollIntoView({behavior: "smooth"});
     }
-  }
+  };
 
   useEffect(() => {
     if (lastMsgRef.current) {
@@ -93,6 +93,6 @@ function ChatContents({chatId, now}) {
       </footer>
     </>
   );
-}
+};
 
 export default ChatContents;

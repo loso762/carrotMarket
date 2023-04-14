@@ -7,19 +7,19 @@ import {CgProfile} from "react-icons/cg";
 import {useRouter} from "next/router";
 import ProductContext from "../context/product-context";
 
-function FooterMenu() {
+const FooterMenu = () => {
   const router = useRouter();
   const {setSelectedCategory} = useContext(ProductContext);
 
-  function clickHomeBtn() {
+  const clickHomeBtn = () => {
     router.push("/Main");
     setSelectedCategory("카테고리");
-  }
+  };
 
-  function clickNearBtn() {
+  const clickNearBtn = () => {
     router.push("/Near");
     setSelectedCategory("Near");
-  }
+  };
 
   return (
     <ul className={classes.footer}>
@@ -37,6 +37,6 @@ function FooterMenu() {
       </li>
     </ul>
   );
-}
+};
 
 export default FooterMenu;

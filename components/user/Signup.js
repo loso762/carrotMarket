@@ -4,7 +4,7 @@ import classes from "./Signup.module.css";
 import {useRouter} from "next/router";
 import FooterMenu from "@/components/layout/FooterMenu";
 
-function Signup() {
+const Signup = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -92,6 +92,6 @@ function Signup() {
       <FooterMenu />
     </>
   );
-}
+};
 
 export default Signup;

@@ -9,7 +9,7 @@ import {collection, doc, updateDoc, where, getDocs, query, getDoc, setDoc} from 
 import Image from "next/image";
 import UserContext from "../context/user-context";
 
-function Setting({urlHandler, image, setoff}) {
+const Setting = ({urlHandler, image, setoff}) => {
   const {loginID, loginDisplayName, setloginDisplayName, likeProducts} = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [imageChange, setimageChange] = useState(true);
@@ -108,6 +108,6 @@ function Setting({urlHandler, image, setoff}) {
       {errorMsg && inputRef.current.value !== "" && <div className={classes.errorMsg}>{errorMsg}</div>}
     </form>
   );
-}
+};
 
 export default Setting;

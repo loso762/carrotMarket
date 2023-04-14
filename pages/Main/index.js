@@ -21,7 +21,7 @@ function Main(props) {
   };
 
   //검색어로 제품 필터링하기
-  async function Productsfilter(filter) {
+  const Productsfilter = async (filter) => {
     const tempData = [];
 
     props.ProductsData.forEach((product) => {
@@ -31,7 +31,7 @@ function Main(props) {
     });
 
     setfilterdProducts(tempData);
-  }
+  };
 
   return (
     <>

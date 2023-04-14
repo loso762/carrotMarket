@@ -9,7 +9,7 @@ import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 import {doc, getDoc} from "firebase/firestore";
 
-function ChatPreview({c, LoadingEnd}) {
+const ChatPreview = ({c, LoadingEnd}) => {
   const router = useRouter();
   const {loginID} = useContext(UserContext);
   const [lastMsg, setLastMsg] = useState("");
@@ -35,13 +35,14 @@ function ChatPreview({c, LoadingEnd}) {
         setuserUrl(url);
       })
       .catch(() => {
+        console.log("프로필없음");
         return;
       });
   }, [imageRef]);
 
   useEffect(() => {
     //마지막 채팅 시간
-    function calcTime(last) {
+    const calcTime = (last) => {
       let minutesAgo = Math.round((Date.now() - last) / 1000 / 60);
 
       if (minutesAgo < 60) {
@@ -53,7 +54,7 @@ function ChatPreview({c, LoadingEnd}) {
       }
 
       setlastTime(minutesAgo);
-    }
+    };
 
     async function fetchData() {
       //메세지 내용가져오기
@@ -76,17 +77,17 @@ function ChatPreview({c, LoadingEnd}) {
     fetchData();
   }, [c.id, LoadingEnd]);
 
-  function openChatHandler(e) {
+  const openChatHandler = (e) => {
     e.stopPropagation();
     console.log("리스트클릭");
     router.push(`/Chat/${c.id}`);
-  }
+  };
 
-  function imgClickHandler(e) {
+  const imgClickHandler = (e) => {
     e.stopPropagation();
     console.log("이미지클릭");
     router.push(`/${c.category}/${c.product}`);
-  }
+  };
 
   return (
     <li className={classes.chatli} onClick={openChatHandler}>
@@ -99,6 +100,6 @@ function ChatPreview({c, LoadingEnd}) {
       <Image src={c.img} alt="productImg" width={40} height={40} onClick={imgClickHandler} />
     </li>
   );
-}
+};
 
 export default ChatPreview;

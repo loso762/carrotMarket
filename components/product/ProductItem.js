@@ -11,8 +11,10 @@ import {ClipLoader} from "react-spinners";
 
 function ProductItem({id, item, isliked, errorHandler}) {
   const router = useRouter();
-  const [image, setImage] = useState();
   const {loginDisplayName, isLoggedIn, loginID} = useContext(UserContext);
+
+  const [image, setImage] = useState();
+  const price = item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   //firebase storage에서 이미지 가져오기
   useEffect(() => {
@@ -71,13 +73,6 @@ function ProductItem({id, item, isliked, errorHandler}) {
     [id, item, router]
   );
 
-  let price;
-  if (item.price == "나눔") {
-    price = item.price;
-  } else if (item.price) {
-    price = `${item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원`;
-  }
-
   let minutesAgo = Math.round((Date.now() - item.time) / 1000 / 60);
 
   if (minutesAgo < 60) {
@@ -105,6 +100,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
         <div className={classes.price}>
           {item.soldout && <p className={classes.soldout}>판매완료</p>}
           {price}
+          {item.price !== "나눔" && "원"}
         </div>
       </div>
 

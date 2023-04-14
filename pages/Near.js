@@ -51,7 +51,7 @@ function Near(props) {
   };
 
   //검색 매물 필터링
-  function Productsfilter(filter) {
+  const Productsfilter = (filter) => {
     const tempData = [];
 
     products.forEach((product) => {
@@ -61,7 +61,7 @@ function Near(props) {
     });
 
     setfilterdProducts(tempData);
-  }
+  };
 
   return (
     <>

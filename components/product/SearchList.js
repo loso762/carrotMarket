@@ -1,22 +1,20 @@
 import classes from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
-import { useEffect, useState } from "react";
-import { useNearbyLocations } from "@/Hooks/useNearbylocation";
-import { firestore } from "@/components/firebase";
-import { collection, doc, getDocs } from "firebase/firestore";
+import {useEffect, useState} from "react";
+import {useNearbyLocations} from "@/Hooks/useNearbylocation";
+import {firestore} from "@/components/firebase";
+import {collection, getDocs} from "firebase/firestore";
 
-function SearchList({ list, range, section }) {
+function SearchList({list, range, section}) {
   const [searchList, setSearchList] = useState([]);
 
-  list.sort(function (a, b) {
-    return b.data.time - a.data.time;
-  });
+  list.sort((a, b) => b.data.time - a.data.time);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
 
   useEffect(() => {
     //상위 검색어 7개만 표시해주기
-    async function fetchSearchList() {
+    const fetchSearchList = async () => {
       const search = [];
       const searchSnap = await getDocs(collection(firestore, "searchlist"));
       searchSnap.docs.forEach((doc) => search.push([doc.id, doc.data().num]));
@@ -24,7 +22,7 @@ function SearchList({ list, range, section }) {
         return b[1] - a[1];
       });
       setSearchList(search.slice(0, 7));
-    }
+    };
 
     fetchSearchList();
   }, []);

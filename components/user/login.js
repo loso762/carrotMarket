@@ -7,7 +7,7 @@ import Image from "next/image";
 import UserContext from "../context/user-context";
 import {FadeLoader} from "react-spinners";
 
-function Login(props) {
+const Login = () => {
   const router = useRouter();
   const {setloginDisplayName, setIsLoggedIn, setloginTemp, setloginID} = useContext(UserContext);
 
@@ -200,6 +200,6 @@ function Login(props) {
       </div>
     </>
   );
-}
+};
 
 export default Login;

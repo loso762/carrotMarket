@@ -13,7 +13,7 @@ function ChatRoom() {
   const {loginID} = useContext(UserContext);
 
   useEffect(() => {
-    async function fetchChat() {
+    const fetchChat = async () => {
       //메세지 내용가져오기
       const messagesRef = collection(firestore, "chat", router.query.chatId, "message");
       const messagesSnap = await getDocs(messagesRef);
@@ -25,26 +25,24 @@ function ChatRoom() {
       });
 
       setMessageData(messages);
-    }
+    };
 
-    async function fetchpartner() {
+    const fetchpartner = async () => {
       const partyID = router.query.chatId.split("-")[0].split("_");
       const partnerID = partyID.filter((el) => el !== loginID);
       const partnerInfo = await getDoc(doc(firestore, "users", ...partnerID));
       setchatpartner(partnerInfo.data().nickname);
-    }
+    };
 
     fetchpartner();
-
     fetchChat();
   }, [router.query.chatId, loginID]);
 
   //현재 시간 구하는 함수
   const today = new Date();
   const hours = today.getHours() % 12 || 12;
-  const minutes = today.getMinutes();
   const ampm = today.getHours() >= 12 ? "오후" : "오전";
-  const now = `${ampm} ${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+  const now = `${ampm} ${hours}:${today.getMinutes() < 10 ? "0" : ""}${minutes}`;
 
   return (
     <>

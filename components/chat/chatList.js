@@ -6,7 +6,7 @@ import UserContext from "../context/user-context";
 import ChatPreview from "./chatPreview";
 import {ClipLoader} from "react-spinners";
 
-function ChatListForm() {
+const ChatListForm = () => {
   const {loginDisplayName, isLoggedIn, loginID} = useContext(UserContext);
   const [chatList, setChatList] = useState([]);
   const [isLoading, setisLoading] = useState(true);
@@ -55,6 +55,6 @@ function ChatListForm() {
       )}
     </>
   );
-}
+};
 
 export default ChatListForm;
