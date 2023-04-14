@@ -44,7 +44,8 @@ CRUD 기능 뿐만 아니라 실시간 채팅 기능, 회원 가입이나 로그
 
 <p align="center">
   <img  width="700" src="https://user-images.githubusercontent.com/57396816/232154880-5c8aebc9-0bd0-4cd1-840e-5b76bc56463b.gif">    
-  &nbsp &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp
+</p>
+<p align="center">
   <img  width="700" src="https://user-images.githubusercontent.com/57396816/232155743-578311ac-cf86-4767-bd8f-5e27269a4773.gif">
 </p>
 
