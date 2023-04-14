@@ -16,9 +16,10 @@ const ChatHeader = ({chatpartnerID, chatpartnerName, chatId, now}) => {
     console.log(chatInfoSnap.data());
 
     if (chatInfoSnap.data()?.partyID.length == 1) {
+      console.log(chatInfoSnap.data()?.partyID.length);
       await deleteDoc(chatInfoRef);
     } else {
-      await updateDoc(chatInfoRef, {partyID: chatpartnerID});
+      await updateDoc(chatInfoRef, {partyID: chatpartnerID, left: chatpartnerID});
       const messagesRef = collection(firestore, "chat", chatId, "message");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -16,13 +16,6 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (router.query.productId) {
-        const itemImageRef = ref(storage, `images/${router.query.productId}`);
-
-        getDownloadURL(itemImageRef).then((url) => {
-          setproductUrl(url);
-          setIsLoading(false);
-        });
-
         const ProductRef = doc(collection(firestore, "products"), router.query.productId);
         onSnapshot(ProductRef, (item) => {
           setItem(item.data());
@@ -36,6 +29,12 @@ const ProductDetailPage = () => {
                 return;
               });
           }
+
+          const itemImageRef = ref(storage, `images/${router.query.productId}`);
+          getDownloadURL(itemImageRef).then((url) => {
+            setproductUrl(url);
+            setIsLoading(false);
+          });
         });
       } else {
         setIsLoading(false);

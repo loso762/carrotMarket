@@ -19,9 +19,15 @@ function ProductItem({id, item, isliked, errorHandler}) {
   //firebase storage에서 이미지 가져오기
   useEffect(() => {
     const imageRef = ref(storage, `images/${id}`);
-    getDownloadURL(imageRef).then((url) => {
-      setImage(url);
-    });
+    setTimeout(() => {
+      getDownloadURL(imageRef)
+        .then((url) => {
+          setImage(url);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }, 400);
   }, [id]);
 
   //좋아요 클릭

@@ -17,8 +17,7 @@ function Near(props) {
   const [filterdProducts, setfilterdProducts] = useState([]);
 
   useEffect(() => {
-    sessionStorage.setItem("category", "Near");
-    setSelectedCategory(sessionStorage.getItem("category"));
+    setSelectedCategory("Near");
   }, [setSelectedCategory]);
 
   useEffect(() => {

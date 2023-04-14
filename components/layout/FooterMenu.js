@@ -14,11 +14,13 @@ const FooterMenu = () => {
   const clickHomeBtn = () => {
     router.push("/Main");
     setSelectedCategory("카테고리");
+    sessionStorage.setItem("category", "카테고리");
   };
 
   const clickNearBtn = () => {
     router.push("/Near");
     setSelectedCategory("Near");
+    sessionStorage.setItem("category", "Near");
   };
 
   return (

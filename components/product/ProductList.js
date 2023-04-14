@@ -7,7 +7,7 @@ import UserContext from "../context/user-context";
 import ProductContext from "../context/product-context";
 
 function ProductList({list, range}) {
-  const {setIsEdit, SelectedCategory} = useContext(ProductContext);
+  const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
   const {isLoggedIn, loginID} = useContext(UserContext);
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
@@ -24,7 +24,7 @@ function ProductList({list, range}) {
     if (SelectedCategory == "Near") {
       nearbyLocationsFn();
     }
-  }, [nearbyLocationsFn, SelectedCategory]);
+  }, [nearbyLocationsFn, SelectedCategory, setSelectedCategory]);
 
   //섹션에 따라 다른 리스트 보여주기
   useEffect(() => {

@@ -17,11 +17,7 @@ function Products() {
   const {setSelectedCategory, SelectedCategory} = useContext(ProductContext);
 
   useEffect(() => {
-    sessionStorage.setItem("category", SelectedCategory);
     setSelectedCategory(sessionStorage.getItem("category"));
-  }, [setSelectedCategory, SelectedCategory]);
-
-  useEffect(() => {
     setIsLoading(true);
     const ProductRef = collection(firestore, "products");
 
@@ -36,8 +32,10 @@ function Products() {
     } else if (SelectedCategory == "관심목록") {
       q = query(ProductRef, where("wholike", "array-contains", loginID));
     } else if (SelectedCategory == "카테고리") {
+      setIsLoading(false);
       return;
     } else if (SelectedCategory == "Near") {
+      setIsLoading(false);
       return;
     } else {
       q = query(ProductRef, where("category", "==", SelectedCategory));
@@ -57,7 +55,7 @@ function Products() {
       setproducts(ProductsData);
       setIsLoading(false);
     });
-  }, [SelectedCategory, loginDisplayName, loginID]);
+  }, [SelectedCategory, loginDisplayName, loginID, setSelectedCategory]);
 
   return (
     <>

@@ -20,12 +20,17 @@ const ChatPreview = ({c, id, LoadingEnd}) => {
   //상대방 아이디 가져오기
   useEffect(() => {
     async function fetchpartner() {
-      const partnerID = c.partyID.filter((el) => el !== loginID);
-      const partnerInfo = await getDoc(doc(firestore, "users", ...partnerID));
-      setchatpartner(partnerInfo.data().nickname);
+      if (c.left.length == 1) {
+        const partnerInfo = await getDoc(doc(firestore, "users", ...c.left));
+        setchatpartner(partnerInfo.data().nickname);
+      } else {
+        const partnerID = c.partyID.filter((el) => el !== loginID);
+        const partnerInfo = await getDoc(doc(firestore, "users", ...partnerID));
+        setchatpartner(partnerInfo.data().nickname);
+      }
     }
     fetchpartner();
-  }, [c.partyID, loginID]);
+  }, [c.partyID, loginID, c.left]);
 
   const imageRef = ref(storage, `profile/${c.partyID.filter((p) => p !== loginID)}`);
 

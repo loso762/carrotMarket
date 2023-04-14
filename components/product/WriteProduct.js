@@ -13,9 +13,12 @@ import {ClipLoader} from "react-spinners";
 
 function WriteProduct() {
   const router = useRouter();
-  const {isEdit, latitude, longitude, dong, SelectedCategory, category} = useContext(ProductContext);
+  const {isEdit, latitude, longitude, dong, SelectedCategory, category, setSelectedCategory} =
+    useContext(ProductContext);
   const {loginDisplayName, loginTemp, loginID, setsellProducts} = useContext(UserContext);
   const [isFree, setIsFree] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
+
   //수정일 경우 데이터 가져오기
   const [product, setProduct] = useState({});
   const productId = router.query.id;
@@ -85,6 +88,7 @@ function WriteProduct() {
   //완료 버튼 클릭 시
   const submitHandler = (e) => {
     e.preventDefault();
+    setisLoading(true);
 
     const category = categoryRef.current.value;
     const enteredTitle = titleInputRef.current.value;
@@ -130,10 +134,18 @@ function WriteProduct() {
 
     WriteData(newProduct);
 
-    setsellProducts &&
+    if (setsellProducts) {
       setsellProducts((prev) => [...prev, {id: now, data: {...newProduct, time: time, likes: likes}}]);
+    }
 
-    router.push("/Main");
+    setSelectedCategory(category);
+    sessionStorage.setItem("category", category);
+
+    setTimeout(() => {
+      console.log("등록중");
+      router.push(`/${category}`);
+      setisLoading(false);
+    }, 1300);
   };
 
   const cancelHandler = () => {
@@ -208,6 +220,12 @@ function WriteProduct() {
           <button>완료</button>
         </div>
       </form>
+
+      {isLoading && (
+        <div className={classes.uploading}>
+          게시글 올리는 중<ClipLoader size={35} color={"#fd9253"} />
+        </div>
+      )}
     </>
   );
 }

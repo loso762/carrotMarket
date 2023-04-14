@@ -39,6 +39,19 @@ const Mypage = () => {
       });
   }, [image, imageRef]);
 
+  const clickLikeList = () => {
+    setSelectedCategory("관심목록");
+    sessionStorage.setItem("category", "관심목록");
+  };
+  const clickSellList = () => {
+    setSelectedCategory("판매내역");
+    sessionStorage.setItem("category", "판매내역");
+  };
+  const clickBuyList = () => {
+    setSelectedCategory("구매내역");
+    sessionStorage.setItem("category", "구매내역");
+  };
+
   return (
     <div className={classes.container}>
       {isSetting ? (
@@ -64,19 +77,19 @@ const Mypage = () => {
           <ul className={classes.menu}>
             나의거래
             <li>
-              <Link href="관심목록" onClick={() => setSelectedCategory("관심목록")}>
+              <Link href="관심목록" onClick={clickLikeList}>
                 <BiHeart />
                 관심 목록{" "}
               </Link>
             </li>
             <li>
-              <Link href="판매내역" onClick={() => setSelectedCategory("판매내역")}>
+              <Link href="판매내역" onClick={clickSellList}>
                 <BiReceipt />
                 판매내역
               </Link>
             </li>
             <li>
-              <Link href="구매내역" onClick={() => setSelectedCategory("구매내역")}>
+              <Link href="구매내역" onClick={clickBuyList}>
                 <BiShoppingBag />
                 구매내역
               </Link>

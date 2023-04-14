@@ -7,8 +7,13 @@ import Link from "next/link";
 const ListItem = React.memo(({category}) => {
   const {setSelectedCategory} = useContext(ProductContext);
 
+  const clickCategory = () => {
+    sessionStorage.setItem("category", category);
+    setSelectedCategory(category);
+  };
+
   return (
-    <li onClick={() => setSelectedCategory(category)}>
+    <li onClick={clickCategory}>
       <Link href={category} className={classes.link}>
         <Image src={`/images/${category}.webp`} alt="category" width={42} height={42} />
         <p>{category}</p>

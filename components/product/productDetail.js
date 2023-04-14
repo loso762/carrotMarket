@@ -11,6 +11,8 @@ import {AiOutlineHeart, AiFillHeart, AiFillHome} from "react-icons/ai";
 import {firestore} from "../firebase";
 import {ClipLoader} from "react-spinners";
 import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
+import {storage} from "@/components/firebase";
+import {ref, deleteObject} from "firebase/storage";
 
 //시간 구하는 함수
 const calcTime = (time) => {
@@ -110,6 +112,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
 
     await setDoc(doc(firestore, "chat", `${loginID}_${item.ID}-${item.title}`), {
       partyID: [loginID, item.ID],
+      left: "",
       product: id,
       img: productUrl,
       dong: item.dong,
@@ -132,8 +135,12 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
   const deleteBtnHandler = async () => {
     // products 컬렉션에서 삭제
     deleteDoc(doc(firestore, "products", id));
+    const imageRef = ref(storage, `images/${id}`);
+    deleteObject(imageRef);
 
-    router.push(`/${item.category}`);
+    setTimeout(() => {
+      router.push(`/${item.category}`);
+    }, 300);
   };
 
   //판매완료
