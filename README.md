@@ -40,7 +40,7 @@ CRUD 기능 뿐만 아니라 실시간 채팅 기능, 회원 가입이나 로그
 
 ### 3. 채팅 관련 기능
 
-<p align="center"><img  width="200" src="https://user-images.githubusercontent.com/57396816/232039906-c82bf70d-7c2d-46d5-a3b5-94f41cfa5d67.gif"> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <img  width="200" src="https://user-images.githubusercontent.com/57396816/232041361-697c8ae9-492a-432e-ac6c-b6e7e2963186.gif">
+<p align="center"><img  width="200" src="https://user-images.githubusercontent.com/57396816/232039906-c82bf70d-7c2d-46d5-a3b5-94f41cfa5d67.gif"> <p width="200px"> <img  width="200" src="https://user-images.githubusercontent.com/57396816/232041361-697c8ae9-492a-432e-ac6c-b6e7e2963186.gif">
 </p>
 
 
