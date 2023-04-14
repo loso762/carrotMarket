@@ -6,19 +6,19 @@ import Link from "next/link";
 import {firestore} from "@/components/firebase";
 import {doc, collection, updateDoc, getDoc, deleteDoc, addDoc} from "firebase/firestore";
 
-const ChatHeader = ({name, chatId, now}) => {
+const ChatHeader = ({chatpartnerID, chatpartnerName, chatId, now}) => {
   const router = useRouter();
 
   const chatOffHandler = async () => {
     const chatInfoRef = doc(collection(firestore, "chat"), chatId);
 
     const chatInfoSnap = await getDoc(chatInfoRef);
+    console.log(chatInfoSnap.data());
 
-    if (chatInfoSnap.data().party.length == 1) {
+    if (chatInfoSnap.data()?.partyID.length == 1) {
       await deleteDoc(chatInfoRef);
     } else {
-      await updateDoc(chatInfoRef, {party: [name]});
-
+      await updateDoc(chatInfoRef, {partyID: chatpartnerID});
       const messagesRef = collection(firestore, "chat", chatId, "message");
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -38,7 +38,7 @@ const ChatHeader = ({name, chatId, now}) => {
           router.push("/Chat");
         }}
       />
-      <p>{name}</p>
+      <p>{chatpartnerName}</p>
       <Link href={"/Chat"} onClick={chatOffHandler}>
         나가기
       </Link>

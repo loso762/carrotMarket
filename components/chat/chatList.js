@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import classes from "./chatList.module.css";
 import {firestore} from "@/components/firebase";
-import {collection, getDocs, query, where} from "firebase/firestore";
+import {collection, onSnapshot, query, where} from "firebase/firestore";
 import UserContext from "../context/user-context";
 import ChatPreview from "./chatPreview";
 import {ClipLoader} from "react-spinners";
@@ -13,27 +13,26 @@ const ChatListForm = () => {
 
   useEffect(() => {
     //채팅내역 불러오기
-    async function fetchChatList() {
-      const tempChat = [];
+    if (isLoggedIn) {
       const chatListRef = collection(firestore, "chat");
-
       const q = query(chatListRef, where("partyID", "array-contains", loginID));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        tempChat.push({...doc.data(), id: doc.id});
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const tempChat = [];
+        snapshot.forEach((doc) => {
+          tempChat.push({id: doc.id, data: doc.data()});
+        });
+
+        if (tempChat.length == 0) {
+          setisLoading(false);
+          return;
+        }
+        setChatList(tempChat);
       });
 
-      if (tempChat.length == 0) {
-        setisLoading(false);
-      }
-
-      setChatList(tempChat);
+      return () => unsubscribe();
     }
-
-    if (isLoggedIn) {
-      fetchChatList();
-    }
-  }, [loginDisplayName, isLoggedIn, loginID]);
+  }, [isLoggedIn, loginID]);
 
   const LoginErrorMsg = <div className={classes.Error}>로그인이 필요해요!</div>;
 
@@ -49,7 +48,7 @@ const ChatListForm = () => {
       ) : (
         <ul className={classes.chatul}>
           {chatList.map((c) => {
-            return <ChatPreview c={c} key={c.id} LoadingEnd={() => setisLoading(false)} />;
+            return <ChatPreview c={c.data} id={c.id} key={c.id} LoadingEnd={() => setisLoading(false)} />;
           })}
         </ul>
       )}

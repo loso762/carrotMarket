@@ -9,7 +9,7 @@ import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 import {doc, getDoc} from "firebase/firestore";
 
-const ChatPreview = ({c, LoadingEnd}) => {
+const ChatPreview = ({c, id, LoadingEnd}) => {
   const router = useRouter();
   const {loginID} = useContext(UserContext);
   const [lastMsg, setLastMsg] = useState("");
@@ -35,7 +35,6 @@ const ChatPreview = ({c, LoadingEnd}) => {
         setuserUrl(url);
       })
       .catch(() => {
-        console.log("프로필없음");
         return;
       });
   }, [imageRef]);
@@ -58,7 +57,7 @@ const ChatPreview = ({c, LoadingEnd}) => {
 
     async function fetchData() {
       //메세지 내용가져오기
-      const messagesRef = collection(firestore, "chat", c.id, "message");
+      const messagesRef = collection(firestore, "chat", id, "message");
 
       const q = query(messagesRef, orderBy("realtime", "desc"), limit(1));
 
@@ -75,17 +74,15 @@ const ChatPreview = ({c, LoadingEnd}) => {
     }
 
     fetchData();
-  }, [c.id, LoadingEnd]);
+  }, [id, LoadingEnd]);
 
   const openChatHandler = (e) => {
     e.stopPropagation();
-    console.log("리스트클릭");
-    router.push(`/Chat/${c.id}`);
+    router.push(`/Chat/${id}`);
   };
 
   const imgClickHandler = (e) => {
     e.stopPropagation();
-    console.log("이미지클릭");
     router.push(`/${c.category}/${c.product}`);
   };
 

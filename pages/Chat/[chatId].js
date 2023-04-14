@@ -8,7 +8,8 @@ import UserContext from "@/components/context/user-context";
 
 function ChatRoom() {
   const [messageData, setMessageData] = useState();
-  const [chatpartner, setchatpartner] = useState();
+  const [chatpartnerName, setchatpartnerName] = useState();
+  const [chatpartnerID, setchatpartnerID] = useState();
   const router = useRouter();
   const {loginID} = useContext(UserContext);
 
@@ -31,7 +32,8 @@ function ChatRoom() {
       const partyID = router.query.chatId.split("-")[0].split("_");
       const partnerID = partyID.filter((el) => el !== loginID);
       const partnerInfo = await getDoc(doc(firestore, "users", ...partnerID));
-      setchatpartner(partnerInfo.data().nickname);
+      setchatpartnerName(partnerInfo.data().nickname);
+      setchatpartnerID(partnerID);
     };
 
     fetchpartner();
@@ -47,7 +49,12 @@ function ChatRoom() {
 
   return (
     <>
-      <ChatHeader name={chatpartner} chatId={router.query.chatId} now={now} />
+      <ChatHeader
+        chatpartnerID={chatpartnerID}
+        chatpartnerName={chatpartnerName}
+        chatId={router.query.chatId}
+        now={now}
+      />
       {router.query.chatId && messageData && (
         <ChatContents msgs={messageData} chatId={router.query.chatId} now={now} />
       )}
