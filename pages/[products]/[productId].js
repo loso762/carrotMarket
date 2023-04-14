@@ -27,13 +27,15 @@ const ProductDetailPage = () => {
         onSnapshot(ProductRef, (item) => {
           setItem(item.data());
 
-          getDownloadURL(ref(storage, `profile/${item.data().ID}`))
-            .then((url) => {
-              setuserUrl(url);
-            })
-            .catch(() => {
-              return;
-            });
+          if (item.data()) {
+            getDownloadURL(ref(storage, `profile/${item.data().ID}`))
+              .then((url) => {
+                setuserUrl(url);
+              })
+              .catch(() => {
+                return;
+              });
+          }
         });
       } else {
         setIsLoading(false);

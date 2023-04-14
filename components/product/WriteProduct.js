@@ -43,9 +43,9 @@ function WriteProduct() {
   const ImageHandler = async (e) => {
     const imageFile = e.target.files[0];
     const options = {
-      maxSizeMB: 0.2, // Maximum size in MB
-      maxWidthOrHeight: 1024, // Maximum width or height of the image
-      useWebWorker: true, // Use Web Worker for faster compression
+      maxSizeMB: 0.2, // 최대 이미지 사이즈
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
     };
     try {
       const compressedFile = await imageCompression(imageFile, options);

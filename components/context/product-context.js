@@ -43,7 +43,7 @@ export const ProductContextProvider = (props) => {
     });
 
     //좌표로 동주소 가져오기
-    const onLoadDong = () => {
+    function onLoadDong() {
       window.kakao.maps.load(() => {
         const geocoder = new window.kakao.maps.services.Geocoder();
         geocoder.coord2RegionCode(longitude, latitude, (result, status) => {
@@ -55,7 +55,7 @@ export const ProductContextProvider = (props) => {
           }
         });
       });
-    };
+    }
 
     if (latitude && longitude) {
       mapScript.addEventListener("load", onLoadDong);
