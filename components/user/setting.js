@@ -62,9 +62,12 @@ const Setting = ({urlHandler, image, setoff}) => {
               seterrorMsg(null);
             }, 2000);
           } else {
+            const prevname = loginDisplayName;
             const productRef = collection(firestore, "products");
-            getDocs(query(productRef, where("nickname", "==", loginDisplayName))).then(() => {
+
+            getDocs(query(productRef, where("nickname", "==", prevname))).then((querySnapshot) => {
               querySnapshot.forEach((item) => {
+                console.log(item);
                 updateDoc(doc(firestore, "products", item.id), {
                   nickname: inputRef.current.value,
                 });
