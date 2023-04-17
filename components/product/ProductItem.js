@@ -4,14 +4,17 @@ import {AiOutlineHeart, AiFillHeart} from "react-icons/ai";
 import {firestore, storage} from "../firebase";
 import classes from "./ProductItem.module.css";
 import {doc, setDoc} from "firebase/firestore";
-import UserContext from "../context/user-context";
 import {ref, getDownloadURL} from "firebase/storage";
 import Image from "next/image";
 import {ClipLoader} from "react-spinners";
+import {useSelector} from "react-redux";
 
 function ProductItem({id, item, isliked, errorHandler}) {
   const router = useRouter();
-  const {loginDisplayName, isLoggedIn, loginID} = useContext(UserContext);
+
+  const loginID = useSelector((state) => state.User.loginID);
+  const nickname = useSelector((state) => state.User.nickname);
+  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
 
   const [image, setImage] = useState();
   const price = item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -36,7 +39,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
       e.stopPropagation();
 
       if (isLoggedIn) {
-        if (loginDisplayName == item.nickname) {
+        if (nickname == item.nickname) {
           errorHandler();
           return;
         } else {
@@ -60,7 +63,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
         router.push("/");
       }
     },
-    [loginID, item, isliked, errorHandler, id, isLoggedIn, loginDisplayName, router]
+    [loginID, item, isliked, errorHandler, id, isLoggedIn, nickname, router]
   );
 
   //디테일 페이지 열기

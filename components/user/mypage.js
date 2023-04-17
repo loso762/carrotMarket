@@ -1,26 +1,29 @@
 import React, {useState, useEffect, useContext} from "react";
 import {auth} from "../firebase";
-import UserContext from "../context/user-context";
 import Link from "next/link";
 import Image from "next/image";
-import ProductContext from "../context/product-context";
 import classes from "./mypage.module.css";
 import {BiShoppingBag, BiReceipt, BiHeart, BiChat} from "react-icons/bi";
 import {FiSettings} from "react-icons/fi";
 import Setting from "./setting";
 import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
+import {useDispatch, useSelector} from "react-redux";
+import {userAction} from "@/store/user-slice";
+import {productAction} from "@/store/product-slice";
 
 const Mypage = () => {
-  const {loginDisplayName, setIsLoggedIn, loginID} = useContext(UserContext);
-  const {setSelectedCategory} = useContext(ProductContext);
+  const dispatch = useDispatch();
+
+  const loginID = useSelector((state) => state.User.loginID);
+  const nickname = useSelector((state) => state.User.nickname);
 
   const [isSetting, setIsSetting] = useState(false);
   const [image, setImage] = useState("/images/profile.jpg");
 
   const handleLogout = async () => {
     await auth.signOut();
-    setIsLoggedIn(false);
+    dispatch(userAction.logout());
   };
 
   function urlHandler(url) {
@@ -40,15 +43,17 @@ const Mypage = () => {
   }, [image, imageRef]);
 
   const clickLikeList = () => {
-    setSelectedCategory("관심목록");
+    dispatch(productAction.setCategory("관심목록"));
     sessionStorage.setItem("category", "관심목록");
   };
+
   const clickSellList = () => {
-    setSelectedCategory("판매내역");
+    dispatch(productAction.setCategory("판매내역"));
     sessionStorage.setItem("category", "판매내역");
   };
+
   const clickBuyList = () => {
-    setSelectedCategory("구매내역");
+    dispatch(productAction.setCategory("구매내역"));
     sessionStorage.setItem("category", "구매내역");
   };
 
@@ -60,8 +65,8 @@ const Mypage = () => {
         <>
           <div className={classes.profile}>
             <figure>
-              {image && <Image src={image} alt={loginDisplayName} width={35} height={35} />}
-              <figcaption className={classes.name}>{loginDisplayName}</figcaption>
+              {image && <Image src={image} alt={nickname} width={35} height={35} />}
+              <figcaption className={classes.name}>{nickname}</figcaption>
               <FiSettings className={classes.setting} onClick={() => setIsSetting(true)} />
               <button onClick={handleLogout}>로그아웃</button>
             </figure>

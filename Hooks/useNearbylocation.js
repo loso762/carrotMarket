@@ -1,8 +1,9 @@
-import {useState, useCallback, useContext} from "react";
-import ProductContext from "@/components/context/product-context";
+import {useState, useCallback} from "react";
+import {useSelector} from "react-redux";
 
 export const useNearbyLocations = (range, list) => {
-  const {longitude: myLng, latitude: myLat} = useContext(ProductContext);
+  const latitude = useSelector((state) => state.Products.latitude);
+  const longitude = useSelector((state) => state.Products.longitude);
 
   const [nearProduct, setNearProduct] = useState([]);
 
@@ -23,7 +24,7 @@ export const useNearbyLocations = (range, list) => {
 
   const nearbyLocationsFn = useCallback(() => {
     const NearList = list.filter(
-      (arr) => calcDistance(myLat, myLng, arr.data.Latitude, arr.data.Longitude) <= range
+      (arr) => calcDistance(latitude, longitude, arr.data.Latitude, arr.data.Longitude) <= range
     );
 
     NearList.sort(function (a, b) {
@@ -31,7 +32,7 @@ export const useNearbyLocations = (range, list) => {
     });
 
     setNearProduct(NearList);
-  }, [calcDistance, myLat, myLng, list, range]);
+  }, [calcDistance, latitude, longitude, list, range]);
 
   return [nearProduct, nearbyLocationsFn];
 };

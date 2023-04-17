@@ -1,23 +1,25 @@
-import React, {useState, useContext} from "react";
+import {useState} from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {useRouter} from "next/router";
 import {auth, firestore, googleAuthProvider} from "../firebase";
 import classes from "./login.module.css";
-import Image from "next/image";
-import UserContext from "../context/user-context";
 import {FadeLoader} from "react-spinners";
+import {useSelector, useDispatch} from "react-redux";
+import {userAction} from "@/store/user-slice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+
+  const temp = useSelector((state) => state.User.temp);
+
   const router = useRouter();
-  const {setloginDisplayName, setIsLoggedIn, setloginTemp, setloginID} = useContext(UserContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const [loginProcess, setloginProcess] = useState(false);
-
-  const temp = 36.5;
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -43,10 +45,15 @@ const Login = () => {
       if (doc.exists) {
         const userData = doc.data();
         const {nickname, temp} = userData;
-        setIsLoggedIn(true);
-        setloginTemp(temp);
-        setloginID(user.uid);
-        setloginDisplayName(nickname);
+
+        dispatch(
+          userAction.login({
+            uid: user.uid,
+            nickname,
+            temp,
+            isLoggedIn: true,
+          })
+        );
       } else {
         setError("사용자 정보를 찾을 수 없습니다.");
       }
@@ -65,34 +72,27 @@ const Login = () => {
       const user = result.user;
 
       const userRef = firestore.collection("users").doc(user.uid);
-      userRef.get().then((doc) => {
-        if (doc.exists) {
-          const userData = doc.data();
-          const {nickname, temp} = userData;
-          setIsLoggedIn(true);
-          setloginTemp(temp);
-          setloginID(user.uid);
-          setloginDisplayName(nickname);
-        } else {
-          firestore
-            .collection("users")
-            .doc(user.uid)
-            .set({
-              email: user.email,
-              displayName: user.displayName,
-              temp,
-            })
-            .then(() => {
-              setIsLoggedIn(true);
-              setloginTemp(temp);
-              setloginID(user.uid);
-              setloginDisplayName(user.displayName);
-            })
-            .catch((error) => {
-              setError("구글메일을 다시 확인해주세요");
-            });
-        }
-      });
+      userRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            const userData = doc.data();
+            const {nickname, temp} = userData;
+            dispatch(
+              userAction.login({
+                uid: user.uid,
+                nickname,
+                temp,
+                isLoggedIn: true,
+              })
+            );
+          } else {
+            setError("사용자 정보를 찾을 수 없습니다.");
+          }
+        })
+        .catch((error) => {
+          setError("구글메일을 다시 확인해주세요");
+        });
     });
   };
 

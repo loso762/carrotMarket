@@ -1,12 +1,13 @@
-import React, {useContext, useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import classes from "./chatContents.module.css";
 import {firestore} from "@/components/firebase";
 import {addDoc, collection, onSnapshot} from "firebase/firestore";
-import UserContext from "../context/user-context";
 import Image from "next/image";
+import {useSelector} from "react-redux";
 
 const ChatContents = ({chatId, now}) => {
-  const {loginDisplayName} = useContext(UserContext);
+  const nickname = useSelector((state) => state.User.nickname);
+
   const [messages, setMessages] = useState([]);
   const chatRef = useRef();
   const lastMsgRef = useRef();
@@ -43,7 +44,7 @@ const ChatContents = ({chatId, now}) => {
 
       await addDoc(messagesRef, {
         msg: chatRef.current.value,
-        who: loginDisplayName,
+        who: nickname,
         time: now,
         realtime: Date.now(),
       });
@@ -72,10 +73,7 @@ const ChatContents = ({chatId, now}) => {
               const ref = isLast ? lastMsgRef : null;
 
               return (
-                <li
-                  key={`${Date.now()}_${idx}`}
-                  className={`${m.who == loginDisplayName && classes.me}`}
-                  ref={ref}>
+                <li key={`${Date.now()}_${idx}`} className={`${m.who == nickname && classes.me}`} ref={ref}>
                   <p className={classes.time}>{m.time}</p>
                   <p className={classes.msg}>{m.msg}</p>
                 </li>

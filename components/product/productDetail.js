@@ -1,7 +1,5 @@
 import classes from "./ProductDetail.module.css";
-import {useContext, useEffect, useRef, useState} from "react";
-import ProductContext from "../context/product-context";
-import UserContext from "../context/user-context";
+import {useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -13,6 +11,8 @@ import {ClipLoader} from "react-spinners";
 import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
 import {storage} from "@/components/firebase";
 import {ref, deleteObject} from "firebase/storage";
+import {useDispatch, useSelector} from "react-redux";
+import {productAction} from "@/store/product-slice";
 
 //시간 구하는 함수
 const calcTime = (time) => {
@@ -41,8 +41,13 @@ const ImoticonHandler = (temp) => {
 
 const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
   const router = useRouter();
-  const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
-  const {loginDisplayName, loginID, isLoggedIn} = useContext(UserContext);
+  const dispatch = useDispatch();
+
+  const loginID = useSelector((state) => state.User.loginID);
+  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
+  const nickname = useSelector((state) => state.User.nickname);
+  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
+
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
@@ -71,7 +76,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     e.stopPropagation();
 
     if (isLoggedIn) {
-      if (loginDisplayName !== item.nickname) {
+      if (nickname !== item.nickname) {
         if (isLike) {
           setDoc(doc(firestore, "products", id), {
             ...item,
@@ -105,7 +110,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
       errHandler("판매완료된 상품입니다!");
       return;
     }
-    if (item.nickname == loginDisplayName) {
+    if (item.nickname == nickname) {
       router.push(`/Chat`);
       return;
     }
@@ -122,9 +127,9 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     });
 
     //채팅목록에 추가
-    if (!item.chat.includes(loginDisplayName)) {
+    if (!item.chat.includes(nickname)) {
       updateDoc(doc(firestore, "products", id), {
-        chat: [...item.chat, loginDisplayName],
+        chat: [...item.chat, nickname],
       });
     }
 
@@ -148,13 +153,13 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     updateDoc(doc(firestore, "products", id), {soldout: "true", buyer: buyerRef.current.value});
     setMenuOpen((prev) => !prev);
     setIsPop(false);
-    router.push(`/${SelectedCategory}`);
+    router.push(`/${selectedCategory}`);
   };
 
   //게시물 수정
   const EditHandler = async () => {
     router.push(`/WriteProduct?id=${id}`);
-    setIsEdit(true);
+    dispatch(productAction.setisEdit(true));
   };
 
   //팝업 종료
@@ -199,7 +204,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     </div>
   );
 
-  const backUrl = SelectedCategory == "카테고리" ? "Main" : SelectedCategory;
+  const backUrl = selectedCategory == "카테고리" ? "Main" : selectedCategory;
 
   return (
     <>
@@ -209,12 +214,12 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
           <IoIosArrowBack />
         </Link>
 
-        <Link href={`/Main`} onClick={() => setSelectedCategory("카테고리")}>
+        <Link href={`/Main`} onClick={() => dispatch(productAction.setCategory("카테고리"))}>
           <AiFillHome />
         </Link>
 
         {/* 게시글 작성자만 게시글 수정 및 삭제 가능하도록 하는 코드*/}
-        {loginDisplayName == item.nickname && (!menuOpen ? menuOpenBtn : menuBox)}
+        {nickname == item.nickname && (!menuOpen ? menuOpenBtn : menuBox)}
       </header>
       {isLoading ? (
         <div className={classes.loading}>
@@ -271,7 +276,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
             <button
               className={`${classes.chatButton} ${!isLoggedIn || (item.soldout && classes.disabled)}`}
               onClick={chatBtnHandler}>
-              {item.nickname == loginDisplayName ? "대화중인 채팅방" : "채팅하기"}
+              {item.nickname == nickname ? "대화중인 채팅방" : "채팅하기"}
             </button>
           </div>
         </section>

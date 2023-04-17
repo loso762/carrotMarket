@@ -1,17 +1,18 @@
-import React, {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import classes from "./chatPreview.module.css";
 import {firestore} from "@/components/firebase";
 import Image from "next/image";
 import {query, orderBy, limit, collection, onSnapshot} from "firebase/firestore";
-import UserContext from "../context/user-context";
 import {useRouter} from "next/router";
 import {storage} from "@/components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 import {doc, getDoc} from "firebase/firestore";
+import {useSelector} from "react-redux";
 
 const ChatPreview = ({c, id, LoadingEnd}) => {
   const router = useRouter();
-  const {loginID} = useContext(UserContext);
+  const loginID = useSelector((state) => state.User.loginID);
+
   const [lastMsg, setLastMsg] = useState("");
   const [lastTime, setlastTime] = useState("");
   const [chatpartner, setchatpartner] = useState();

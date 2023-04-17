@@ -2,16 +2,17 @@ import ChatHeader from "@/components/chat/chatHeader";
 import {firestore} from "@/components/firebase";
 import {doc, getDoc, getDocs, collection} from "firebase/firestore";
 import {useRouter} from "next/router";
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState} from "react";
 import ChatContents from "@/components/chat/chatContents";
-import UserContext from "@/components/context/user-context";
+import {useSelector} from "react-redux";
 
 function ChatRoom() {
+  const loginID = useSelector((state) => state.User.loginID);
+
   const [messageData, setMessageData] = useState();
   const [chatpartnerName, setchatpartnerName] = useState();
   const [chatpartnerID, setchatpartnerID] = useState();
   const router = useRouter();
-  const {loginID} = useContext(UserContext);
 
   useEffect(() => {
     const fetchChat = async () => {

@@ -1,14 +1,14 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import {BsSearch} from "react-icons/bs";
 import {IoIosArrowBack} from "react-icons/io";
 import classes from "./Header.module.css";
-import ProductContext from "../context/product-context";
 import {firestore} from "@/components/firebase";
 import {doc, updateDoc, setDoc, increment, getDoc} from "firebase/firestore";
+import {useSelector} from "react-redux";
 
 function Header({Productsfilter, searchBoxOpen, onSearch, searchBoxCancel, range, rangechange}) {
   const searchRef = useRef();
-  const {SelectedCategory} = useContext(ProductContext);
+  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
 
   const SubmitHandler = async (e) => {
     e.preventDefault();
@@ -25,9 +25,9 @@ function Header({Productsfilter, searchBoxOpen, onSearch, searchBoxCancel, range
     }
   };
 
-  const Category = SelectedCategory == "Near" ? <p>내근처</p> : <p>{SelectedCategory}</p>;
+  const Category = selectedCategory == "Near" ? <p>내근처</p> : <p>{selectedCategory}</p>;
 
-  const searchBtn = (SelectedCategory == "카테고리" || SelectedCategory == "Near") && (
+  const searchBtn = (selectedCategory == "카테고리" || selectedCategory == "Near") && (
     <BsSearch className={classes.searchBtn} onClick={searchBoxOpen} />
   );
 
@@ -55,7 +55,7 @@ function Header({Productsfilter, searchBoxOpen, onSearch, searchBoxCancel, range
       )}
 
       {/* 범위조절옵션 */}
-      {SelectedCategory == "Near" && (
+      {selectedCategory == "Near" && (
         <select
           className={classes.rangeselect}
           onChange={(e) => rangechange(e.target.value)}
@@ -63,6 +63,7 @@ function Header({Productsfilter, searchBoxOpen, onSearch, searchBoxCancel, range
           <option value="3">3km</option>
           <option value="5">5km</option>
           <option value="10">10km</option>
+          <option value="20">20km</option>
         </select>
       )}
     </header>

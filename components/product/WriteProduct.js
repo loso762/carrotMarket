@@ -6,16 +6,29 @@ import ProductContext from "../context/product-context";
 import {firestore, storage} from "../firebase";
 import {ref, uploadBytes, deleteObject} from "firebase/storage";
 import {doc, getDoc, setDoc} from "firebase/firestore";
-import UserContext from "../context/user-context";
 import {MdAddAPhoto} from "react-icons/md";
 import imageCompression from "browser-image-compression";
 import {ClipLoader} from "react-spinners";
+import {useSelector} from "react-redux";
 
 function WriteProduct() {
   const router = useRouter();
-  const {isEdit, latitude, longitude, dong, SelectedCategory, category, setSelectedCategory} =
-    useContext(ProductContext);
-  const {loginDisplayName, loginTemp, loginID, setsellProducts} = useContext(UserContext);
+
+  const loginID = useSelector((state) => state.User.loginID);
+  const nickname = useSelector((state) => state.User.nickname);
+  const temp = useSelector((state) => state.User.loginID);
+
+  const latitude = useSelector((state) => state.Products.latitude);
+  const longitude = useSelector((state) => state.Products.longitude);
+  const dong = useSelector((state) => state.Products.dong);
+  const category = useSelector((state) => state.Products.category);
+  const isEdit = useSelector((state) => state.Products.isEdit);
+
+  const newCategory = category.slice();
+  newCategory.splice(0, 1, "카테고리");
+
+  const {SelectedCategory, setSelectedCategory} = useContext(ProductContext);
+
   const [isFree, setIsFree] = useState(false);
   const [isLoading, setisLoading] = useState(false);
 
@@ -41,7 +54,7 @@ function WriteProduct() {
       }
       getData();
     }
-  }, [productId, isEdit]);
+  }, [productId, isEdit, SelectedCategory, product.category]);
 
   const ImageHandler = async (e) => {
     const imageFile = e.target.files[0];
@@ -90,7 +103,7 @@ function WriteProduct() {
     e.preventDefault();
     setisLoading(true);
 
-    const category = categoryRef.current.value;
+    const enteredcategory = categoryRef.current.value;
     const enteredTitle = titleInputRef.current.value;
     const enteredPrice = isFree ? "나눔" : priceInputRef.current.value;
     const enteredDescription = descriptionInputRef.current.value;
@@ -100,7 +113,7 @@ function WriteProduct() {
       return;
     }
 
-    if (category == "카테고리") {
+    if (enteredcategory == "카테고리") {
       alert("카테고리를 골라주세요!");
       return;
     }
@@ -116,10 +129,10 @@ function WriteProduct() {
       description: enteredDescription || product?.description,
       Latitude: latitude,
       Longitude: longitude,
-      category: category,
+      category: enteredcategory,
       dong: dong,
-      nickname: loginDisplayName,
-      temp: loginTemp,
+      nickname: nickname,
+      temp: temp,
       ID: loginID,
       chat: [],
       show: 0,
@@ -134,16 +147,11 @@ function WriteProduct() {
 
     WriteData(newProduct);
 
-    if (setsellProducts) {
-      setsellProducts((prev) => [...prev, {id: now, data: {...newProduct, time: time, likes: likes}}]);
-    }
-
-    setSelectedCategory(category);
+    setSelectedCategory(enteredcategory);
     sessionStorage.setItem("category", category);
 
     setTimeout(() => {
-      console.log("등록중");
-      router.push(`/${category}`);
+      router.push(`/${enteredcategory}`);
       setisLoading(false);
     }, 1300);
   };
@@ -156,8 +164,6 @@ function WriteProduct() {
     }
   };
 
-  category.splice(0, 1, "카테고리");
-
   return (
     <>
       <header className={classes.header}>
@@ -166,8 +172,8 @@ function WriteProduct() {
 
       <form id="form" className={classes.form} onSubmit={submitHandler}>
         <p>
-          <select ref={categoryRef}>
-            {category.map((category, idx) => {
+          <select ref={categoryRef} defaultValue={SelectedCategory}>
+            {newCategory.map((category, idx) => {
               return (
                 <option key={idx} value={category}>
                   {category}

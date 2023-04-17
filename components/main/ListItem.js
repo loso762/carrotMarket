@@ -1,15 +1,16 @@
-import React, {useContext} from "react";
+import React from "react";
 import classes from "./Category.module.css";
-import ProductContext from "../context/product-context";
 import Image from "next/image";
 import Link from "next/link";
+import {useDispatch} from "react-redux";
+import {productAction} from "@/store/product-slice";
 
 const ListItem = React.memo(({category}) => {
-  const {setSelectedCategory} = useContext(ProductContext);
+  const dispatch = useDispatch();
 
   const clickCategory = () => {
     sessionStorage.setItem("category", category);
-    setSelectedCategory(category);
+    dispatch(productAction.setCategory(category));
   };
 
   return (

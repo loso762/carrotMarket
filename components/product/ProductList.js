@@ -1,19 +1,24 @@
 import classes from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
 import Link from "next/link";
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useNearbyLocations} from "@/Hooks/useNearbylocation";
-import UserContext from "../context/user-context";
-import ProductContext from "../context/product-context";
+import {useDispatch, useSelector} from "react-redux";
+import {productAction} from "@/store/product-slice";
 
 function ProductList({list, range}) {
-  const {setIsEdit, SelectedCategory, setSelectedCategory} = useContext(ProductContext);
-  const {isLoggedIn, loginID} = useContext(UserContext);
+  const dispatch = useDispatch();
+
+  const loginID = useSelector((state) => state.User.loginID);
+  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
+  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
+  console.log(selectedCategory);
+
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [isScroll, setIsScroll] = useState(false);
   const [showList, setShowList] = useState([]);
   const [isError, setisError] = useState(false);
-  const writeBtnOff = ["구매내역", "관심목록"].includes(SelectedCategory);
+  const writeBtnOff = ["구매내역", "관심목록"].includes(selectedCategory);
 
   const handleScroll = () => {
     setIsScroll(true);
@@ -21,21 +26,21 @@ function ProductList({list, range}) {
 
   useEffect(() => {
     //내 근처 매물 불러오기
-    if (SelectedCategory == "Near") {
+    if (selectedCategory == "Near") {
       nearbyLocationsFn();
     }
-  }, [nearbyLocationsFn, SelectedCategory, setSelectedCategory]);
+  }, [nearbyLocationsFn, selectedCategory]);
 
   //섹션에 따라 다른 리스트 보여주기
   useEffect(() => {
-    if (SelectedCategory == "Near") {
+    if (selectedCategory == "Near") {
       setShowList(nearProduct);
-    } else if (SelectedCategory == "카테고리") {
+    } else if (selectedCategory == "카테고리") {
       return;
     } else {
       setShowList(list);
     }
-  }, [SelectedCategory, , list, nearProduct]);
+  }, [selectedCategory, , list, nearProduct]);
 
   //자신의 글 좋아요 누른경우
   const errorHandler = useCallback(() => {
@@ -65,7 +70,7 @@ function ProductList({list, range}) {
         <Link
           href="WriteProduct"
           className={`${classes.writeButton} ${isScroll && classes.onScroll}`}
-          onClick={() => setIsEdit(false)}
+          onClick={() => dispatch(productAction.setisEdit(false))}
           onMouseOver={() => setIsScroll(false)}>
           +{!isScroll && " 글쓰기"}
         </Link>

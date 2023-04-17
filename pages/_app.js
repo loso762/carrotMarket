@@ -1,13 +1,11 @@
 import "@/styles/globals.css";
-import {ProductContextProvider} from "@/components/context/product-context";
-import {UserContextProvider} from "@/components/context/user-context";
+import {Provider} from "react-redux";
+import store from "@/store";
 
 export default function App({Component, pageProps}) {
   return (
-    <ProductContextProvider>
-      <UserContextProvider>
-        <Component {...pageProps} />
-      </UserContextProvider>
-    </ProductContextProvider>
+    <Provider store={store}>
+      <Component {...pageProps} />
+    </Provider>
   );
 }

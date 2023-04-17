@@ -1,4 +1,3 @@
-import React from "react";
 import {IoIosArrowBack} from "react-icons/io";
 import {useRouter} from "next/router";
 import classes from "./chatHeader.module.css";

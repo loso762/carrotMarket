@@ -4,12 +4,13 @@ import Header from "@/components/layout/Header";
 import FooterMenu from "@/components/layout/FooterMenu";
 import {firestore} from "@/components/firebase";
 import {collection, onSnapshot} from "firebase/firestore";
-import {useState, useContext} from "react";
+import {useState} from "react";
 import SearchList from "@/components/product/SearchList";
-import ProductContext from "@/components/context/product-context";
+import {useDispatch} from "react-redux";
+import {productAction} from "@/store/product-slice";
 
-function Near(props) {
-  const {setSelectedCategory} = useContext(ProductContext);
+function Near() {
+  const dispatch = useDispatch();
 
   const [products, setproducts] = useState([]);
   const [searchRange, setSearchRange] = useState(10); // 검색 지역 범위
@@ -17,8 +18,8 @@ function Near(props) {
   const [filterdProducts, setfilterdProducts] = useState([]);
 
   useEffect(() => {
-    setSelectedCategory("Near");
-  }, [setSelectedCategory]);
+    dispatch(productAction.setCategory("Near"));
+  }, [dispatch]);
 
   useEffect(() => {
     const ProductRef = collection(firestore, "products");

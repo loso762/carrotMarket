@@ -1,16 +1,19 @@
 import {ClipLoader} from "react-spinners";
 import {FiCamera} from "react-icons/fi";
 import {IoIosArrowBack} from "react-icons/io";
-import React, {useEffect, useState, useRef, useContext} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import classes from "./setting.module.css";
 import {storage, firestore} from "@/components/firebase";
 import {ref, getDownloadURL, uploadBytes, deleteObject} from "firebase/storage";
-import {collection, doc, updateDoc, where, getDocs, query, getDoc, setDoc} from "firebase/firestore";
+import {collection, doc, updateDoc, where, getDocs, query} from "firebase/firestore";
 import Image from "next/image";
-import UserContext from "../context/user-context";
+import {useSelector} from "react-redux";
+import {userAction} from "@/store/user-slice";
 
 const Setting = ({urlHandler, image, setoff}) => {
-  const {loginID, loginDisplayName, setloginDisplayName, likeProducts} = useContext(UserContext);
+  const loginID = useSelector((state) => state.User.loginID);
+  const nickname = useSelector((state) => state.User.nickname);
+
   const [isLoading, setIsLoading] = useState(false);
   const [imageChange, setimageChange] = useState(true);
   const [errorMsg, seterrorMsg] = useState(null);
@@ -62,12 +65,11 @@ const Setting = ({urlHandler, image, setoff}) => {
               seterrorMsg(null);
             }, 2000);
           } else {
-            const prevname = loginDisplayName;
+            const prevname = nickname;
             const productRef = collection(firestore, "products");
 
             getDocs(query(productRef, where("nickname", "==", prevname))).then((querySnapshot) => {
               querySnapshot.forEach((item) => {
-                console.log(item);
                 updateDoc(doc(firestore, "products", item.id), {
                   nickname: inputRef.current.value,
                 });
@@ -76,7 +78,7 @@ const Setting = ({urlHandler, image, setoff}) => {
               updateDoc(doc(firestore, "users", loginID), {
                 nickname: inputRef.current.value,
               }).then(() => {
-                setloginDisplayName(inputRef.current.value);
+                dispatch(userAction.nicknameChange(nickname));
                 setoff();
               });
             });
@@ -106,7 +108,7 @@ const Setting = ({urlHandler, image, setoff}) => {
         </p>
         <input type="file" id="file" onChange={ImageHandler} autoComplete="off" />
         <label htmlFor="name">닉네임</label>
-        <input placeholder={loginDisplayName} id="name" ref={inputRef} />
+        <input placeholder={nickname} id="name" ref={inputRef} />
       </div>
       {errorMsg && inputRef.current.value !== "" && <div className={classes.errorMsg}>{errorMsg}</div>}
     </form>
