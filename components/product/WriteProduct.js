@@ -1,33 +1,33 @@
-import {useRef, useEffect, useState, useContext} from "react";
+import {useRef, useEffect, useState} from "react";
 import classes from "./WriteProduct.module.css";
 import {useRouter} from "next/router";
 import {IoIosArrowBack} from "react-icons/io";
-import ProductContext from "../context/product-context";
 import {firestore, storage} from "../firebase";
 import {ref, uploadBytes, deleteObject} from "firebase/storage";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import {MdAddAPhoto} from "react-icons/md";
 import imageCompression from "browser-image-compression";
 import {ClipLoader} from "react-spinners";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {productAction} from "@/store/product-slice";
 
 function WriteProduct() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const loginID = useSelector((state) => state.User.loginID);
   const nickname = useSelector((state) => state.User.nickname);
-  const temp = useSelector((state) => state.User.loginID);
+  const temp = useSelector((state) => state.User.temp);
 
   const latitude = useSelector((state) => state.Products.latitude);
   const longitude = useSelector((state) => state.Products.longitude);
   const dong = useSelector((state) => state.Products.dong);
   const category = useSelector((state) => state.Products.category);
   const isEdit = useSelector((state) => state.Products.isEdit);
+  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
 
   const newCategory = category.slice();
   newCategory.splice(0, 1, "카테고리");
-
-  const {SelectedCategory, setSelectedCategory} = useContext(ProductContext);
 
   const [isFree, setIsFree] = useState(false);
   const [isLoading, setisLoading] = useState(false);
@@ -54,7 +54,7 @@ function WriteProduct() {
       }
       getData();
     }
-  }, [productId, isEdit, SelectedCategory, product.category]);
+  }, [productId, isEdit, selectedCategory, product.category]);
 
   const ImageHandler = async (e) => {
     const imageFile = e.target.files[0];
@@ -147,8 +147,8 @@ function WriteProduct() {
 
     WriteData(newProduct);
 
-    setSelectedCategory(enteredcategory);
-    sessionStorage.setItem("category", category);
+    dispatch(productAction.setCategory(enteredcategory));
+    sessionStorage.setItem("category", enteredcategory);
 
     setTimeout(() => {
       router.push(`/${enteredcategory}`);
@@ -158,7 +158,7 @@ function WriteProduct() {
 
   const cancelHandler = () => {
     if (!isEdit) {
-      router.push(SelectedCategory);
+      router.push(selectedCategory);
     } else {
       router.push(`/${product.category}/${productId}`);
     }
@@ -172,7 +172,7 @@ function WriteProduct() {
 
       <form id="form" className={classes.form} onSubmit={submitHandler}>
         <p>
-          <select ref={categoryRef} defaultValue={SelectedCategory}>
+          <select ref={categoryRef} defaultValue={selectedCategory}>
             {newCategory.map((category, idx) => {
               return (
                 <option key={idx} value={category}>

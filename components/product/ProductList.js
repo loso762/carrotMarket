@@ -1,27 +1,25 @@
 import classes from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
-import Link from "next/link";
 import {useCallback, useEffect, useState} from "react";
 import {useNearbyLocations} from "@/Hooks/useNearbylocation";
-import {useDispatch, useSelector} from "react-redux";
-import {productAction} from "@/store/product-slice";
+import {useSelector} from "react-redux";
+import WriteBtn from "./writeBtn";
 
 function ProductList({list, range}) {
-  const dispatch = useDispatch();
-
   const loginID = useSelector((state) => state.User.loginID);
-  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
   const selectedCategory = useSelector((state) => state.Products.selectedCategory);
-  console.log(selectedCategory);
 
   const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
-  const [isScroll, setIsScroll] = useState(false);
   const [showList, setShowList] = useState([]);
   const [isError, setisError] = useState(false);
-  const writeBtnOff = ["구매내역", "관심목록"].includes(selectedCategory);
+  const [isScroll, setIsScroll] = useState(false);
 
   const handleScroll = () => {
     setIsScroll(true);
+  };
+
+  const hoverBtn = () => {
+    setIsScroll(false);
   };
 
   useEffect(() => {
@@ -64,18 +62,7 @@ function ProductList({list, range}) {
           />
         ))}
       </ul>
-
-      {/* 글쓰기버튼 조건 */}
-      {isLoggedIn && !writeBtnOff && (
-        <Link
-          href="WriteProduct"
-          className={`${classes.writeButton} ${isScroll && classes.onScroll}`}
-          onClick={() => dispatch(productAction.setisEdit(false))}
-          onMouseOver={() => setIsScroll(false)}>
-          +{!isScroll && " 글쓰기"}
-        </Link>
-      )}
-
+      <WriteBtn isScroll={isScroll} hoverBtn={hoverBtn} />
       <div className={`${classes.errorBox} ${!isError && classes.hide}`}>
         본인의 글에는 좋아요를 누르실 수 없습니다
       </div>

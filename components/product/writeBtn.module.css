@@ -1,0 +1,18 @@
+.writeButton {
+  position: absolute;
+  bottom: 110px;
+  right: 20px;
+  background-color: rgb(251, 127, 55);
+  width: 75px;
+  height: 38px;
+  text-align: center;
+  line-height: 35px;
+  border-radius: 15px;
+  transition: 1s;
+  z-index: 10;
+}
+
+.onScroll {
+  width: 50px;
+  transition: 1s;
+}
