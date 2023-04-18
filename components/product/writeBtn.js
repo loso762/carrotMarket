@@ -8,11 +8,11 @@ const WriteBtn = ({isScroll, hoverBtn}) => {
   const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
   const selectedCategory = useSelector((state) => state.Products.selectedCategory);
 
-  const writeBtnOff = ["구매내역", "관심목록"].includes(selectedCategory);
+  const BtnOff = ["구매내역", "관심목록"].includes(selectedCategory);
 
   return (
     <>
-      {isLoggedIn && !writeBtnOff && (
+      {isLoggedIn && !BtnOff && (
         <Link
           href="WriteProduct"
           className={`${classes.writeButton} ${isScroll && classes.onScroll}`}
