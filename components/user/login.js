@@ -9,11 +9,10 @@ import {useSelector, useDispatch} from "react-redux";
 import {userAction} from "@/store/user-slice";
 
 const Login = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const temp = useSelector((state) => state.User.temp);
-
-  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

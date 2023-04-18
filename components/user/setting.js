@@ -63,7 +63,7 @@ const Setting = ({urlHandler, image, setoff}) => {
             seterrorMsg("이미 존재하는 닉네임입니다.");
             setTimeout(() => {
               seterrorMsg(null);
-            }, 2000);
+            }, 1600);
           } else {
             const prevname = nickname;
             const productRef = collection(firestore, "products");
