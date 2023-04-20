@@ -1,14 +1,14 @@
 import React from "react";
-import FooterMenu from "@/components/layout/FooterMenu";
+import FooterMenu from "../components/layout/FooterMenu";
 import Signup from "../components/user/Signup";
 
-function Sign(props) {
+const Sign: React.FC = () => {
   return (
     <>
       <Signup />
       <FooterMenu />
     </>
   );
-}
+};
 
 export default Sign;

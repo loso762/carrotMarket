@@ -9,10 +9,10 @@ import {AiOutlineHeart, AiFillHeart, AiFillHome} from "react-icons/ai";
 import {firestore} from "../firebase";
 import {ClipLoader} from "react-spinners";
 import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
-import {storage} from "@/components/firebase";
+import {storage} from "../../components/firebase";
 import {ref, deleteObject} from "firebase/storage";
 import {useDispatch, useSelector} from "react-redux";
-import {productAction} from "@/store/product-slice";
+import {productAction} from "../../store/product-slice";
 
 //시간 구하는 함수
 const calcTime = (time) => {
@@ -46,7 +46,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
   const loginID = useSelector((state) => state.User.loginID);
   const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
   const nickname = useSelector((state) => state.User.nickname);
-  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
+  const category = useSelector((state) => state.Products.category);
 
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -153,7 +153,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     updateDoc(doc(firestore, "products", id), {soldout: "true", buyer: buyerRef.current.value});
     setMenuOpen((prev) => !prev);
     setIsPop(false);
-    router.push(`/${selectedCategory}`);
+    router.push(`/${category}`);
   };
 
   //게시물 수정
@@ -204,7 +204,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     </div>
   );
 
-  const backUrl = selectedCategory == "카테고리" ? "Main" : selectedCategory;
+  const backUrl = category == "카테고리" ? "Main" : category;
 
   return (
     <>

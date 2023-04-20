@@ -1,5 +1,5 @@
 import {useRouter} from "next/router";
-import {useCallback, useContext, useEffect, useState} from "react";
+import {MouseEvent, useCallback, useEffect, useState} from "react";
 import {AiOutlineHeart, AiFillHeart} from "react-icons/ai";
 import {firestore, storage} from "../firebase";
 import classes from "./ProductItem.module.css";
@@ -7,16 +7,22 @@ import {doc, setDoc} from "firebase/firestore";
 import {ref, getDownloadURL} from "firebase/storage";
 import Image from "next/image";
 import {ClipLoader} from "react-spinners";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "../../Hooks/storeHook";
+import {ItemData} from "../../store/product-slice";
 
-function ProductItem({id, item, isliked, errorHandler}) {
+const ProductItem: React.FC<{id: string; item: ItemData; isliked: boolean; errorHandler: () => void}> = ({
+  id,
+  item,
+  isliked,
+  errorHandler,
+}) => {
   const router = useRouter();
 
-  const loginID = useSelector((state) => state.User.loginID);
-  const nickname = useSelector((state) => state.User.nickname);
-  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
+  const loginID = useAppSelector((state) => state.User.loginID);
+  const nickname = useAppSelector((state) => state.User.nickname);
+  const isLoggedIn = useAppSelector((state) => state.User.isLoggedIn);
 
-  const [image, setImage] = useState();
+  const [image, setImage] = useState("");
   const price = item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   //firebase storage에서 이미지 가져오기
@@ -24,7 +30,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
     const imageRef = ref(storage, `images/${id}`);
     setTimeout(() => {
       getDownloadURL(imageRef)
-        .then((url) => {
+        .then((url: string) => {
           setImage(url);
         })
         .catch((error) => {
@@ -35,7 +41,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
 
   //좋아요 클릭
   const likeBtnHandler = useCallback(
-    (e) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
 
       if (isLoggedIn) {
@@ -67,7 +73,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
   );
 
   //디테일 페이지 열기
-  const showDetailsHandler = useCallback(
+  const showDetailsHandler: (e: MouseEvent<HTMLElement>) => void = useCallback(
     async (e) => {
       e.stopPropagation();
 
@@ -82,7 +88,7 @@ function ProductItem({id, item, isliked, errorHandler}) {
     [id, item, router]
   );
 
-  let minutesAgo = Math.round((Date.now() - item.time) / 1000 / 60);
+  let minutesAgo: string | number = Math.round((Date.now() - item.time) / 1000 / 60);
 
   if (minutesAgo < 60) {
     minutesAgo = `${minutesAgo}분`;
@@ -119,6 +125,6 @@ function ProductItem({id, item, isliked, errorHandler}) {
       </button>
     </li>
   );
-}
+};
 
 export default ProductItem;

@@ -2,7 +2,7 @@ import {IoIosArrowBack} from "react-icons/io";
 import {useRouter} from "next/router";
 import classes from "./chatHeader.module.css";
 import Link from "next/link";
-import {firestore} from "@/components/firebase";
+import {firestore} from "../../components/firebase";
 import {doc, collection, updateDoc, getDoc, deleteDoc, addDoc} from "firebase/firestore";
 
 const ChatHeader = ({chatpartnerID, chatpartnerName, chatId, now}) => {

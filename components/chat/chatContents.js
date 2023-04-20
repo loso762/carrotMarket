@@ -1,6 +1,6 @@
 import React, {useRef, useState, useEffect} from "react";
 import classes from "./chatContents.module.css";
-import {firestore} from "@/components/firebase";
+import {firestore} from "../../components/firebase";
 import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import Image from "next/image";
 import {useSelector} from "react-redux";

@@ -1,18 +1,18 @@
-import {useState} from "react";
+import React, {ChangeEvent, MouseEvent, useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {useRouter} from "next/router";
 import {auth, firestore, googleAuthProvider} from "../firebase";
 import classes from "./login.module.css";
 import {FadeLoader} from "react-spinners";
-import {useSelector, useDispatch} from "react-redux";
-import {userAction} from "@/store/user-slice";
+import {useAppSelector, useAppDispatch} from "../../Hooks/storeHook";
+import {userAction} from "../../store/user-slice";
 
-const Login = () => {
+const Login: React.FC = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const temp = useSelector((state) => state.User.temp);
+  const temp = useAppSelector((state) => state.User.temp);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,17 +20,17 @@ const Login = () => {
 
   const [loginProcess, setloginProcess] = useState(false);
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
   };
 
   //이메일 로그인
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     setloginProcess(true);
 
@@ -64,7 +64,7 @@ const Login = () => {
   };
 
   //구글 로그인
-  const handleGoogleLogin = (e) => {
+  const handleGoogleLogin = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     auth.signInWithPopup(googleAuthProvider).then((result) => {
@@ -96,14 +96,14 @@ const Login = () => {
   };
 
   //구글 회원가입
-  const handleGoogleSignup = (e) => {
+  const handleGoogleSignup = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     auth
       .signInWithPopup(googleAuthProvider)
       .then((result) => {
         const user = result.user;
-        const {nickname, email} = user;
+        const {displayName, email} = user;
 
         // Check if the user already exists in Firestore
         firestore
@@ -120,7 +120,7 @@ const Login = () => {
                 .doc(user.uid)
                 .set({
                   email,
-                  nickname,
+                  nickname: displayName,
                   temp,
                 })
                 .then(() => {
@@ -152,6 +152,7 @@ const Login = () => {
       <div className={classes.container}>
         {loginProcess && LoadingDiv}
         <Image src="/images/Marketlogo.png" alt="profileImg" width={110} height={130} />
+
         <form onSubmit={handleLogin} className={classes.form}>
           <div>
             <label htmlFor="email" className={classes.label}>
@@ -185,6 +186,7 @@ const Login = () => {
             로그인
           </button>
         </form>
+
         <div className={classes.buttonContainer}>
           <button type="button" className={classes.button2} onClick={handleGoogleLogin}>
             구글 로그인

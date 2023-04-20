@@ -11,6 +11,7 @@
   "dependencies": {
     "@next/font": "13.2.4",
     "@reduxjs/toolkit": "^1.9.4",
+    "@types/react-redux": "^7.1.25",
     "browser-image-compression": "^2.0.2",
     "dotenv": "^16.0.3",
     "eslint": "8.37.0",
@@ -26,5 +27,11 @@
     "react-router-dom": "^6.9.0",
     "react-spinners": "^0.13.8",
     "session": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "typescript": "^5.0.4"
   }
 }

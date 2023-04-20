@@ -1,26 +1,33 @@
 import {ClipLoader} from "react-spinners";
 import {FiCamera} from "react-icons/fi";
 import {IoIosArrowBack} from "react-icons/io";
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState, useRef, MouseEvent} from "react";
 import classes from "./setting.module.css";
-import {storage, firestore} from "@/components/firebase";
+import {storage, firestore} from "../firebase";
 import {ref, getDownloadURL, uploadBytes, deleteObject} from "firebase/storage";
 import {collection, doc, updateDoc, where, getDocs, query} from "firebase/firestore";
 import Image from "next/image";
-import {useSelector} from "react-redux";
-import {userAction} from "@/store/user-slice";
+import {userAction} from "../../store/user-slice";
+import {useAppDispatch, useAppSelector} from "../../Hooks/storeHook";
 
-const Setting = ({urlHandler, image, setoff}) => {
-  const loginID = useSelector((state) => state.User.loginID);
-  const nickname = useSelector((state) => state.User.nickname);
+interface Props {
+  urlHandler: (url: string) => void;
+  image: string;
+  setoff: () => void;
+}
+
+const Setting: React.FC<Props> = ({urlHandler, image, setoff}) => {
+  const dispatch = useAppDispatch();
+  const loginID = useAppSelector((state) => state.User.loginID);
+  const nickname = useAppSelector((state) => state.User.nickname);
 
   const [isLoading, setIsLoading] = useState(false);
   const [imageChange, setimageChange] = useState(true);
   const [errorMsg, seterrorMsg] = useState(null);
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>();
   const imageRef = ref(storage, `profile/${loginID}`);
 
-  async function ImageHandler(e) {
+  async function ImageHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setIsLoading(true);
     e.target.files[0] &&
       getDownloadURL(imageRef)
@@ -49,7 +56,7 @@ const Setting = ({urlHandler, image, setoff}) => {
       });
   }, [imageChange, imageRef, urlHandler]);
 
-  async function submitHandler(e) {
+  async function submitHandler(e: React.FormEvent) {
     e.preventDefault();
 
     if (inputRef.current.value !== "") {

@@ -1,17 +1,16 @@
 import classes from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
 import {useCallback, useEffect, useState} from "react";
-import {useNearbyLocations} from "@/Hooks/useNearbylocation";
-import {useSelector} from "react-redux";
 import WriteBtn from "./writeBtn";
+import {Item} from "../../store/product-slice";
+import {useAppSelector} from "../../Hooks/storeHook";
 
-function ProductList({list, range}) {
-  const loginID = useSelector((state) => state.User.loginID);
-  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
+const ProductList: React.FC<{list: Item[]}> = ({list}) => {
+  const loginID = useAppSelector((state) => state.User.loginID);
+  const category = useAppSelector((state) => state.Products.category);
 
-  const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
   const [showList, setShowList] = useState([]);
-  const [isError, setisError] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [isScroll, setIsScroll] = useState(false);
 
   const handleScroll = () => {
@@ -22,30 +21,19 @@ function ProductList({list, range}) {
     setIsScroll(false);
   };
 
-  useEffect(() => {
-    //내 근처 매물 불러오기
-    if (selectedCategory == "Near") {
-      nearbyLocationsFn();
-    }
-  }, [nearbyLocationsFn, selectedCategory]);
-
   //섹션에 따라 다른 리스트 보여주기
   useEffect(() => {
-    if (selectedCategory == "Near") {
-      setShowList(nearProduct);
-    } else if (selectedCategory == "카테고리") {
-      return;
-    } else {
+    if (category !== "카테고리") {
       setShowList(list);
     }
-  }, [selectedCategory, , list, nearProduct]);
+  }, [category, list]);
 
   //자신의 글 좋아요 누른경우
   const errorHandler = useCallback(() => {
-    setisError(true);
+    setIsError(true);
 
     setTimeout(() => {
-      setisError(false);
+      setIsError(false);
     }, 1000);
   }, []);
 
@@ -68,6 +56,6 @@ function ProductList({list, range}) {
       </div>
     </>
   );
-}
+};
 
 export default ProductList;

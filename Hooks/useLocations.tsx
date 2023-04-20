@@ -1,15 +1,22 @@
-import FooterMenu from "@/components/layout/FooterMenu";
-import Mypage from "@/components/user/mypage";
-import Login from "@/components/user/login";
-import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
-import {productAction} from "@/store/product-slice";
+import {useAppSelector, useAppDispatch} from "./storeHook";
+import {productAction} from "../store/product-slice";
 
-function Index() {
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
-  const latitude = useSelector((state) => state.Products.latitude);
-  const longitude = useSelector((state) => state.Products.longitude);
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
+
+interface RegionInfo {
+  region_3depth_name: string;
+  // Add any other properties you need from the region information object
+}
+
+export const useLocations = () => {
+  const dispatch = useAppDispatch();
+  const latitude = useAppSelector((state) => state.Products.latitude);
+  const longitude = useAppSelector((state) => state.Products.longitude);
 
   useEffect(() => {
     const mapScript = document.createElement("script");
@@ -31,7 +38,7 @@ function Index() {
     const onLoadDong = () => {
       window.kakao.maps.load(() => {
         const geocoder = new window.kakao.maps.services.Geocoder();
-        geocoder.coord2RegionCode(longitude, latitude, (result, status) => {
+        geocoder.coord2RegionCode(longitude, latitude, (result: Array<RegionInfo> | null, status) => {
           if (status === window.kakao.maps.services.Status.OK) {
             const dongAddress = result[0].region_3depth_name;
             dispatch(productAction.setDong(dongAddress));
@@ -45,12 +52,5 @@ function Index() {
     latitude && longitude && mapScript.addEventListener("load", onLoadDong);
   }, [dispatch, latitude, longitude]);
 
-  return (
-    <>
-      {isLoggedIn ? <Mypage /> : <Login />}
-      <FooterMenu />
-    </>
-  );
-}
-
-export default Index;
+  return;
+};

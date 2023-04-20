@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect} from "react";
 import {auth} from "../firebase";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,17 +6,17 @@ import classes from "./mypage.module.css";
 import {BiShoppingBag, BiReceipt, BiHeart, BiChat} from "react-icons/bi";
 import {FiSettings} from "react-icons/fi";
 import Setting from "./setting";
-import {storage} from "@/components/firebase";
+import {storage} from "../firebase";
 import {ref, getDownloadURL} from "firebase/storage";
-import {useDispatch, useSelector} from "react-redux";
-import {userAction} from "@/store/user-slice";
-import {productAction} from "@/store/product-slice";
+import {userAction} from "../../store/user-slice";
+import {productAction} from "../../store/product-slice";
+import {useAppDispatch, useAppSelector} from "../../Hooks/storeHook";
 
-const Mypage = () => {
-  const dispatch = useDispatch();
+const Mypage: React.FC = () => {
+  const dispatch = useAppDispatch();
 
-  const loginID = useSelector((state) => state.User.loginID);
-  const nickname = useSelector((state) => state.User.nickname);
+  const loginID = useAppSelector((state) => state.User.loginID);
+  const nickname = useAppSelector((state) => state.User.nickname);
 
   const [isSetting, setIsSetting] = useState(false);
   const [image, setImage] = useState("/images/profile.jpg");
@@ -26,7 +26,7 @@ const Mypage = () => {
     dispatch(userAction.logout());
   };
 
-  function urlHandler(url) {
+  function urlHandler(url: string) {
     setImage(url);
   }
 

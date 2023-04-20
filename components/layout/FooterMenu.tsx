@@ -4,22 +4,24 @@ import {MdOutlineLocationOn, MdLocationOn} from "react-icons/md";
 import {BsChatDots, BsFillChatDotsFill} from "react-icons/bs";
 import {CgProfile} from "react-icons/cg";
 import {useRouter} from "next/router";
-import {useDispatch} from "react-redux";
-import {productAction} from "@/store/product-slice";
+import {useAppDispatch} from "../../Hooks/storeHook";
+import {productAction} from "../../store/product-slice";
 
-const FooterMenu = () => {
-  const dispatch = useDispatch();
+const FooterMenu: React.FC = () => {
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const clickHomeBtn = () => {
     router.push("/Main");
     dispatch(productAction.setCategory("카테고리"));
+    dispatch(productAction.Searching(false));
     sessionStorage.setItem("category", "카테고리");
   };
 
   const clickNearBtn = () => {
     router.push("/Near");
     dispatch(productAction.setCategory("Near"));
+    dispatch(productAction.Searching(false));
     sessionStorage.setItem("category", "Near");
   };
 

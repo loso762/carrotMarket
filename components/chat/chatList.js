@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import classes from "./chatList.module.css";
-import {firestore} from "@/components/firebase";
+import {firestore} from "../../components/firebase";
 import {collection, onSnapshot, query, where} from "firebase/firestore";
 import ChatPreview from "./chatPreview";
 import {ClipLoader} from "react-spinners";

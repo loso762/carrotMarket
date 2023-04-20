@@ -1,16 +1,17 @@
 import classes from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
-import {useEffect, useState} from "react";
-import {useNearbyLocations} from "@/Hooks/useNearbylocation";
-import {firestore} from "@/components/firebase";
+import {useCallback, useEffect, useState} from "react";
+import {firestore} from "../../components/firebase";
 import {collection, getDocs} from "firebase/firestore";
+import {useAppSelector} from "../../Hooks/storeHook";
+import {Item} from "../../store/product-slice";
 
-function SearchList({list, range, section}) {
+const SearchList: React.FC<{list: Item[]}> = ({list}) => {
   const [searchList, setSearchList] = useState([]);
+  const [isError, setIsError] = useState(false);
+  const loginID = useAppSelector((state) => state.User.loginID);
 
   list.sort((a, b) => b.data.time - a.data.time);
-
-  const [nearProduct, nearbyLocationsFn] = useNearbyLocations(range, list);
 
   useEffect(() => {
     //상위 검색어 7개만 표시해주기
@@ -27,18 +28,27 @@ function SearchList({list, range, section}) {
     fetchSearchList();
   }, []);
 
-  useEffect(() => {
-    nearbyLocationsFn();
-  }, [nearbyLocationsFn]);
+  //자신의 글 좋아요 누른경우
+  const errorHandler = useCallback(() => {
+    setIsError(true);
 
-  const lists = section == "내근처" ? nearProduct : list;
+    setTimeout(() => {
+      setIsError(false);
+    }, 1000);
+  }, []);
 
   return (
     <>
-      {lists.length !== 0 ? (
+      {list.length !== 0 ? (
         <ul className={classes.list}>
-          {lists.map((item) => (
-            <ProductItem key={item.id} id={item.id} item={item.data} />
+          {list.map((item) => (
+            <ProductItem
+              errorHandler={errorHandler}
+              key={item.id}
+              id={item.id}
+              item={item.data}
+              isliked={item.data.wholike.includes(loginID)}
+            />
           ))}
         </ul>
       ) : (
@@ -49,8 +59,11 @@ function SearchList({list, range, section}) {
           })}
         </ul>
       )}
+      <div className={`${classes.errorBox} ${!isError && classes.hide}`}>
+        본인의 글에는 좋아요를 누르실 수 없습니다
+      </div>
     </>
   );
-}
+};
 
 export default SearchList;

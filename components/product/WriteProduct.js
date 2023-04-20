@@ -9,7 +9,7 @@ import {MdAddAPhoto} from "react-icons/md";
 import imageCompression from "browser-image-compression";
 import {ClipLoader} from "react-spinners";
 import {useDispatch, useSelector} from "react-redux";
-import {productAction} from "@/store/product-slice";
+import {productAction} from "../../store/product-slice";
 
 function WriteProduct() {
   const router = useRouter();
@@ -22,12 +22,12 @@ function WriteProduct() {
   const latitude = useSelector((state) => state.Products.latitude);
   const longitude = useSelector((state) => state.Products.longitude);
   const dong = useSelector((state) => state.Products.dong);
-  const category = useSelector((state) => state.Products.category);
+  const categoryList = useSelector((state) => state.Products.categoryList);
   const isEdit = useSelector((state) => state.Products.isEdit);
-  const selectedCategory = useSelector((state) => state.Products.selectedCategory);
+  const category = useSelector((state) => state.Products.category);
 
-  const newCategory = category.slice();
-  newCategory.splice(0, 1, "카테고리");
+  const newList = categoryList.slice();
+  newList.splice(0, 1, "카테고리");
 
   const [isFree, setIsFree] = useState(false);
   const [isLoading, setisLoading] = useState(false);
@@ -54,7 +54,7 @@ function WriteProduct() {
       }
       getData();
     }
-  }, [productId, isEdit, selectedCategory, product.category]);
+  }, [productId, isEdit, category, product.category]);
 
   const ImageHandler = async (e) => {
     const imageFile = e.target.files[0];
@@ -158,7 +158,7 @@ function WriteProduct() {
 
   const cancelHandler = () => {
     if (!isEdit) {
-      router.push(selectedCategory);
+      router.push(category);
     } else {
       router.push(`/${product.category}/${productId}`);
     }
@@ -172,8 +172,8 @@ function WriteProduct() {
 
       <form id="form" className={classes.form} onSubmit={submitHandler}>
         <p>
-          <select ref={categoryRef} defaultValue={selectedCategory}>
-            {newCategory.map((category, idx) => {
+          <select ref={categoryRef} defaultValue={category}>
+            {newList.map((category, idx) => {
               return (
                 <option key={idx} value={category}>
                   {category}

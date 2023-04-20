@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import classes from "./chatPreview.module.css";
-import {firestore} from "@/components/firebase";
+import {firestore} from "../../components/firebase";
 import Image from "next/image";
 import {query, orderBy, limit, collection, onSnapshot} from "firebase/firestore";
 import {useRouter} from "next/router";
-import {storage} from "@/components/firebase";
+import {storage} from "../../components/firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 import {doc, getDoc} from "firebase/firestore";
 import {useSelector} from "react-redux";

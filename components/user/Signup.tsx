@@ -2,9 +2,9 @@ import {useState} from "react";
 import {auth, firestore} from "../firebase";
 import classes from "./Signup.module.css";
 import {useRouter} from "next/router";
-import FooterMenu from "@/components/layout/FooterMenu";
+import FooterMenu from "../layout/FooterMenu";
 
-const Signup = () => {
+const Signup: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +13,7 @@ const Signup = () => {
 
   const temp = 36.5;
 
-  const handleSignup = (e) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
 
     // 중복여부 확인해 회원가입하는 코드
