@@ -2,20 +2,25 @@ import {IoIosArrowBack} from "react-icons/io";
 import {useRouter} from "next/router";
 import classes from "./chatHeader.module.css";
 import Link from "next/link";
-import {firestore} from "../../components/firebase";
+import {firestore} from "../firebase";
 import {doc, collection, updateDoc, getDoc, deleteDoc, addDoc} from "firebase/firestore";
 
-const ChatHeader = ({chatpartnerID, chatpartnerName, chatId, now}) => {
+interface Props {
+  chatpartnerID: string;
+  chatpartnerName: string;
+  chatId: string;
+  now: number;
+}
+
+const ChatHeader: React.FC<Props> = ({chatpartnerID, chatpartnerName, chatId, now}) => {
   const router = useRouter();
 
   const chatOffHandler = async () => {
     const chatInfoRef = doc(collection(firestore, "chat"), chatId);
 
     const chatInfoSnap = await getDoc(chatInfoRef);
-    console.log(chatInfoSnap.data());
 
     if (chatInfoSnap.data()?.partyID.length == 1) {
-      console.log(chatInfoSnap.data()?.partyID.length);
       await deleteDoc(chatInfoRef);
     } else {
       await updateDoc(chatInfoRef, {partyID: chatpartnerID, left: chatpartnerID});

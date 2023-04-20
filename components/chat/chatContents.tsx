@@ -1,16 +1,16 @@
 import React, {useRef, useState, useEffect} from "react";
 import classes from "./chatContents.module.css";
-import {firestore} from "../../components/firebase";
+import {firestore} from "../firebase";
 import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import Image from "next/image";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "../../Hooks/storeHook";
 
-const ChatContents = ({chatId, now}) => {
-  const nickname = useSelector((state) => state.User.nickname);
+const ChatContents: React.FC<{chatId: string; now: number}> = ({chatId, now}) => {
+  const nickname = useAppSelector((state) => state.User.nickname);
 
   const [messages, setMessages] = useState([]);
-  const chatRef = useRef();
-  const lastMsgRef = useRef();
+  const chatRef = useRef<HTMLInputElement>();
+  const lastMsgRef = useRef<HTMLLIElement>();
 
   //실시간 채팅상황 구독
   useEffect(() => {
@@ -30,7 +30,7 @@ const ChatContents = ({chatId, now}) => {
   }, [chatId]);
 
   //메세지 입력시 message 컬렉션에 doc 추가
-  const messageHandler = async (e) => {
+  const messageHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (chatRef.current.value === "") {

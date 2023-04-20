@@ -1,17 +1,34 @@
-import {useEffect, useState} from "react";
+import {MouseEvent, useEffect, useState} from "react";
 import classes from "./chatPreview.module.css";
-import {firestore} from "../../components/firebase";
+import {firestore} from "../firebase";
 import Image from "next/image";
 import {query, orderBy, limit, collection, onSnapshot} from "firebase/firestore";
 import {useRouter} from "next/router";
-import {storage} from "../../components/firebase";
+import {storage} from "../firebase";
 import {ref, getDownloadURL} from "firebase/storage";
 import {doc, getDoc} from "firebase/firestore";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "../../Hooks/storeHook";
 
-const ChatPreview = ({c, id, LoadingEnd}) => {
+interface Props {
+  c: {
+    category: string;
+    date: number;
+    dong: string;
+    img: string;
+    left: string;
+    partyID: string[];
+    product: string;
+    title: string;
+  };
+  id: string;
+  LoadingEnd: () => void;
+}
+
+const ChatPreview: React.FC<Props> = ({c, id, LoadingEnd}) => {
   const router = useRouter();
-  const loginID = useSelector((state) => state.User.loginID);
+  const loginID = useAppSelector((state) => state.User.loginID);
+
+  console.log(c);
 
   const [lastMsg, setLastMsg] = useState("");
   const [lastTime, setlastTime] = useState("");
@@ -22,7 +39,7 @@ const ChatPreview = ({c, id, LoadingEnd}) => {
   useEffect(() => {
     async function fetchpartner() {
       if (c.left.length == 1) {
-        const partnerInfo = await getDoc(doc(firestore, "users", ...c.left));
+        const partnerInfo = await getDoc(doc(firestore, "users", c.left));
         setchatpartner(partnerInfo.data().nickname);
       } else {
         const partnerID = c.partyID.filter((el) => el !== loginID);
@@ -47,8 +64,8 @@ const ChatPreview = ({c, id, LoadingEnd}) => {
 
   useEffect(() => {
     //마지막 채팅 시간
-    const calcTime = (last) => {
-      let minutesAgo = Math.round((Date.now() - last) / 1000 / 60);
+    const calcTime = (last: number) => {
+      let minutesAgo: string | number = Math.round((Date.now() - last) / 1000 / 60);
 
       if (minutesAgo < 60) {
         minutesAgo = `${minutesAgo}분`;
@@ -82,12 +99,12 @@ const ChatPreview = ({c, id, LoadingEnd}) => {
     fetchData();
   }, [id, LoadingEnd]);
 
-  const openChatHandler = (e) => {
+  const openChatHandler = (e: MouseEvent<HTMLLIElement>) => {
     e.stopPropagation();
     router.push(`/Chat/${id}`);
   };
 
-  const imgClickHandler = (e) => {
+  const imgClickHandler = (e: MouseEvent<HTMLImageElement>) => {
     e.stopPropagation();
     router.push(`/${c.category}/${c.product}`);
   };

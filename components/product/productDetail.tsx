@@ -1,5 +1,5 @@
 import classes from "./ProductDetail.module.css";
-import {useEffect, useRef, useState} from "react";
+import {Key, MouseEvent, useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -9,15 +9,15 @@ import {AiOutlineHeart, AiFillHeart, AiFillHome} from "react-icons/ai";
 import {firestore} from "../firebase";
 import {ClipLoader} from "react-spinners";
 import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
-import {storage} from "../../components/firebase";
+import {storage} from "../firebase";
 import {ref, deleteObject} from "firebase/storage";
-import {useDispatch, useSelector} from "react-redux";
 import {productAction} from "../../store/product-slice";
+import {useAppDispatch, useAppSelector} from "../../Hooks/storeHook";
 
 //시간 구하는 함수
-const calcTime = (time) => {
+const calcTime = (time: number) => {
   const now = Date.now();
-  let minutesAgo = Math.round((now - time) / 1000 / 60);
+  let minutesAgo: number | string = Math.round((now - time) / 1000 / 60);
   if (minutesAgo < 60) {
     minutesAgo = `${minutesAgo}분`;
   } else if (minutesAgo < 60 * 24) {
@@ -29,7 +29,7 @@ const calcTime = (time) => {
 };
 
 //온도 이모티콘 구하는 함수
-const ImoticonHandler = (temp) => {
+const ImoticonHandler = (temp: number) => {
   let tempImoticon = "🙂";
   if (temp < 35) {
     tempImoticon = "😨";
@@ -41,19 +41,20 @@ const ImoticonHandler = (temp) => {
 
 const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const loginID = useSelector((state) => state.User.loginID);
-  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
-  const nickname = useSelector((state) => state.User.nickname);
-  const category = useSelector((state) => state.Products.category);
+  const loginID = useAppSelector((state) => state.User.loginID);
+  const isLoggedIn = useAppSelector((state) => state.User.isLoggedIn);
+  const nickname = useAppSelector((state) => state.User.nickname);
+  const category = useAppSelector((state) => state.Products.category);
 
   const [isLike, setIsLike] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPop, setIsPop] = useState(false);
   const [errMsg, seterrMsg] = useState(null);
-  const buyerRef = useRef();
+  const buyerRef = useRef<HTMLSelectElement>();
 
+  const imageRef = ref(storage, `images/${id}`);
   const price = item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   useEffect(() => {
@@ -64,7 +65,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     }
   }, [item.wholike, loginID]);
 
-  const errHandler = (text) => {
+  const errHandler = (text: string) => {
     seterrMsg(text);
     setTimeout(() => {
       seterrMsg(null);
@@ -72,7 +73,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
   };
 
   //좋아요 클릭
-  const likeBtnHandler = (e) => {
+  const likeBtnHandler = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
 
     if (isLoggedIn) {
@@ -81,7 +82,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
           setDoc(doc(firestore, "products", id), {
             ...item,
             likes: item.likes - 1,
-            wholike: item.wholike.filter((item) => item !== loginID),
+            wholike: item.wholike.filter((item: string) => item !== loginID),
           });
         } else if (!isLike) {
           setDoc(doc(firestore, "products", id), {
@@ -138,9 +139,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
 
   //게시물 삭제
   const deleteBtnHandler = async () => {
-    // products 컬렉션에서 삭제
     deleteDoc(doc(firestore, "products", id));
-    const imageRef = ref(storage, `images/${id}`);
     deleteObject(imageRef);
 
     setTimeout(() => {
@@ -173,7 +172,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
       <div className={classes.popup}>
         누구와 거래하셨나요?
         <select ref={buyerRef}>
-          {item.chat.map((chatPartner, idx) => {
+          {item.chat.map((chatPartner: string, idx: Key) => {
             return (
               <option value={chatPartner} key={idx}>
                 {chatPartner}

@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react";
 import classes from "./chatList.module.css";
-import {firestore} from "../../components/firebase";
+import {firestore} from "../firebase";
 import {collection, onSnapshot, query, where} from "firebase/firestore";
 import ChatPreview from "./chatPreview";
 import {ClipLoader} from "react-spinners";
-import {useSelector} from "react-redux";
+import {useAppSelector} from "../../Hooks/storeHook";
 
-const ChatListForm = () => {
-  const loginID = useSelector((state) => state.User.loginID);
-  const isLoggedIn = useSelector((state) => state.User.isLoggedIn);
+const ChatListForm: React.FC = () => {
+  const loginID = useAppSelector((state) => state.User.loginID);
+  const isLoggedIn = useAppSelector((state) => state.User.isLoggedIn);
 
   const [chatList, setChatList] = useState([]);
   const [isLoading, setisLoading] = useState(true);
