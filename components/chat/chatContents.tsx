@@ -5,7 +5,7 @@ import {addDoc, collection, onSnapshot} from "firebase/firestore";
 import Image from "next/image";
 import {useAppSelector} from "../../Hooks/storeHook";
 
-const ChatContents: React.FC<{chatId: string; now: number}> = ({chatId, now}) => {
+const ChatContents: React.FC<{chatId: string; now: string}> = ({chatId, now}) => {
   const nickname = useAppSelector((state) => state.User.nickname);
 
   const [messages, setMessages] = useState([]);

@@ -50,7 +50,7 @@ const ProductDetailPage: React.FC = () => {
       {item && (
         <ProductDetail
           item={item}
-          id={router.query.productId}
+          id={router.query.productId as string}
           productUrl={productUrl}
           userUrl={userUrl}
           isLoading={isLoading}

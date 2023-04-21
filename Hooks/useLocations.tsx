@@ -32,18 +32,20 @@ export const useLocations = () => {
           longitude: position.coords.longitude,
         })
       );
+      sessionStorage.setItem("latitude", position.coords.latitude.toString());
+      sessionStorage.setItem("logitude", position.coords.longitude.toString());
     });
 
     //좌표로 동주소 가져오기
     const onLoadDong = () => {
       window.kakao.maps.load(() => {
         const geocoder = new window.kakao.maps.services.Geocoder();
-        geocoder.coord2RegionCode(longitude, latitude, (result: Array<RegionInfo> | null, status) => {
+        geocoder.coord2RegionCode(longitude, latitude, (result: Array<RegionInfo> | null, status: string) => {
           if (status === window.kakao.maps.services.Status.OK) {
             const dongAddress = result[0].region_3depth_name;
             dispatch(productAction.setDong(dongAddress));
           } else {
-            console.error("주소 불러오기 실패!");
+            console.error("주소 불러오기 실패..");
           }
         });
       });

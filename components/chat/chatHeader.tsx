@@ -9,7 +9,7 @@ interface Props {
   chatpartnerID: string;
   chatpartnerName: string;
   chatId: string;
-  now: number;
+  now: string;
 }
 
 const ChatHeader: React.FC<Props> = ({chatpartnerID, chatpartnerName, chatId, now}) => {

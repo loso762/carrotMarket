@@ -7,23 +7,11 @@ import {collection, getDocs} from "firebase/firestore";
 import SearchList from "../../components/product/SearchList";
 import {Item} from "../../store/product-slice";
 import {useAppSelector} from "../../Hooks/storeHook";
+import {useFiltering} from "../../Hooks/useFiltering";
 
 const Main: React.FC<{ProductsData: Item[]}> = (props) => {
-  const [filterdProducts, setfilterdProducts] = useState([]);
   const isSearch = useAppSelector((state) => state.Products.isSearch);
-
-  //검색어로 제품 필터링하기
-  const Productsfilter = async (filter: string) => {
-    const tempData = [];
-
-    props.ProductsData.forEach((product) => {
-      if (product.data.title.includes(filter)) {
-        tempData.push(product);
-      }
-    });
-
-    setfilterdProducts(tempData);
-  };
+  const {filterdProducts, Productsfilter} = useFiltering(props.ProductsData);
 
   return (
     <>

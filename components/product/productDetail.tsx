@@ -11,7 +11,7 @@ import {ClipLoader} from "react-spinners";
 import {doc, setDoc, deleteDoc, updateDoc} from "firebase/firestore";
 import {storage} from "../firebase";
 import {ref, deleteObject} from "firebase/storage";
-import {productAction} from "../../store/product-slice";
+import {ItemData, productAction} from "../../store/product-slice";
 import {useAppDispatch, useAppSelector} from "../../Hooks/storeHook";
 
 //시간 구하는 함수
@@ -39,7 +39,15 @@ const ImoticonHandler = (temp: number) => {
   return tempImoticon;
 };
 
-const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
+interface Props {
+  item: ItemData;
+  id: string;
+  productUrl: string;
+  userUrl: string;
+  isLoading: boolean;
+}
+
+const ProductDetail: React.FC<Props> = ({item, id, productUrl, userUrl, isLoading}) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -167,6 +175,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
     setMenuOpen((prev) => !prev);
   };
 
+  //판매완료 팝업
   const sellpopup = (
     <>
       <div className={classes.popup}>
@@ -218,7 +227,7 @@ const ProductDetail = ({item, id, productUrl, userUrl, isLoading}) => {
         </Link>
 
         {/* 게시글 작성자만 게시글 수정 및 삭제 가능하도록 하는 코드*/}
-        {nickname == item.nickname && (!menuOpen ? menuOpenBtn : menuBox)}
+        {nickname === item.nickname && (!menuOpen ? menuOpenBtn : menuBox)}
       </header>
       {isLoading ? (
         <div className={classes.loading}>

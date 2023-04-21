@@ -39,10 +39,10 @@ const ChatRoom: React.FC = () => {
       <ChatHeader
         chatpartnerID={chatpartnerID}
         chatpartnerName={chatpartnerName}
-        chatId={router.query.chatId}
+        chatId={router.query.chatId as string}
         now={now}
       />
-      {router.query.chatId && <ChatContents chatId={router.query.chatId} now={now} />}
+      {router.query.chatId && <ChatContents chatId={router.query.chatId as string} now={now} />}
     </>
   );
 };

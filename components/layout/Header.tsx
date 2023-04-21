@@ -7,7 +7,7 @@ import {doc, updateDoc, setDoc, increment, getDoc} from "firebase/firestore";
 import {useAppSelector, useAppDispatch} from "../../Hooks/storeHook";
 import {productAction} from "../../store/product-slice";
 
-const Header: React.FC<{Productsfilter: (value: string) => void}> = ({Productsfilter}) => {
+const Header: React.FC<{Productsfilter: (filter: string) => void}> = ({Productsfilter}) => {
   const dispatch = useAppDispatch();
   const searchRef = useRef<HTMLInputElement>(null);
   const category = useAppSelector((state) => state.Products.category);

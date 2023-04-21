@@ -11,7 +11,7 @@ const SearchList: React.FC<{list: Item[]}> = ({list}) => {
   const [isError, setIsError] = useState(false);
   const loginID = useAppSelector((state) => state.User.loginID);
 
-  list.sort((a, b) => b.data.time - a.data.time);
+  list?.sort((a, b) => b.data.time - a.data.time);
 
   useEffect(() => {
     //상위 검색어 7개만 표시해주기
@@ -39,9 +39,9 @@ const SearchList: React.FC<{list: Item[]}> = ({list}) => {
 
   return (
     <>
-      {list.length !== 0 ? (
+      {list?.length !== 0 ? (
         <ul className={classes.list}>
-          {list.map((item) => (
+          {list?.map((item) => (
             <ProductItem
               errorHandler={errorHandler}
               key={item.id}

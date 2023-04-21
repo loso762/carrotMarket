@@ -13,12 +13,13 @@ import {
   DocumentData,
   QuerySnapshot,
 } from "firebase/firestore";
-import Image from "next/image";
 import {PulseLoader} from "react-spinners";
 import ProductList from "../../components/product/ProductList";
 import {useAppDispatch, useAppSelector} from "../../Hooks/storeHook";
 import {productAction} from "../../store/product-slice";
-import WriteBtn from "../../components/product/writeBtn";
+import {useFiltering} from "../../Hooks/useFiltering";
+import SearchList from "../../components/product/SearchList";
+import Empty from "../../components/product/Empty";
 
 const Products: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -30,12 +31,14 @@ const Products: React.FC = () => {
   const isLoggedIn = useAppSelector((state) => state.User.isLoggedIn);
   const nickname = useAppSelector((state) => state.User.nickname);
   const category = useAppSelector((state) => state.Products.category);
+  const isSearch = useAppSelector((state) => state.Products.isSearch);
 
   useEffect(() => {
     dispatch(productAction.setCategory(sessionStorage.getItem("category")));
     setIsLoading(true);
 
     const ProductRef: CollectionReference<DocumentData> = collection(firestore, "products");
+
     const q = getQuery(ProductRef);
 
     function getQuery(ref: CollectionReference<DocumentData>) {
@@ -79,39 +82,16 @@ const Products: React.FC = () => {
   }, [category, dispatch, isLoggedIn, loginID, nickname]);
 
   //검색 매물 필터링
-  const Productsfilter = (filter: string) => {
-    const tempData = [];
+  const {filterdProducts, Productsfilter} = useFiltering(products);
 
-    products.forEach((product) => {
-      if (product.data.title.includes(filter)) {
-        tempData.push(product);
-      }
-    });
-
-    if (tempData.length === 0) {
-      alert("찾으시는 상품이 없습니다!");
-      return;
-    }
-
-    setProducts(tempData);
-  };
+  const Loader = <PulseLoader margin={10} size={12} color={"#fd9253"} className="loader" />;
+  const List =
+    !isSearch && products ? <ProductList list={products} /> : <SearchList list={filterdProducts} />;
 
   return (
     <>
       <Header Productsfilter={Productsfilter} />
-
-      {isLoading ? (
-        <PulseLoader margin={10} size={12} color={"#fd9253"} className="loader" />
-      ) : !isLoading && products.length === 0 ? (
-        <>
-          <div className="empty">
-            <Image src="/images/empty.webp" alt="" width={100} height={100} />텅
-          </div>
-          <WriteBtn isScroll={false} hoverBtn={() => {}} />
-        </>
-      ) : (
-        <ProductList list={products} />
-      )}
+      {isLoading ? Loader : !isLoading && products.length === 0 ? <Empty /> : List}
       <FooterMenu />
     </>
   );

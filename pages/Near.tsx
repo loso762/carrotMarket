@@ -7,10 +7,11 @@ import {firestore} from "../components/firebase";
 import {collection, onSnapshot} from "firebase/firestore";
 import {useState} from "react";
 import {useAppSelector, useAppDispatch} from "../Hooks/storeHook";
-import {productAction} from "../store/product-slice";
-import {useLocations} from "../Hooks/useLocations";
+import {Item, productAction} from "../store/product-slice";
+import {PulseLoader} from "react-spinners";
+import {useFiltering} from "../Hooks/useFiltering";
 
-const Near: React.FC = () => {
+const Near: React.FC<{ProductsData: Item[]}> = () => {
   const dispatch = useAppDispatch();
 
   const range = useAppSelector((state) => state.Products.range);
@@ -18,11 +19,11 @@ const Near: React.FC = () => {
   const latitude = useAppSelector((state) => state.Products.latitude);
   const longitude = useAppSelector((state) => state.Products.longitude);
 
-  const [products, setproducts] = useState([]);
-  const [filterdProducts, setfilterdProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [products, setproducts] = useState<Item[]>();
 
-  //내 좌표, 동 구하기
-  useLocations();
+  //검색 매물 필터링
+  const {filterdProducts, Productsfilter} = useFiltering(products);
 
   //거리 구하는 함수
   const calcDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -42,6 +43,11 @@ const Near: React.FC = () => {
 
   //거리 필터링
   useEffect(() => {
+    setIsLoading(true);
+    const lat = Number(sessionStorage.getItem("latitude"));
+    const log = Number(sessionStorage.getItem("logitude"));
+
+    dispatch(productAction.setCoordinate({latitude: lat, longitude: log}));
     dispatch(productAction.setCategory("Near"));
     const ProductRef = collection(firestore, "products");
 
@@ -56,32 +62,20 @@ const Near: React.FC = () => {
       ).sort((a, b) => b.data.time - a.data.time);
 
       setproducts(NearList);
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
-  }, [dispatch, latitude, longitude, range]);
+  }, [dispatch, range, latitude, longitude]);
 
-  //검색 매물 필터링
-  const Productsfilter = (filter: string) => {
-    const tempData = [];
-
-    products.forEach((product) => {
-      if (product.data.title.includes(filter)) {
-        tempData.push(product);
-      }
-    });
-
-    if (tempData.length === 0) {
-      alert("찾으시는 상품이 없습니다!");
-      return;
-    }
-    setfilterdProducts(tempData);
-  };
+  const Loader = <PulseLoader margin={10} size={12} color={"#fd9253"} className="loader" />;
+  const List =
+    !isSearch && products ? <ProductList list={products} /> : <SearchList list={filterdProducts} />;
 
   return (
     <>
       <Header Productsfilter={Productsfilter} />
-      {!isSearch && products ? <ProductList list={products} /> : <SearchList list={filterdProducts} />}
+      {isLoading ? Loader : List}
       <FooterMenu />
     </>
   );
